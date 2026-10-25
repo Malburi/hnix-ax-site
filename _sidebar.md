@@ -1,0 +1,32 @@
+- **시작하기**
+  - [HNIX AX란](/)
+  - [제품 구성과 구조](/getting-started/architecture.md)
+  - [빠른 시작](/getting-started/quickstart.md)
+  - [Claude 연결 — 구독·키·게이트웨이](/getting-started/connect.md)
+  - [장애 한 건 따라가기](/getting-started/scenario.md)
+
+- **AX Platform**
+  - [개요](/platform/README.md)
+  - [LLM 게이트웨이](/platform/gateway.md)
+  - [Insight — AI 사용 현황](/platform/insight.md)
+  - [MCP 허브와 승인함](/platform/hub.md)
+  - [에이전트 실행기와 A2A](/platform/agents.md)
+  - [문서 RAG](/platform/docs-rag.md)
+  - [설치와 운영](/platform/operations.md)
+
+- **AX-NAVI**
+  - [개요](/axnavi/README.md)
+  - [변경 리뷰와 보안 점검](/axnavi/review.md)
+  - [SDLC 산출물과 단계 게이트](/axnavi/sdlc.md)
+  - [플랫폼 연동](/axnavi/integration.md)
+
+- **PMS-X**
+  - [개요](/pmsx/README.md)
+  - [As-Is 화면 분석](/pmsx/asis.md)
+  - [SM 운영과 AI 보조](/pmsx/sm-ai.md)
+  - [인수인계와 구현 명세](/pmsx/handover.md)
+
+- **레퍼런스**
+  - [데이터·보안 원칙](/reference/security.md)
+  - [자주 묻는 질문](/reference/faq.md)
+  - [용어집](/reference/glossary.md)
