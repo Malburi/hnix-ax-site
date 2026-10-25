@@ -83,3 +83,7 @@ flowchart LR
 | PMS-X | `Malburi/hnix-pmsx` (비공개) | Spring Boot 3·Java 21, Vue 3, Python 수집기 |
 
 이 사이트는 제품 소개와 사용 안내다. 설치 파일과 상세 설계 문서는 각 저장소에 있다.
+
+## 오프라인판
+
+인터넷이 안 되거나 GitHub Pages에 접속할 수 없는 곳에서는 오프라인판을 쓴다. [hnix-ax-offline.zip](download/hnix-ax-offline.zip ':ignore')을 받아 풀고 `offline/index.html`을 더블클릭하면 된다. 내용과 화면은 이 사이트와 같고, 검색과 다이어그램도 인터넷 없이 동작한다.
