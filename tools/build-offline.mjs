@@ -15,6 +15,7 @@ import { Marked } from "marked";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "offline");
+const ONLINE = "https://malburi.github.io/hnix-ax-site/";
 const NL = "\n";
 
 /* ---------- 사이드바 → 페이지 목록 ---------- */
@@ -66,7 +67,10 @@ function render(src) {
         return `<div class="table-wrapper"><table><thead>${header}</thead><tbody>${body}</tbody></table></div>${NL}`;
       },
       link(href, title, text) {
-        return `<a href="${esc(linkOf(href, prefix))}"${title ? ` title="${esc(title)}"` : ""}${/^https?:/.test(href) ? ' target="_blank" rel="noopener"' : ""}>${text}</a>`;
+        // docsify 전용 표시(':ignore')는 지운다. 오프라인판 안에 없는 내려받기 파일은 온라인 주소로 보낸다.
+        const t = title && !title.startsWith(":") ? title : null;
+        const to = href.startsWith("download/") ? ONLINE + href : linkOf(href, prefix);
+        return `<a href="${esc(to)}"${t ? ` title="${esc(t)}"` : ""}${/^https?:/.test(to) ? ' target="_blank" rel="noopener"' : ""}>${text}</a>`;
       },
       image(href, title, text) {
         return `<img src="${esc(/^(https?:|\/)/.test(href) ? href : prefix + href)}" alt="${esc(text)}"${title ? ` title="${esc(title)}"` : ""}>`;
