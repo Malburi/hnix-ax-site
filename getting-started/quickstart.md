@@ -69,6 +69,8 @@ powershell -ExecutionPolicy Bypass -File start.ps1      # 경로는 e2e.config.j
 node scripts\smoke.mjs                                    # 장애 한 건 ①~⑨ 자동 점검
 ```
 
+저장소 없이 다른 PC(회사 PC)에서 하려면 [회사 PC에서 따라 하기](/getting-started/e2e-kit.md)의 꾸러미를 쓴다 — Node·Java·npm 설치 없이 `setup.ps1` → `start.ps1`.
+
 ## 잘 됐는지 확인
 
 - 플랫폼 › MCP 허브 › 도구 승인에 `pmsx__*`, `axnavi__*` 도구가 보인다.
