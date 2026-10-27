@@ -14,6 +14,10 @@ flowchart LR
     H --> I["사용 현황<br/>Insight"]
 ```
 
+<figure><img src="img/hnix-ax-e2e-flow.png" alt="E2E 워크플로우 — 모니터링·고객, PMS-X, AX Platform, 개발자, 모델 레인에 걸친 ①~⑨ 단계"><figcaption>같은 흐름을 제품 레인별로 나눈 그림(draw.io 원본 2쪽). 번호가 아래 절과 같다.</figcaption></figure>
+
+> **직접 돌려 보기** — 플랫폼 저장소의 `e2e/`가 세 제품을 한 PC에 띄워 이 시나리오 그대로 연결하고(`start.ps1`), ①~⑨를 실제 API로 끝까지 점검한다(`node scripts/smoke.mjs`). 화면에서 따라 하는 순서는 `e2e/README.md`에 있다.
+
 ## 1. 경보가 장애와 SR로 바뀐다
 
 모니터링 도구가 보낸 경보 4건이 들어왔다. critical은 장애로, warning은 SR로 만들어졌고 info는 기록만 남았다. 같은 배치 실패가 두 번 와도 장애는 하나로 묶였다(×2).

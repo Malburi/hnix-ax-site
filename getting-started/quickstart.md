@@ -59,6 +59,16 @@ Claude 연결은 개발자마다 다르다. 구독·좌석·API 키·게이트�
 | Claude Code → Insight | 개발자 PC 설정 | [Insight](/platform/insight.md)의 텔레메트리 설정 |
 | 모니터링 → PMS-X | 모니터링 도구의 웹훅 | [SM 운영과 AI 보조](/pmsx/sm-ai.md)의 경보 접수 |
 
+## 한 번에 띄우기 — E2E 키트
+
+위 1~4를 스크립트 하나로 하려면 플랫폼 저장소의 `e2e/`를 쓴다. 사내 로컬 모델(Ollama) · 플랫폼 · PMS-X 시연(AI 켬)을 띄우고, 게이트웨이·허브 커넥터·승인 정책·에이전트·문서를 채우고, AX-NAVI IDE에 허브를 등록한다.
+
+```powershell
+cd hnix-ax-platform\e2e
+powershell -ExecutionPolicy Bypass -File start.ps1      # 경로는 e2e.config.json
+node scripts\smoke.mjs                                    # 장애 한 건 ①~⑨ 자동 점검
+```
+
 ## 잘 됐는지 확인
 
 - 플랫폼 › MCP 허브 › 도구 승인에 `pmsx__*`, `axnavi__*` 도구가 보인다.

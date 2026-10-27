@@ -16,7 +16,29 @@ HNIX AX는 세 제품으로 이루어진다. 각 제품은 혼자서도 동작�
 4. **AI는 켤 때만.** PMS-X의 AI 기능은 기본으로 꺼져 있다. 끈 상태에서는 외부 호출이 0건이다.
 5. **사람이 확정한다.** AI가 만든 분류·설명·KB는 모두 초안이다. 반영 버튼은 사람이 누른다.
 
-## 전체 구조
+## 전체 아키텍처
+
+<figure><img src="img/hnix-ax-architecture.png" alt="HNIX AX 전체 아키텍처 — 개발자 PC(AX-NAVI IDE·CLI·Claude Code), AX Platform 모듈, PMS-X 모듈, 모델, 외부 시스템과 연결 ①~⑭"><figcaption>세 제품과 모델·외부 시스템의 연결. 번호 ①~⑭는 연결마다의 경로와 인증이다. 그림을 누르면 크게 보인다.</figcaption></figure>
+
+| 번호 | 연결 | 경로 · 인증 |
+|---|---|---|
+| ① | AX-NAVI IDE → 게이트웨이 | OpenAI 호환 `/v1`, llm 키 |
+| ② ③ | AX-NAVI IDE → Claude Code → Anthropic | 개발자 본인 구독 로그인(`claude -p`), 서버 중계 없음 |
+| ④ | AX-NAVI IDE·Claude Code → MCP 허브 | `/mcp`, mcp 키 — `pmsx__*`·`axnavi__*`·`docs__search` |
+| ⑤ | AX-NAVI·Claude Code → Insight | 작업 요약·OTLP 텔레메트리, ingest 키 |
+| ⑥ | 허브 → AX-NAVI 색인 | `axnavi__*`, query-index 읽기 |
+| ⑦ | 허브 → PMS-X | `pmsx__*`, 서비스 계정 JWT, GET 만 |
+| ⑧ | PMS-X AI 보조 → 게이트웨이 | llm 키, 켤 때만 |
+| ⑨ | 게이트웨이 → 모델 | 라우팅·폴백, `restricted`는 사내 로컬만 |
+| ⑩ | 모니터링 → PMS-X | 경보 웹훅 → 장애·SR |
+| ⑪ | 수집기 → PMS-X | 결과 zip 업로드 |
+| ⑫ | CI → AX-NAVI CLI | `review`·`gate`, 종료 코드 0·3·4 |
+| ⑬ | 외부 에이전트 ↔ A2A 서버 | JSON-RPC, a2a 키 |
+| ⑭ | PMS-X 구현 명세 → 개발자 | MD·JSON 파일 |
+
+원본: [hnix-ax-architecture.drawio](download/hnix-ax-architecture.drawio ':ignore') — diagrams.net(draw.io)이나 VS Code의 Draw.io Integration 확장으로 연다. 2쪽에 [장애 한 건](/getting-started/scenario.md)의 E2E 워크플로우가 있다.
+
+## 배포 구조
 
 ```mermaid
 flowchart TB
