@@ -228,6 +228,24 @@ const APP_JS = `(function () {
     document.body.removeChild(ta); return ok;
   }
 
+  // 이미지 확대 보기 (온라인판 index.html 과 같은 동작)
+  function closeZoom() { var z = document.querySelector('.img-zoom'); if (z) z.remove(); }
+  document.addEventListener('click', function (e) {
+    var img = e.target.closest && e.target.closest('.markdown-section img:not(.no-zoom)');
+    if (!img || img.closest('a')) return;
+    var box = document.createElement('div');
+    box.className = 'img-zoom';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-label', '이미지 확대 보기 (누르거나 Esc 로 닫기)');
+    var big = document.createElement('img');
+    big.src = img.currentSrc || img.src; big.alt = img.alt || '';
+    box.appendChild(big);
+    if (img.alt) { var cap = document.createElement('div'); cap.className = 'img-zoom-cap'; cap.textContent = img.alt; box.appendChild(cap); }
+    box.addEventListener('click', closeZoom);
+    document.body.appendChild(box);
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeZoom(); });
+
   // 검색 — 미리 만든 색인(search-index.js)에서 찾는다
   var q = document.getElementById('q');
   var panel = document.getElementById('results');

@@ -159,7 +159,7 @@
     body.close .sidebar { transform: translateX(-288px); }
     body.close .content { padding-left: 0; }
     .markdown-section {
-      max-width: 74ch; margin: 0 auto;
+      max-width: 1100px; margin: 0 auto;
       padding: 56px 40px 96px;
     }
     .markdown-section > :first-child { margin-top: 0; }
@@ -219,6 +219,14 @@
     .markdown-section figure { margin: 1.4em 0; }
     .markdown-section figure img { display: block; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
     .markdown-section figcaption { margin-top: 6px; font-size: .85rem; color: var(--muted); }
+    /* 이미지 확대 보기 — 본문 이미지를 누르면 원본 크기로 */
+    .markdown-section img:not(.no-zoom) { cursor: zoom-in; }
+    .img-zoom {
+      position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;
+      padding: 24px 24px 52px; background: rgba(15, 20, 25, .82); cursor: zoom-out; overflow: auto;
+    }
+    .img-zoom img { max-width: min(1600px, 100%); max-height: 100%; border-radius: 6px; background: #fff; box-shadow: 0 10px 40px rgba(0, 0, 0, .45); }
+    .img-zoom .img-zoom-cap { position: fixed; left: 0; right: 0; bottom: 12px; text-align: center; color: #e8eaed; font-size: .85rem; pointer-events: none; }
     /* 복사 버튼 (docsify-copy-code) */
     .docsify-copy-code-button { font-family: var(--font-body); font-size: .72rem; background: var(--surface); color: var(--ink-soft); border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px; }
     .docsify-copy-code-button:hover { color: var(--accent-ink); border-color: var(--accent); }
@@ -284,6 +292,14 @@
       plugins: [
         function (hook) {
           hook.doneEach(function () {
+            // 넓은 표는 페이지가 아니라 표 안에서 가로 스크롤 (오프라인판과 같은 .table-wrapper)
+            document.querySelectorAll('.markdown-section table').forEach(function (t) {
+              if (t.parentElement.classList.contains('table-wrapper')) return;
+              var w = document.createElement('div');
+              w.className = 'table-wrapper';
+              t.parentNode.insertBefore(w, t);
+              w.appendChild(t);
+            });
             if (window.mermaid && document.querySelector('.mermaid')) {
               var dark = document.documentElement.getAttribute('data-theme') === 'dark'
                 || (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -294,6 +310,27 @@
         },
       ],
     };
+  </script>
+  <script>
+    // 이미지 확대 보기 (온라인판·오프라인판 공통 로직 — tools/build-offline.mjs 의 APP_JS 와 맞춘다)
+    (function () {
+      function close() { var z = document.querySelector('.img-zoom'); if (z) z.remove(); }
+      document.addEventListener('click', function (e) {
+        var img = e.target.closest && e.target.closest('.markdown-section img:not(.no-zoom)');
+        if (!img || img.closest('a')) return;
+        var box = document.createElement('div');
+        box.className = 'img-zoom';
+        box.setAttribute('role', 'dialog');
+        box.setAttribute('aria-label', '이미지 확대 보기 (누르거나 Esc 로 닫기)');
+        var big = document.createElement('img');
+        big.src = img.currentSrc || img.src; big.alt = img.alt || '';
+        box.appendChild(big);
+        if (img.alt) { var cap = document.createElement('div'); cap.className = 'img-zoom-cap'; cap.textContent = img.alt; box.appendChild(cap); }
+        box.addEventListener('click', close);
+        document.body.appendChild(box);
+      });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    })();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
