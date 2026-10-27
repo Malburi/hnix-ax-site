@@ -2,7 +2,7 @@
 
 AX-NAVI IDE는 레거시 개발용 AI IDE다. VS Code처럼 설치해 쓰면 AX-NAVI 에이전트가 기본으로 들어 있다. 채팅으로 코드를 찾고 고치고, 변경을 리뷰받고, 보안 지적을 AI로 고치고, 단계 게이트를 넘는 일을 한 화면에서 한다. 쓰던 VS Code가 있다면 같은 확장(.vsix)만 깔아도 된다.
 
-<figure><img src="img/axnavi-ide-welcome.png" alt="AX-NAVI IDE — 왼쪽 AX-NAVI 채팅, 가운데 코드, 아래 변경 리뷰 STOP과 Findings"><figcaption>왼쪽은 AX-NAVI 채팅, 아래는 변경 리뷰 결과(Findings). 상태 표시줄에 판정 <code>리뷰 STOP</code>이 뜬다.</figcaption></figure>
+<figure><img src="img/axnavi-ide-welcome.png" alt="AX-NAVI IDE — 오른쪽 AX-NAVI 채팅과 마스코트 나침이, 아래 Findings와 상세 칸"><figcaption>오른쪽은 AX-NAVI 채팅(첫 화면에서 나침이가 인사한다), 아래는 변경 리뷰 결과 Findings와 상세 칸. 상태 표시줄에 판정 <code>리뷰 STOP</code>이 뜬다.</figcaption></figure>
 
 <div class="home-grid">
   <a class="home-card" href="#/axnavi/start">
@@ -41,11 +41,12 @@ IDE와 CI가 같은 엔진을 쓰므로 **개발자가 IDE에서 본 판정과 �
 
 | IBM Bob | AX-NAVI IDE |
 |---|---|
+| 오른쪽 채팅 패널 | 채팅은 Bob처럼 **오른쪽 보조 사이드바**에 열린다. 첫 화면에서 마스코트 **나침이**가 인사하고 최근 작업을 보여 준다 |
 | 채팅 에이전트와 모드 | Architect · Code · Ask · Debug · Orchestrator 모드. 파일 수정은 diff로 보여 주고 승인받는다. 체크포인트로 되돌린다 |
 | 슬래시 명령 | `/`를 누르면 AX-NAVI 스킬 26개 — `/find`, `/flow`, `/impact`, `/safe-modify`, `/review-sql`, `/security-scan`, `/plan-migration` 등 |
 | 코드베이스 이해 | **코드 인덱스** — AI 없이 만든 전수 색인(화면 → 버튼 → 함수 → SQL → 테이블)을 에이전트가 MCP 도구로 바로 조회한다. grep으로 추측하지 않는다 |
 | `/review`, 리뷰 패널 | **변경 리뷰** — 소스 제어 뷰 버튼이나 상태 표시줄로 실행. GO / HOLD / STOP과 영향 범위(호출자, 테이블, 화면 이벤트) |
-| Findings | **Findings 패널 + 문제 탭** — 항목의 ✨ 버튼이나 전구(빠른 수정)로 **AI로 고치기** |
+| Findings | **Findings 패널 + 상세 칸 + 문제 탭** — 항목을 고르면 오른쪽 상세 칸에 **파일로 이동 / AX-NAVI로 수정 / 닫기**. 심각도 필터, 심각도별·파일별 묶기 |
 | 보안 점검 | **보안 점검** — OWASP 기준. 탐색기에서 폴더를 우클릭해도 된다 |
 | SDLC 단계 | **단계 게이트** — 요구 · 설계 · 개발 · 테스트마다 산출물, ADR, 리뷰, 보안 점검 통과 여부 |
 | 조직 사용량 관리 | **Insight** — 설정하면 작업 요약을 HNIX AX 플랫폼으로 보낸다 |
@@ -57,7 +58,7 @@ IDE와 CI가 같은 엔진을 쓰므로 **개발자가 IDE에서 본 판정과 �
 
 <figure><img src="img/axnavi-ide-chat.png" alt="AX-NAVI 채팅 — 파일을 읽겠다는 승인 요청과 작업 완료"><figcaption>에이전트는 파일을 읽거나 고치기 전에 무엇을 하려는지 보여 주고, 끝나면 바늘이 북쪽에 멈추며 <b>작업 완료</b>를 띄운다.</figcaption></figure>
 
-작업 중에는 코드 나침 표식의 바늘이 방향을 찾아 흔들리고 "방향 잡는 중… / 코드 지도 펼치는 중…" 같은 문구가 돈다. 화면 아래의 연결 이름(예: `AX-NAVI 구독 (Claude Code)`)이 지금 어느 경로로 과금되는지 알려 준다.
+작업 중에는 코드 나침 표식의 바늘이 방향을 찾아 흔들리고 "생각하는 중… / 코드를 살펴보는 중…" 같은 짧은 진행 문구가 돈다. 요청이 끝나면 "API 요청"으로 바뀐다. 화면 아래의 연결 이름(예: `AX-NAVI 구독 (Claude Code)`)이 지금 어느 경로로 과금되는지 알려 준다.
 
 ## 무엇을 근거로 판단하나
 

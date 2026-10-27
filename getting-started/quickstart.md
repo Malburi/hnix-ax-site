@@ -43,7 +43,7 @@ AI를 켜지 않으면 PMS-X는 외부로 아무것도 호출하지 않는다.
 1. 판정 엔진을 설치한다: `npm i -g axnavi`
 2. AX-NAVI IDE zip을 풀고 `설치.cmd`를 실행한다. VS Code를 쓰던 사람은 `code --install-extension axnavi-<버전>.vsix`만 해도 된다.
 3. IDE에서 프로젝트 폴더를 열고 명령 팔레트 › **AX-NAVI: 인덱스 만들기**.
-4. 왼쪽 `‹ ›` 아이콘으로 채팅을 열고 `/find 사원 저장` 처럼 물어본다.
+4. 오른쪽 AX-NAVI 채팅에서 `/find 사원 저장` 처럼 물어본다.
 
 자세한 순서는 [설치와 첫 사용](/axnavi/start.md)에 있다. 터미널에서는 `axnavi doctor`로 실행 경로와 과금을 확인한다.
 
