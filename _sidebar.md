@@ -23,6 +23,8 @@
 - **PMS-X**
   - [개요](/pmsx/README.md)
   - [As-Is 화면 분석](/pmsx/asis.md)
+  - [DB · PL/SQL 분석](/pmsx/db.md)
+  - [프로젝트 관리와 협업](/pmsx/pm.md)
   - [SM 운영과 AI 보조](/pmsx/sm-ai.md)
   - [인수인계와 구현 명세](/pmsx/handover.md)
 
