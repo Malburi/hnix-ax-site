@@ -1,12 +1,18 @@
 # 자주 묻는 질문
 
+### VS Code에서 IBM Bob처럼 쓸 수 있나요?
+
+그렇게 쓰는 것이 AX-NAVI IDE다. VS Code 계열 IDE를 설치하면 채팅 에이전트(Architect · Code · Ask · Debug · Orchestrator), 슬래시 명령, 변경 리뷰와 Findings, 보안 점검, 단계 게이트가 들어 있다. 쓰던 VS Code에 `.vsix`만 깔아도 된다. Bob과의 기능 대응은 [AX-NAVI IDE 개요](/axnavi/README.md)에 있다.
+
 ### Claude 구독(Pro·Max)만 있어도 쓸 수 있나요?
 
 AX-NAVI는 된다. 본인 PC에서 `claude`에 로그인해 두면 AX-NAVI가 그 Claude Code에 작업을 맡긴다. Team·Enterprise 좌석도 똑같다. 다만 여러 사람을 대신해 호출하는 서버 기능(게이트웨이, PMS-X AI, 공통 에이전트)은 구독으로 쓸 수 없고 조직 API 키나 사내 로컬 모델을 쓴다. [Claude 연결](/getting-started/connect.md)을 본다.
 
 ### 구독과 API 키를 둘 다 갖고 있으면 어느 쪽으로 과금되나요?
 
-기본은 API 키다. `AXNAVI_AUTH=subscription`을 넣으면 구독을 먼저 쓰고, 이때 AX-NAVI가 위임 프로세스에서 API 키를 빼서 구독으로 과금되게 한다. `axnavi doctor`의 **과금** 줄로 확인한다.
+AX-NAVI IDE는 **구독 로그인**을 먼저 고르고, 구독 연결에서는 API 키 환경 변수를 빼서 구독으로 과금되게 한다. 채팅 입력창 아래 연결 이름으로 확인하고, 바꾸려면 명령 팔레트 › **AX-NAVI: AI 연결 설정**.
+
+AX-NAVI CLI는 기본이 API 키다. `AXNAVI_AUTH=subscription`을 넣으면 구독을 먼저 쓰고, 이때 위임 프로세스에서 API 키를 뺀다. `axnavi doctor`의 **과금** 줄로 확인한다.
 
 ### Claude 없이 사내 모델만으로 쓸 수 있나요?
 

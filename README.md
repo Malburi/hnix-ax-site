@@ -10,8 +10,8 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
   </a>
   <a class="home-card" href="#/axnavi/README">
     <span class="eyebrow">개발</span>
-    <strong>AX-NAVI</strong>
-    <span class="desc">코드베이스를 전수 색인하고 영향 분석·안전 변경·변경 리뷰·보안 점검·SDLC 단계 게이트를 수행하는 개발 에이전트.</span>
+    <strong>AX-NAVI IDE</strong>
+    <span class="desc">VS Code처럼 쓰는 레거시 개발용 AI IDE. 전수 색인 위에서 채팅으로 찾고 고치고, 변경 리뷰·보안 Findings·SDLC 단계 게이트를 버튼 하나로.</span>
   </a>
   <a class="home-card" href="#/pmsx/README">
     <span class="eyebrow">관리·운영</span>
@@ -41,7 +41,7 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
 ```mermaid
 flowchart LR
     subgraph DEV["개발자 PC"]
-        NAVI["AX-NAVI<br/>색인·리뷰·게이트"]
+        NAVI["AX-NAVI IDE<br/>색인·리뷰·게이트"]
         CC["Claude Code<br/>(각자 로그인)"]
     end
     subgraph PLAT["AX Platform"]
@@ -79,7 +79,8 @@ flowchart LR
 | 제품 | 저장소 | 기술 |
 |---|---|---|
 | AX Platform | `Malburi/hnix-ax-platform` (비공개) | TypeScript, Fastify, Vue 3, SQLite·PostgreSQL |
-| AX-NAVI | [Malburi/AX-NAVI-CLI](https://github.com/Malburi/AX-NAVI-CLI) · [문서](https://malburi.github.io/AX-NAVI-CLI/) | Node.js CLI, Claude Code 플러그인 |
+| AX-NAVI IDE | `Malburi/axnavi-ide` (비공개) | VSCodium 재포장 + Roo Code 포크 확장 |
+| AX-NAVI CLI (판정 엔진) | [Malburi/AX-NAVI-CLI](https://github.com/Malburi/AX-NAVI-CLI) · [문서](https://malburi.github.io/AX-NAVI-CLI/) | Node.js CLI, Claude Code 플러그인 |
 | PMS-X | `Malburi/hnix-pmsx` (비공개) | Spring Boot 3·Java 21, Vue 3, Python 수집기 |
 
 이 사이트는 제품 소개와 사용 안내다. 설치 파일과 상세 설계 문서는 각 저장소에 있다.

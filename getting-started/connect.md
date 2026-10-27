@@ -20,6 +20,10 @@ Anthropic은 승인 없이 제3자 제품(Agent SDK로 만든 에이전트 포�
 
 ## AX-NAVI가 경로를 고르는 순서
 
+**AX-NAVI IDE**는 처음 열 때 가진 연결을 찾아 프로필(`AX-NAVI 구독 (Claude Code)`, `AX-NAVI API 키 (Anthropic)`, `AX-NAVI 사내 게이트웨이`)을 만들고, 조직 선호 → `AXNAVI_AUTH` → 구독 로그인 → API 키 → 게이트웨이 순으로 하나를 고른다. 바꾸려면 명령 팔레트 › **AX-NAVI: AI 연결 설정**. 정책이 허용하지 않는 프로필은 지운다.
+
+**AX-NAVI CLI**는 실행할 때마다 아래 순서로 고른다.
+
 ```mermaid
 flowchart LR
     A{"AXNAVI_AUTH<br/>선호 경로?"} -- 있음 --> P["그 경로 먼저"]

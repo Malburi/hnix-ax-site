@@ -5,7 +5,7 @@ HNIX AX는 세 제품으로 이루어진다. 각 제품은 혼자서도 동작�
 | 제품 | 누가 쓰나 | 하는 일 | 단독 실행 |
 |---|---|---|---|
 | **AX Platform** | 관리자, 개발자, 운영자 | LLM 게이트웨이, 사용 현황, MCP 허브·승인, 에이전트, 문서 검색 | 가능 |
-| **AX-NAVI** | 개발자 | 코드 색인, 영향 분석, 안전 변경, 변경 리뷰, 보안 점검, SDLC 게이트 | 가능 (Claude만 있으면) |
+| **AX-NAVI IDE** | 개발자 | VS Code 계열 IDE의 AI 에이전트 — 코드 색인, 영향 분석, 안전 변경, 변경 리뷰, 보안 점검, SDLC 게이트 | 가능 (Claude만 있으면) |
 | **PMS-X** | PM, 분석자, 운영자, 고객 | As-Is 화면 분석, 일정·인력·산출물·품질, SM 운영(SR·SLA·장애) | 가능 (AI 기능은 꺼진 채로) |
 
 ## 설계 원칙
@@ -21,7 +21,7 @@ HNIX AX는 세 제품으로 이루어진다. 각 제품은 혼자서도 동작�
 ```mermaid
 flowchart TB
     subgraph USERS["사용자"]
-        DEVPC["개발자 PC<br/>AX-NAVI · Claude Code"]
+        DEVPC["개발자 PC<br/>AX-NAVI IDE · Claude Code"]
         BROWSER["브라우저<br/>PMS-X · 플랫폼 웹"]
         MON["모니터링<br/>Zabbix · Prometheus"]
     end
@@ -70,5 +70,5 @@ flowchart TB
 | 제품 | 서버 | 웹 | 저장소 | 배포 |
 |---|---|---|---|---|
 | AX Platform | Node.js 24, Fastify 5, Kysely | Vue 3, Naive UI | SQLite(기본, sqlite-vec) · PostgreSQL | win-x64 zip · linux-x64 tar.gz (Node 런타임 포함), WinSW · systemd |
-| AX-NAVI | Node.js CLI | 터미널 | 저장소의 `_workspace/index` | npm 패키지, 폐쇄망 tgz |
+| AX-NAVI IDE | Node.js CLI(판정 엔진) | VSCodium 기반 IDE · VS Code 확장 | 저장소의 `_workspace/index` | IDE zip(설치 스크립트) · `.vsix` · CLI npm 패키지/폐쇄망 tgz |
 | PMS-X | Spring Boot 3, Java 21 | Vue 3, Vuetify | PostgreSQL · Oracle · Tibero · SQL Server · H2 | 단일 jar + 내장 JRE 오프라인 패키지 |
