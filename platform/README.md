@@ -9,6 +9,7 @@ AX Platform은 HNIX AX 제품군이 함께 쓰는 AI 기반이다. 모델 호출
 | [MCP 허브와 승인함](/platform/hub.md) | 도구 레지스트리, 정책(허용·거부·승인), 스키마 변경 차단, 호출 감사, PMS-X·AX-NAVI 커넥터 |
 | [에이전트 실행기와 A2A](/platform/agents.md) | 게이트웨이와 허브를 거쳐 도는 에이전트, 트리거(경보·예약·새 SR), 외부 A2A 에이전트 연결 |
 | [현업 창구](/platform/desk.md) | 매뉴얼·처리 사례 근거로 현업 질문에 답하고, 못 찾으면 사용자 확인 후 티켓으로 접수 |
+| [모델 평가와 GPU 모델 서버](/platform/eval.md) | 통합ITO 정답 세트로 모델 별칭을 견주고 업무 별칭에 반영, 사내 vLLM 설치 꾸러미 |
 | [문서 RAG](/platform/docs-rag.md) | 키워드(FTS5)와 벡터(sqlite-vec) 검색을 합친 사내 문서 검색 |
 | [설치와 운영](/platform/operations.md) | 폐쇄망 설치 패키지, Windows·Linux 서비스, 백업·복원, LDAP(AD) 로그인 |
 

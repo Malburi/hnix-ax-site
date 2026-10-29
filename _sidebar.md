@@ -13,6 +13,7 @@
   - [MCP 허브와 승인함](/platform/hub.md)
   - [에이전트 실행기와 A2A](/platform/agents.md)
   - [현업 창구](/platform/desk.md)
+  - [모델 평가와 GPU 모델 서버](/platform/eval.md)
   - [문서 RAG](/platform/docs-rag.md)
   - [설치와 운영](/platform/operations.md)
 
