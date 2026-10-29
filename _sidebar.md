@@ -5,6 +5,7 @@
   - [Claude 연결 — 구독·키·게이트웨이](/getting-started/connect.md)
   - [장애 한 건 따라가기](/getting-started/scenario.md)
   - [회사 PC에서 따라 하기](/getting-started/e2e-kit.md)
+  - [고객사 설치와 연결 점검](/getting-started/onsite.md)
 
 - **AX Platform**
   - [개요](/platform/README.md)
@@ -38,6 +39,7 @@
   - [인수인계와 구현 명세](/pmsx/handover.md)
 
 - **레퍼런스**
+  - [기능 현황과 로드맵](/reference/roadmap.md)
   - [데이터·보안 원칙](/reference/security.md)
   - [자주 묻는 질문](/reference/faq.md)
   - [용어집](/reference/glossary.md)

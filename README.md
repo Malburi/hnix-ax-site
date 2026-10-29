@@ -6,17 +6,17 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
   <a class="home-card" href="#/platform/README">
     <span class="eyebrow">공통 기반</span>
     <strong>AX Platform</strong>
-    <span class="desc">LLM 게이트웨이, 사용 현황(Insight), MCP 허브와 승인함, 에이전트 실행기, 문서 RAG. 폐쇄망 설치 패키지 하나로 뜬다.</span>
+    <span class="desc">LLM 게이트웨이와 MCP 허브 위에 경보 진단 에이전트, 현업 창구, 고객 ITSM 연동, 승인 후 실행하는 런북, 생산성 보고서, 전사 AI 관측. 폐쇄망 설치 패키지 하나로 뜬다.</span>
   </a>
   <a class="home-card" href="#/axnavi/README">
     <span class="eyebrow">개발</span>
     <strong>AX-NAVI IDE</strong>
-    <span class="desc">VS Code처럼 쓰는 레거시 개발용 AI IDE. 전수 색인 위에서 채팅으로 찾고 고치고, 변경 리뷰·보안 Findings·SDLC 단계 게이트를 버튼 하나로.</span>
+    <span class="desc">VS Code처럼 쓰는 레거시 개발용 AI IDE. 전수 색인 위에서 채팅으로 찾고 고치고, 변경 리뷰·보안 Findings·단계 게이트·테스트·현대화 레시피까지 같은 판정 엔진으로.</span>
   </a>
   <a class="home-card" href="#/pmsx/README">
     <span class="eyebrow">관리·운영</span>
     <strong>PMS-X</strong>
-    <span class="desc">화면의 버튼 하나가 어떤 함수·API·SQL·테이블로 이어지는지 보여 주는 SI·SM 통합 프로젝트 관리 시스템.</span>
+    <span class="desc">화면의 버튼 하나가 어떤 함수·API·SQL·테이블로 이어지는지 보여 주는 SI·SM 통합 프로젝트 관리 시스템. SR·SLA·업무 템플릿·인수인계 퀴즈까지.</span>
   </a>
 </div>
 
@@ -36,6 +36,19 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
 | 거버넌스 | 도구마다 따로 | 게이트웨이·Claude Code·AX-NAVI·에이전트 사용량을 한 화면에서 같은 기준으로 본다 |
 | 설치 | 클라우드 SaaS | 고객사 폐쇄망에 설치. 외부 호출 0건으로 운영할 수 있다 |
 
+## 통합ITO 운영에서 하는 일
+
+요청 하나가 들어와 처리되고 보고되기까지, 각 단계에서 무엇이 일하는지 보여 준다. 자세한 상태는 [기능 현황과 로드맵](/reference/roadmap.md)에 있다.
+
+| 단계 | 하는 일 | 제품 |
+|---|---|---|
+| 접수 | 현업 질문에 매뉴얼·사례 근거로 1차 답변, 못 하면 SR 접수. 고객 ITSM 티켓·모니터링 경보도 SR·장애로 | [현업 창구](/platform/desk.md) · [ITSM 연동](/platform/itsm.md) · [경보 접수](/pmsx/sm-ai.md) |
+| 분석 | 경보 진단 에이전트가 원인을 좁히고, SR 분류·배정 추천, 영향도와 화면 흐름으로 고칠 곳을 찾는다 | [에이전트 실행기](/platform/agents.md) · PMS-X · AX-NAVI |
+| 처리 | 업무 템플릿 절차대로, 코드는 AX-NAVI 로 고치고, 정해진 조치는 승인 후 런북으로(실패하면 원복) | [업무 템플릿](/pmsx/sm-ai.md#업무-템플릿) · [AX-NAVI](/axnavi/README.md) · [런북](/platform/runbooks.md) |
+| 검증 | 변경 리뷰 GO/HOLD/STOP, 보안 Findings, 테스트 계획·바뀐 줄 커버리지를 CI 게이트로 | [변경 리뷰](/axnavi/review.md) · [CLI와 CI](/axnavi/cli.md) |
+| 보고 | SLA·월간 운영보고, 커밋 ↔ SR 로 공수 절감률, AI 사용량·비용, 고객 전사 AI 관측 | [생산성 보고서](/platform/productivity.md) · [Insight](/platform/insight.md) · [전사 AI 관측](/platform/enterprise-ai.md) |
+| 이관·현대화 | SI → SM 인수인계 갭·이해도 퀴즈, Java·Spring Boot·Oracle → PostgreSQL 레시피 | [인수인계](/pmsx/handover.md) · [현대화 레시피](/axnavi/cli.md#현대화-레시피) |
+
 ## 세 제품이 이어지는 방식
 
 ```mermaid
@@ -53,6 +66,7 @@ flowchart LR
     end
     PMSX["PMS-X<br/>As-Is·SM 운영"]
     LLM[("Claude · 사내 로컬 모델")]
+    EXT["고객 ITSM·GitLab·모니터링"]
     NAVI -- "게이트웨이 경로" --> GW
     NAVI -- "MCP 도구" --> HUB
     CC -. "사용량(OTLP)" .-> INS
@@ -62,6 +76,8 @@ flowchart LR
     RUN --> HUB
     GW --> LLM
     GW -. "계량" .-> INS
+    EXT -- "티켓·커밋·경보(웹훅)" --> PLAT
+    RUN -- "승인 후 런북" --> EXT
 ```
 
 - 지식은 복제하지 않는다. AX Platform은 PMS-X와 AX-NAVI가 이미 가진 그래프를 **커넥터로 읽기만** 한다.
@@ -73,6 +89,7 @@ flowchart LR
 1. [제품 구성과 구조](/getting-started/architecture.md)에서 전체 그림을 본다.
 2. [빠른 시작](/getting-started/quickstart.md)으로 세 제품을 내 PC에 띄운다.
 3. [장애 한 건 따라가기](/getting-started/scenario.md)에서 경보 접수부터 KB 등록까지 세 제품이 이어지는 흐름을 본다.
+4. 고객사에 설치한다면 [고객사 설치와 연결 점검](/getting-started/onsite.md)의 순서대로 연동을 확인한다.
 
 ## 저장소
 

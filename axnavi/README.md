@@ -37,11 +37,11 @@ AX-NAVI IDE는 레거시 개발용 AI IDE다. VS Code처럼 설치해 쓰면 AX-
 
 IDE와 CI가 같은 엔진을 쓰므로 **개발자가 IDE에서 본 판정과 머지 요청에서 받는 판정이 같다.** 리뷰·보안 점검·게이트·색인은 AI를 부르지 않아 같은 변경에는 늘 같은 결과가 나온다.
 
-## IBM Bob과 비교하면
+## 상용 AI IDE와 비교하면
 
-| IBM Bob | AX-NAVI IDE |
+| 상용 AI IDE에 흔한 기능 | AX-NAVI IDE |
 |---|---|
-| 오른쪽 채팅 패널 | 채팅은 Bob처럼 **오른쪽 보조 사이드바**에 열린다. 첫 화면에서 마스코트 **나침이**가 인사하고 최근 작업을 보여 준다 |
+| 오른쪽 채팅 패널 | 채팅은 **오른쪽 보조 사이드바**에 열린다. 첫 화면에서 마스코트 **나침이**가 인사하고 최근 작업을 보여 준다 |
 | 채팅 에이전트와 모드 | Architect · Code · Ask · Debug · Orchestrator 모드. 파일 수정은 diff로 보여 주고 승인받는다. 체크포인트로 되돌린다 |
 | 슬래시 명령 | `/`를 누르면 AX-NAVI 스킬 26개 — `/find`, `/flow`, `/impact`, `/safe-modify`, `/review-sql`, `/security-scan`, `/plan-migration` 등 |
 | 코드베이스 이해 | **코드 인덱스** — AI 없이 만든 전수 색인(화면 → 버튼 → 함수 → SQL → 테이블)을 에이전트가 MCP 도구로 바로 조회한다. grep으로 추측하지 않는다 |
@@ -51,8 +51,10 @@ IDE와 CI가 같은 엔진을 쓰므로 **개발자가 IDE에서 본 판정과 �
 | SDLC 단계 | **단계 게이트** — 요구 · 설계 · 개발 · 테스트마다 산출물, ADR, 리뷰, 보안 점검 통과 여부 |
 | 조직 사용량 관리 | **Insight** — 설정하면 작업 요약을 HNIX AX 플랫폼으로 보낸다 |
 | 모델 선택 | **AI 연결** — Claude 구독, API 키, 사내 게이트웨이, PC의 로컬 모델. 조직 정책이 허용한 연결만 쓴다 |
+| 팀 모드·규칙 배포 | **조직 설정** — 규칙·스킬·SDLC 양식·MCP·사용자 정의 모드를 플랫폼에서 전사·팀에 버전 배포 |
+| 현대화 | **현대화 레시피** — Java 17·21, Spring Boot 3, jakarta, Oracle → PostgreSQL. 기계적 치환은 자동, 판단이 필요한 SQL 은 AI 초안 |
 
-레거시 쪽은 Bob보다 깊다. Struts 1과 자체 프레임워크, MyBatis·iBatis, JSP, Nexacro·XPlatform·MiPlatform, WebSquare, Vue·React, ASP.NET·WinForms, EUC-KR 소스를 색인한다. 인코딩은 도구가 도는 동안만 UTF-8로 바꾸고 끝나면 되돌린다.
+레거시 쪽이 특히 깊다. Struts 1과 자체 프레임워크, MyBatis·iBatis, JSP, Nexacro·XPlatform·MiPlatform, WebSquare, Vue·React, ASP.NET·WinForms, EUC-KR 소스를 색인한다. 인코딩은 도구가 도는 동안만 UTF-8로 바꾸고 끝나면 되돌린다.
 
 ## 채팅에서 일하는 모습
 

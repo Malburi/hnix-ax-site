@@ -1,8 +1,8 @@
 # 자주 묻는 질문
 
-### VS Code에서 IBM Bob처럼 쓸 수 있나요?
+### VS Code에서 상용 AI 코딩 에이전트처럼 쓸 수 있나요?
 
-그렇게 쓰는 것이 AX-NAVI IDE다. VS Code 계열 IDE를 설치하면 채팅 에이전트(Architect · Code · Ask · Debug · Orchestrator), 슬래시 명령, 변경 리뷰와 Findings, 보안 점검, 단계 게이트가 들어 있다. 쓰던 VS Code에 `.vsix`만 깔아도 된다. Bob과의 기능 대응은 [AX-NAVI IDE 개요](/axnavi/README.md)에 있다.
+그렇게 쓰는 것이 AX-NAVI IDE다. VS Code 계열 IDE를 설치하면 채팅 에이전트(Architect · Code · Ask · Debug · Orchestrator), 슬래시 명령, 변경 리뷰와 Findings, 보안 점검, 단계 게이트가 들어 있다. 쓰던 VS Code에 `.vsix`만 깔아도 된다. 흔한 기능과의 대응은 [AX-NAVI IDE 개요](/axnavi/README.md)에 있다.
 
 ### Claude 구독(Pro·Max)만 있어도 쓸 수 있나요?
 
@@ -41,3 +41,19 @@ AI 결과는 모두 초안이다. SR 분류는 후보 목록 안에서만 고르
 ### 다른 회사의 에이전트 플랫폼과도 연결되나요?
 
 A2A(Agent2Agent) 프로토콜을 지원하는 에이전트는 MCP 허브에 외부 에이전트로 등록해 도구처럼 쓴다. 반대로 HNIX AX의 도구는 MCP로 열려 있어 MCP를 지원하는 클라이언트가 붙을 수 있다.
+
+### 고객사에 설치한 뒤 연동이 제대로 붙었는지 어떻게 확인하나요?
+
+**관리 › 현장 연결 점검** 화면 하나로 본다. 기본은 이미 남은 기록(마지막 동기화, 웹훅 수신, 최근 모델 요청)만 읽고, 관리자가 "연결 시험 포함 점검"을 누르면 ITSM·MCP 서버·외부 AI 관리 API 에 실제로 붙어 본다. 순서와 고객 쪽 준비물은 [고객사 설치와 연결 점검](/getting-started/onsite.md)에 있다.
+
+### 런북이 중간에 실패하면 어떻게 되나요?
+
+실패·시간 초과로 기록되고, 런북에 원복 런북(`spec.rollback`)을 연결해 두었으면 같은 승인으로 바로 원복이 돈다. 원복 실행은 원래 실행 번호와 함께 남는다. [런북](/platform/runbooks.md#실패하면-원복)을 본다.
+
+### Oracle → PostgreSQL 전환에서 AI 는 무엇을 하나요?
+
+기계적으로 같은 뜻인 치환(NVL, SYSDATE, 한 줄 DECODE 등)은 규칙이 AI 없이 고친다. 페이징 ROWNUM, (+) 조인, CONNECT BY, MERGE 처럼 판단이 필요한 문장만 `--draft` 로 AI 초안과 확인할 점을 받고, 소스에는 사람이 검토해 옮긴다. [현대화 레시피](/axnavi/cli.md#현대화-레시피)를 본다.
+
+### 어떤 기능이 이미 있고 무엇이 남았나요?
+
+[기능 현황과 로드맵](/reference/roadmap.md)에 영역별로 '제품에 있음 · 현장 확인 · 계획'과 남은 일을 정리해 두었다.
