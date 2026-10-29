@@ -30,6 +30,8 @@ axnavi doc list                 산출물 현황
 axnavi adr new "<제목>"          아키텍처 결정 기록
 axnavi gate <req|design|dev|test>  단계 게이트 (AI 불필요 · 종료 코드 0/3/4)
 axnavi modernize <레시피>        현대화 레시피 — java17 · java21 · jakarta · oracle-pg (AI 불필요)
+axnavi test plan|scaffold|status  SR 테스트 계획·골격·진행 상태 (AI 불필요)
+axnavi coverage [--diff A..B]    커버리지 — 전체와 바뀐 줄 (AI 불필요)
 axnavi org pull|status          조직 설정(플랫폼 배포본) 받기
 ```
 
@@ -42,6 +44,22 @@ IDE의 명령과 이렇게 대응한다.
 | AX-NAVI: 보안 점검 (OWASP) | `axnavi scan security [경로]` |
 | AX-NAVI: 단계 게이트 점검 | `axnavi gate <단계>` |
 | AX-NAVI: 환경 점검 (doctor) | `axnavi doctor` |
+
+## 테스트 계획과 커버리지
+
+PMS-X 구현 명세(SR 화면의 "구현 명세 내보내기" JSON, 또는 에이전트의 `pmsx__spec` 도구)에는 테스트 케이스(단계, 기대 결과, 근거)와 관련 서버 소스가 들어 있다. AX-NAVI는 이를 받아 AI 없이 테스트 계획과 골격을 만들고, 테스트 결과로 진행 상태를 잰다. 본문은 사람이나 에이전트("SR-0012 테스트 채워줘")가 채운다.
+
+```text
+axnavi test plan --spec <명세.json> [--framework junit5|vitest]   명세 → 계획 (_workspace/tests/<SR>.plan.json)
+axnavi test scaffold <SR> [--out <파일>]                          계획 → 테스트 골격
+axnavi test status [SR] [--junit <폴더>]                           테스트 결과 → 진행 상태 (종료 코드 0/3/4)
+axnavi coverage [--jacoco <xml>] [--lcov <info>] [--diff A..B|--staged] [--min <%>]
+```
+
+- **골격**: 서버 소스가 자바면 JUnit 5(관련 소스의 패키지에 `SR_0012Test`), 프런트만 있으면 Vitest. 케이스마다 `@DisplayName("TC01 …")`과 `@Disabled("작성 필요")`(Vitest는 `it.todo`)로 시작해 빌드는 깨지지 않고 남은 일로 보인다. 단계와 기대 결과는 주석으로 들어간다.
+- **재개**: 명세가 바뀌어 다시 만들면 없는 케이스만 덧붙인다. 사람이 쓴 본문은 건드리지 않는다.
+- **진행 상태**: 테스트를 돌린 뒤 JUnit XML(Maven surefire, Gradle, Vitest junit 리포터)을 읽어 케이스마다 작성 필요·실패·통과를 매긴다. 실패가 있으면 STOP(4), 남은 케이스가 있으면 HOLD(3), 다 통과하면 GO(0).
+- **커버리지**: 빌드가 만든 JaCoCo XML·lcov를 읽는다(흔한 위치는 자동으로 찾는다). `--diff`를 주면 **이번에 바뀐 줄**의 커버리지를 따로 재고, 테스트가 닿지 않은 줄 번호를 보여 준다. 레거시 전체 수치는 낮아도 새로 고친 줄은 덮였는지가 기준이다. `--min` 미달이면 HOLD.
 
 ## 현대화 레시피
 
