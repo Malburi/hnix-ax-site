@@ -73,3 +73,39 @@ auth:
 |---|---|
 | 팀·사업부 단위 | SQLite (기본, 파일 하나, sqlite-vec로 벡터 검색) |
 | 전사 | PostgreSQL (`db.driver: postgres`, `db.url`) |
+
+PostgreSQL 경로는 실제 PostgreSQL 에서 마이그레이션부터 주요 기능까지 자동 시험으로 확인한다. PostgreSQL 에서는 키워드 검색이 LIKE(조사 뗀 줄기 포함), 의미 검색은 직접 계산이라 컬렉션당 수만 청크까지가 실용 범위다.
+
+## 여러 대로 띄우기 (이중화)
+
+같은 PostgreSQL 과 같은 `master.key` 를 쓰는 서버 여러 대를 분산기 뒤에 둔다(`cluster.enabled: true`, 서버마다 `cluster.instanceId`). 로그인 토큰은 어느 서버에서나 검증되므로 고정 세션이 필요 없다.
+
+- 예약·감시 트리거 점검, 오래된 대화 정리, 정기 백업은 DB 임대를 잡은 **한 대만** 돈다. 그 서버가 죽으면 임대가 만료되어 다른 서버가 이어받는다.
+- 키별 분당 요청 한도는 DB 로 세어 서버 수만큼 늘지 않는다.
+- 분산기는 `GET /readyz`(DB 까지 닿아야 200, 인스턴스·임대 표시)로 상태를 본다. 스트리밍 응답이 끊기지 않게 버퍼링을 끈다.
+
+설정 예시와 nginx 예시는 플랫폼 저장소 `deploy/ha/`에 있다.
+
+## 보안 헤더와 자체 점검
+
+모든 응답에 CSP(같은 출처 스크립트만), X-Frame-Options, nosniff, Referrer-Policy 를 붙이고, `server.publicUrl` 이 https 면 HSTS 와 Secure 쿠키를 쓴다. 현업 창구를 포털에 iframe 으로 넣으려면 포털 주소를 `security.frameAncestors` 에 적는다.
+
+```bash
+node scripts/security-check.mjs --url https://ax.corp.local --token <관리자 토큰> --user-token <일반 사용자 토큰>
+```
+
+인젝션·XSS·정보 누출·인증·인가·로그인 잠금·세션·CSRF·업로드·평문 전송·보안 헤더 12개 항목을 실제 요청으로 확인한다. 공인 취약점 진단을 대신하지는 않는다.
+
+## 부하 시험
+
+```bash
+node scripts/loadtest.mjs --self --vus 50 --duration 20      # 임시 서버 + 즉시 답하는 가짜 모델
+```
+
+| DB | 동시 | 초당 처리 | p95 | 오류 |
+|---|---|---|---|---|
+| SQLite | 50 | 245 | 0.28초 | 0 |
+| SQLite | 200 | 235 | 1.19초 | 0 |
+| PostgreSQL | 50 | 249 | 0.34초 | 0 |
+
+개발 PC 기준, 플랫폼 자체(키 확인·예산·개인정보 처리·라우팅·기록·계량)만 잰 값이다. 서버 한 대가 초당 약 240건을 처리하므로 사용자 2,000명 규모는 한 대로 충분하고, 이중화는 가용성을 위해 둔다. 실제 응답 시간은 모델이 정한다.
