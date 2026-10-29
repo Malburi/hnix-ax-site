@@ -14,6 +14,7 @@
   - [에이전트 실행기와 A2A](/platform/agents.md)
   - [현업 창구](/platform/desk.md)
   - [모델 평가와 GPU 모델 서버](/platform/eval.md)
+  - [런북 — 승인 후 실행](/platform/runbooks.md)
   - [문서 RAG](/platform/docs-rag.md)
   - [설치와 운영](/platform/operations.md)
 
