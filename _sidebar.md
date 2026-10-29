@@ -10,6 +10,7 @@
   - [개요](/platform/README.md)
   - [LLM 게이트웨이](/platform/gateway.md)
   - [Insight — AI 사용 현황](/platform/insight.md)
+  - [생산성 보고서](/platform/productivity.md)
   - [MCP 허브와 승인함](/platform/hub.md)
   - [에이전트 실행기와 A2A](/platform/agents.md)
   - [현업 창구](/platform/desk.md)
