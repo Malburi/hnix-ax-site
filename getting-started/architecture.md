@@ -1,12 +1,13 @@
 # 제품 구성과 구조
 
-HNIX AX는 세 제품으로 이루어진다. 각 제품은 혼자서도 동작하고, 함께 쓰면 같은 화면·코드 자산과 같은 AI 기반을 공유한다.
+HNIX AX는 네 제품으로 이루어진다. 각 제품은 혼자서도 동작하고, 함께 쓰면 같은 화면·코드 자산과 같은 AI 기반을 공유한다.
 
 | 제품 | 누가 쓰나 | 하는 일 | 단독 실행 |
 |---|---|---|---|
 | **AX Platform** | 관리자, 개발자, 운영자 | LLM 게이트웨이, 사용 현황, MCP 허브·승인, 에이전트, 문서 검색 | 가능 |
 | **AX-NAVI IDE** | 개발자 | VS Code 계열 IDE의 AI 에이전트 — 코드 색인, 영향 분석, 안전 변경, 변경 리뷰, 보안 점검, SDLC 게이트 | 가능 (Claude만 있으면) |
 | **PMS-X** | PM, 분석자, 운영자, 고객 | As-Is 화면 분석, 일정·인력·산출물·품질, SM 운영(SR·SLA·장애) | 가능 (AI 기능은 꺼진 채로) |
+| **AX-DataLake** | 데이터 엔지니어, 분석가, AI 에이전트 | 업무 DB·파일·실시간 이벤트 수집, 권한·개인정보 가림·행 제한, 시점 조회, AI 질문 | 가능 (AI 질문은 게이트웨이가 있을 때) |
 
 ## 설계 원칙
 
@@ -18,7 +19,7 @@ HNIX AX는 세 제품으로 이루어진다. 각 제품은 혼자서도 동작�
 
 ## 전체 아키텍처
 
-<figure><img src="img/hnix-ax-architecture.png" alt="HNIX AX 전체 아키텍처 — 개발자 PC(AX-NAVI IDE·CLI·Claude Code), AX Platform 모듈, PMS-X 모듈, 모델, 외부 시스템과 연결 ①~⑭"><figcaption>세 제품과 모델·외부 시스템의 연결. 번호 ①~⑭는 연결마다의 경로와 인증이다. 그림을 누르면 크게 보인다.</figcaption></figure>
+<figure><img src="img/hnix-ax-architecture.png" alt="HNIX AX 전체 아키텍처 — 개발자 PC(AX-NAVI IDE·CLI·Claude Code), AX Platform 모듈, PMS-X 모듈, AX-DataLake, 모델, 외부 시스템과 연결 ①~⑲"><figcaption>네 제품과 모델·외부 시스템의 연결. 번호는 연결마다의 경로와 인증이다. 그림을 누르면 크게 보인다.</figcaption></figure>
 
 | 번호 | 연결 | 경로 · 인증 |
 |---|---|---|
@@ -35,6 +36,8 @@ HNIX AX는 세 제품으로 이루어진다. 각 제품은 혼자서도 동작�
 | ⑫ | CI → AX-NAVI CLI | `review`·`gate`, 종료 코드 0·3·4 |
 | ⑬ | 외부 에이전트 ↔ A2A 서버 | JSON-RPC, a2a 키 |
 | ⑭ | PMS-X 구현 명세 → 개발자 | MD·JSON 파일 |
+| ⑱ | 허브 → AX-DataLake | `datalake__*`(외부 MCP), 분석가 권한 키 — 가림·행 제한 그대로 |
+| ⑲ | AX-DataLake AI 질문 → 게이트웨이 | llm 키, 테이블 구조만(값 없음), 기밀 → 사내 모델만 |
 
 원본: [hnix-ax-architecture.drawio](download/hnix-ax-architecture.drawio ':ignore') — diagrams.net(draw.io)이나 VS Code의 Draw.io Integration 확장으로 연다. 2쪽에 [장애 한 건](/getting-started/scenario.md)의 E2E 워크플로우가 있다.
 

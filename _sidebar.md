@@ -38,6 +38,13 @@
   - [SM 운영과 AI 보조](/pmsx/sm-ai.md)
   - [인수인계와 구현 명세](/pmsx/handover.md)
 
+- **AX-DataLake**
+  - [개요](/datalake/README.md)
+  - [수집 — 파일·원본 DB·실시간](/datalake/ingest.md)
+  - [거버넌스 — 권한·가림·행 제한](/datalake/governance.md)
+  - [AI 질문과 에이전트](/datalake/ai.md)
+  - [설치와 운영](/datalake/operations.md)
+
 - **레퍼런스**
   - [기능 현황과 로드맵](/reference/roadmap.md)
   - [데이터·보안 원칙](/reference/security.md)

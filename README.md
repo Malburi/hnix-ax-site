@@ -1,8 +1,8 @@
 # HNIX AX
 
-HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시 코드와 화면을 **스크립트로 전수 분석해 근거를 먼저 만들고**, AI는 그 근거 위에서 설명·분류·요약·변경 검토를 돕는다. 세 제품이 하나의 공통 기반 위에서 같은 데이터를 본다.
+HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시 코드와 화면을 **스크립트로 전수 분석해 근거를 먼저 만들고**, AI는 그 근거 위에서 설명·분류·요약·변경 검토를 돕는다. 네 제품이 하나의 공통 기반 위에서 같은 데이터를 본다.
 
-<div class="home-grid three">
+<div class="home-grid">
   <a class="home-card" href="#/platform/README">
     <span class="eyebrow">공통 기반</span>
     <strong>AX Platform</strong>
@@ -17,6 +17,11 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
     <span class="eyebrow">관리·운영</span>
     <strong>PMS-X</strong>
     <span class="desc">화면의 버튼 하나가 어떤 함수·API·SQL·테이블로 이어지는지 보여 주는 SI·SM 통합 프로젝트 관리 시스템. SR·SLA·업무 템플릿·인수인계 퀴즈까지.</span>
+  </a>
+  <a class="home-card" href="#/datalake/README">
+    <span class="eyebrow">데이터</span>
+    <strong>AX-DataLake</strong>
+    <span class="desc">폐쇄망 레이크하우스. 업무 DB·파일·실시간 이벤트를 표준 파일로 모으고, 사람과 AI 에이전트가 같은 권한·개인정보 가림·행 제한으로 읽는다. 자연어 질문은 사내 모델로.</span>
   </a>
 </div>
 
@@ -34,6 +39,7 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
 | 변경 안전 | 승인 대화상자 | 영향 범위·보안 규칙·실행 증거로 GO / HOLD / STOP 판정. 종료 코드로 CI에 바로 연결 |
 | 모델 선택 | 한 회사 모델에 고정 | Claude와 사내 로컬 모델을 섞어 쓰고, 데이터 등급에 따라 로컬 모델을 강제한다 |
 | 거버넌스 | 도구마다 따로 | 게이트웨이·Claude Code·AX-NAVI·에이전트 사용량을 한 화면에서 같은 기준으로 본다 |
+| 데이터 | AI 에 데이터를 넘기면 무엇을 봤는지 모른다 | 레이크의 권한·열 가림·행 제한이 사람·에이전트·AI 질문에 똑같이 걸리고, 누가 어떤 길로 무엇을 읽었는지 남는다 |
 | 설치 | 클라우드 SaaS | 고객사 폐쇄망에 설치. 외부 호출 0건으로 운영할 수 있다 |
 
 ## 통합ITO 운영에서 하는 일
@@ -47,9 +53,10 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
 | 처리 | 업무 템플릿 절차대로, 코드는 AX-NAVI 로 고치고, 정해진 조치는 승인 후 런북으로(실패하면 원복) | [업무 템플릿](/pmsx/sm-ai.md#업무-템플릿) · [AX-NAVI](/axnavi/README.md) · [런북](/platform/runbooks.md) |
 | 검증 | 변경 리뷰 GO/HOLD/STOP, 보안 Findings, 테스트 계획·바뀐 줄 커버리지를 CI 게이트로 | [변경 리뷰](/axnavi/review.md) · [CLI와 CI](/axnavi/cli.md) |
 | 보고 | SLA·월간 운영보고, 커밋 ↔ SR 로 공수 절감률, AI 사용량·비용, 고객 전사 AI 관측 | [생산성 보고서](/platform/productivity.md) · [Insight](/platform/insight.md) · [전사 AI 관측](/platform/enterprise-ai.md) |
+| 데이터 | 업무 DB·장애·로그를 한곳에 모아 기간·계열사별 분석, 에이전트의 근거 데이터로(개인정보는 가린 채) | [AX-DataLake](/datalake/README.md) |
 | 이관·현대화 | SI → SM 인수인계 갭·이해도 퀴즈, Java·Spring Boot·Oracle → PostgreSQL 레시피 | [인수인계](/pmsx/handover.md) · [현대화 레시피](/axnavi/cli.md#현대화-레시피) |
 
-## 세 제품이 이어지는 방식
+## 네 제품이 이어지는 방식
 
 ```mermaid
 flowchart LR
@@ -65,6 +72,7 @@ flowchart LR
         RUN["에이전트 실행기"]
     end
     PMSX["PMS-X<br/>As-Is·SM 운영"]
+    LAKE["AX-DataLake<br/>레이크·거버넌스"]
     LLM[("Claude · 사내 로컬 모델")]
     EXT["고객 ITSM·GitLab·모니터링"]
     NAVI -- "게이트웨이 경로" --> GW
@@ -72,6 +80,8 @@ flowchart LR
     CC -. "사용량(OTLP)" .-> INS
     PMSX -- "AI 기능(켤 때만)" --> GW
     HUB -- "읽기 전용 커넥터" --> PMSX
+    HUB -- "레이크 조회(가림·행 제한)" --> LAKE
+    LAKE -- "AI 질문" --> GW
     RUN --> GW
     RUN --> HUB
     GW --> LLM
@@ -87,8 +97,8 @@ flowchart LR
 ## 처음이라면
 
 1. [제품 구성과 구조](/getting-started/architecture.md)에서 전체 그림을 본다.
-2. [빠른 시작](/getting-started/quickstart.md)으로 세 제품을 내 PC에 띄운다.
-3. [장애 한 건 따라가기](/getting-started/scenario.md)에서 경보 접수부터 KB 등록까지 세 제품이 이어지는 흐름을 본다.
+2. [빠른 시작](/getting-started/quickstart.md)으로 제품을 내 PC에 띄운다.
+3. [장애 한 건 따라가기](/getting-started/scenario.md)에서 경보 접수부터 KB 등록까지 제품이 이어지는 흐름을 본다.
 4. 고객사에 설치한다면 [고객사 설치와 연결 점검](/getting-started/onsite.md)의 순서대로 연동을 확인한다.
 
 ## 저장소
@@ -99,6 +109,7 @@ flowchart LR
 | AX-NAVI IDE | `Malburi/axnavi-ide` (비공개) | VSCodium 재포장 + Roo Code 포크 확장 |
 | AX-NAVI CLI (판정 엔진) | [Malburi/AX-NAVI-CLI](https://github.com/Malburi/AX-NAVI-CLI) · [문서](https://malburi.github.io/AX-NAVI-CLI/) | Node.js CLI, Claude Code 플러그인 |
 | PMS-X | `Malburi/hnix-pmsx` (비공개) | Spring Boot 3·Java 21, Vue 3, Python 수집기 |
+| AX-DataLake | `Malburi/ax-datalake` (비공개) | TypeScript, Fastify, Vue 3, 내장 SQL 엔진 · Parquet |
 
 이 사이트는 제품 소개와 사용 안내다. 설치 파일과 상세 설계 문서는 각 저장소에 있다.
 
