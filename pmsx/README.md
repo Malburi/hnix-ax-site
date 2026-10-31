@@ -4,7 +4,7 @@ PMS-X는 레거시 화면의 버튼 하나가 어떤 함수·API·SQL·테이블
 
 <video controls preload="metadata" poster="video/pmsx.jpg" src="video/pmsx.mp4" style="width:100%;border-radius:10px"></video>
 
-> 경보로 만든 요청 · AI 분류 추천(사내 모델) · As-Is 화면 분석 · 지식 문서 · 인수인계 퀴즈를 실제 화면으로(1분 25초). [시연 영상 전체](/demo/README.md)
+> 경보로 만든 요청 · AI 분류 추천(사내 모델) · 지식 문서 · As-Is 분석(화면 분석 · 테이블 정의서 · ERD · CRUD · 화면 이동 맵 · 영향도) · WBS · 인수인계 퀴즈를 실제 화면으로(2분 50초). [시연 영상 전체](/demo/README.md)
 
 
 <figure><img src="img/pmsx-home.png" alt="PMS-X 홈 대시보드"><figcaption>홈 대시보드 — 진척, SPI, 이슈, 결함, MM, 마일스톤</figcaption></figure>

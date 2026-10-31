@@ -281,6 +281,31 @@ class Recorder {
     return true;
   }
 
+  /** 폼 항목 이름(label)으로 입력 칸을 찾아 친다 — placeholder 없는 칸(Naive UI n-form-item). tag:true 면 태그 입력(+ 를 눌러 열고 Enter) */
+  async typeLabel(label, text, opts = {}) {
+    const base = `[...document.querySelectorAll('.n-form-item')].find((f) => (f.querySelector('.n-form-item-label')?.innerText || '').replace(/\\s+/g, ' ').trim() === ${JSON.stringify(label)} && f.getBoundingClientRect().width > 0)`;
+    if (opts.tag) {
+      const plus = await this.eval(`(() => { const f = ${base}; const b = f && f.querySelector('button'); if (!b) return null; const r = b.getBoundingClientRect(); return {x: Math.round(r.left + r.width/2), y: Math.round(r.top + r.height/2)}; })()`);
+      if (plus) await this.clickAt(plus);
+    }
+    const p = await this.eval(`(() => { const f = ${base}; const el = f && f.querySelector('input, textarea'); if (!el) return null; el.scrollIntoView({block:'center'}); const r = el.getBoundingClientRect(); return {x: Math.round(r.left + Math.min(r.width/2, 120)), y: Math.round(r.top + r.height/2)}; })()`);
+    if (!p) {
+      console.warn(`  ! 폼 항목 못 찾음: ${label}`);
+      return false;
+    }
+    await this.clickAt(p);
+    if (opts.clear) {
+      for (const [type, key, code, vk, modifiers] of [["keyDown", "a", "KeyA", 65, 2], ["keyUp", "a", "KeyA", 65, 2], ["keyDown", "Backspace", "Backspace", 8, 0], ["keyUp", "Backspace", "Backspace", 8, 0]]) await this.send("Input.dispatchKeyEvent", { type, key, code, windowsVirtualKeyCode: vk, modifiers });
+    }
+    for (const ch of text) {
+      await this.send("Input.insertText", { text: ch });
+      await sleep(opts.delay ?? 55);
+    }
+    if (opts.tag) await this.press("Enter");
+    await sleep(300);
+    return true;
+  }
+
   async press(key) {
     const codes = { Enter: 13, Escape: 27, Tab: 9 };
     await this.send("Input.dispatchKeyEvent", { type: "keyDown", key, code: key, windowsVirtualKeyCode: codes[key] ?? 0, ...(key === "Enter" ? { text: "\r" } : {}) });

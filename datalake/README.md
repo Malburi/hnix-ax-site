@@ -4,7 +4,7 @@ AX-DataLake는 고객사 폐쇄망에서 도는 **레이크하우스**다. 흩�
 
 <video controls preload="metadata" poster="video/datalake.jpg" src="video/datalake.mp4" style="width:100%;border-radius:10px"></video>
 
-> 가림 · 객체 탐색(장애 → 직전 72시간 변경) · 진단 요청 승인 → 플랫폼 에이전트 · 계보 · AI 질문을 실제로(2분). [시연 영상 전체](/demo/README.md)
+> Kafka 실시간 수집(화면에서 스트림 만들기 → 초 단위 적재 → SQL) · Debezium CDC · 가림 · 객체 탐색(장애 → 직전 72시간 변경) · 진단 요청 승인 · 계보 · AI 질문을 실제로(3분 50초). [시연 영상 전체](/demo/README.md)
 
 
 <figure><img src="img/datalake-catalog-analyst.png" alt="AX-DataLake 카탈로그 — 분석가가 본 인사 테이블. 이름·주민번호·전화·이메일이 가려지고 자기 소속 행만 보인다"><figcaption>분석가(소속 HD01)가 본 <code>hr.employee</code>. 이름·주민등록번호·전화·이메일은 형식별로 가려지고, 행 제한으로 HD01 행만 보인다.</figcaption></figure>

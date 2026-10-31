@@ -4,7 +4,7 @@ AX Platform은 HNIX AX 제품군이 함께 쓰는 AI 기반이다. 모델 호출
 
 <video controls preload="metadata" poster="video/platform.jpg" src="video/platform.mp4" style="width:100%;border-radius:10px"></video>
 
-> 게이트웨이 · MCP 허브 · 에이전트 · 런북 · 현업 창구 · Insight 를 실제 화면으로(1분 20초). [시연 영상 전체](/demo/README.md)
+> 게이트웨이 · 워크스페이스 채팅 · 문서 RAG · Process Studio · 에이전트 · MCP 허브 · 현업 창구 · 런북 · Insight 를 사내 모델이 실제로 답하는 화면으로(5분). [시연 영상 전체](/demo/README.md)
 
 
 | 모듈 | 하는 일 |
