@@ -10,8 +10,8 @@
 | 2 | 사내 계정 로그인 — LDAP(AD) 또는 OIDC(SSO) | 디렉터리 조회 계정 또는 SSO 앱 등록 | 사내 계정으로 로그인, 관리자 그룹 매핑 |
 | 3 | 모델 — 사내 GPU 모델 서버([vLLM 꾸러미](/platform/eval.md)) 또는 조직 API 키 | GPU 서버, 외부 HTTPS 허용(클라우드 모델을 쓸 때) | 게이트웨이 시험 호출, 모델 평가 세트 점수 |
 | 4 | PMS-X 연결 — MCP 허브에 PMS-X 서버(서비스 계정) 등록 | PMS-X 서비스 계정 | 점검 화면 '도구 서버' 연결 시험 |
-| 5 | 고객 ITSM — [ServiceNow·Jira 연결](/platform/itsm.md), 웹훅 | 티켓 조회·수정 권한 계정, 웹훅 등록 권한 | 연결 시험(최근 하루 티켓), 시험 티켓 → SR 접수 → SR 처리 → 티켓 상태 |
-| 6 | Git — [저장소 등록과 웹훅](/platform/productivity.md) | GitLab 관리자(Push·Merge request 이벤트, 비밀 토큰) | 시험 커밋 → 생산성 보고서에 SR 연결 |
+| 5 | 고객 ITSM — [ServiceNow·Jira 연결](/platform/itsm.md), 웹훅 | 티켓 조회·수정 권한 계정, 웹훅 등록 권한 | 연결 시험(최근 하루 티켓), 시험 티켓 → 서비스 요청(SR) 접수 → 요청 처리 → 티켓 상태 |
+| 6 | Git — [저장소 등록과 웹훅](/platform/productivity.md) | GitLab 관리자(Push·Merge request 이벤트, 비밀 토큰) | 시험 커밋 → 생산성 보고서에 요청 연결 |
 | 7 | 모니터링 경보 — Alertmanager·Grafana·Zabbix 웹훅 → [에이전트 트리거](/platform/agents.md) | 모니터링 담당 | 시험 경보 → 진단 실행 기록 |
 | 8 | 외부 AI 사용량 — [Claude 조직 Admin API·Copilot](/platform/enterprise-ai.md) | 조직 관리자가 만든 관리 키·토큰 | 연결 시험(받은 행 수) |
 | 9 | 현업 창구 — 포털 iframe(`security.frameAncestors`)·Teams | 포털 담당, Teams 관리자 | 포털에서 질문 → 답변·접수 |
@@ -54,5 +54,5 @@
 - **방화벽 방향** — 나가는 쪽(플랫폼 → ITSM·GitLab API·외부 AI 관리 API)과 들어오는 쪽(ITSM·GitLab·모니터링 → 플랫폼 웹훅)을 따로 연다. 웹훅은 보통 리버스 프록시 뒤 `https://<공개 주소>/itsm-hooks/…`, `/git-hooks/…`, `/hooks/…` 로 들어온다.
 - **사내 인증서** — 고객 프록시가 HTTPS 를 다시 서명하면 Node 가 인증서를 믿지 못한다. 고객 루트 인증서를 PEM 으로 받아 서비스 환경 변수 `NODE_EXTRA_CA_CERTS` 에 지정한다.
 - **웹훅이 안 온다** — 점검 화면에 '한 번도 안 옴'으로 남는다. 주소의 연결 번호, 토큰(로테이트 뒤 옛 토큰), 고객 시스템의 발송 기록을 순서대로 본다.
-- **티켓은 오는데 SR 이 안 생긴다** — ITSM 연결의 PMS-X 서버·프로젝트, 서비스 계정의 SR 등록 권한을 본다.
-- **시간대** — 서버 시간대가 다르면 SLA·일별 집계가 하루씩 밀린다. 서버를 고객 현지 시간대로 둔다.
+- **티켓은 오는데 요청이 안 생긴다** — ITSM 연결의 PMS-X 서버·프로젝트, 서비스 계정의 요청 등록 권한을 본다.
+- **시간대** — 서버 시간대가 다르면 처리 기한(SLA)·일별 집계가 하루씩 밀린다. 서버를 고객 현지 시간대로 둔다.

@@ -114,4 +114,4 @@ export AXNAVI_OPENAI_MODEL="hnix-claude"
 | 개발자 대부분이 구독이나 좌석을 갖고 있다 | 정책 `preferred: subscription`, 게이트웨이는 대체 경로로. 사용량은 Claude Code 관리 설정으로 텔레메트리를 일괄 적용 |
 | 좌석이 없는 협력사 인력이 섞여 있다 | 그 사람들은 게이트웨이 키만 받는다. 모델 별칭과 분당 한도를 키에 건다 |
 | 기밀 과제가 있다 | 그 저장소에 `.axnavi/policy.json`으로 `["gateway"]`, 게이트웨이에서 데이터 등급 `restricted` → 사내 로컬 모델 |
-| 비용을 과제별로 나누고 싶다 | 브랜치 이름에 작업번호(`feature/SR-2026-0142`)를 쓰면 Insight가 SR·CR별로 묶는다 |
+| 비용을 과제별로 나누고 싶다 | 브랜치 이름에 작업번호(`feature/SR-2026-0142`)를 쓰면 Insight가 서비스 요청(SR)·CR별로 묶는다 |

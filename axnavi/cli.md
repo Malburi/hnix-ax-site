@@ -30,7 +30,7 @@ axnavi doc list                 산출물 현황
 axnavi adr new "<제목>"          아키텍처 결정 기록
 axnavi gate <req|design|dev|test>  단계 게이트 (AI 불필요 · 종료 코드 0/3/4)
 axnavi modernize <레시피>        현대화 레시피 — java17 · java21 · jakarta · boot3 · oracle-pg (AI 불필요, --draft 는 AI 초안)
-axnavi test plan|scaffold|status  SR 테스트 계획·골격·진행 상태 (AI 불필요)
+axnavi test plan|scaffold|status  요청별 테스트 계획·골격·진행 상태 (AI 불필요)
 axnavi coverage [--diff A..B]    커버리지 — 전체와 바뀐 줄 (AI 불필요)
 axnavi org pull|status          조직 설정(플랫폼 배포본) 받기
 ```
@@ -47,12 +47,12 @@ IDE의 명령과 이렇게 대응한다.
 
 ## 테스트 계획과 커버리지
 
-PMS-X 구현 명세(SR 화면의 "구현 명세 내보내기" JSON, 또는 에이전트의 `pmsx__spec` 도구)에는 테스트 케이스(단계, 기대 결과, 근거)와 관련 서버 소스가 들어 있다. AX-NAVI는 이를 받아 AI 없이 테스트 계획과 골격을 만들고, 테스트 결과로 진행 상태를 잰다. 본문은 사람이나 에이전트("SR-0012 테스트 채워줘")가 채운다.
+PMS-X 구현 명세(서비스 요청 화면의 "구현 명세 내보내기" JSON, 또는 에이전트의 `pmsx__spec` 도구)에는 테스트 케이스(단계, 기대 결과, 근거)와 관련 서버 소스가 들어 있다. AX-NAVI는 이를 받아 AI 없이 테스트 계획과 골격을 만들고, 테스트 결과로 진행 상태를 잰다. 본문은 사람이나 에이전트("SR-0012 테스트 채워줘")가 채운다.
 
 ```text
-axnavi test plan --spec <명세.json> [--framework junit5|vitest]   명세 → 계획 (_workspace/tests/<SR>.plan.json)
-axnavi test scaffold <SR> [--out <파일>]                          계획 → 테스트 골격
-axnavi test status [SR] [--junit <폴더>]                           테스트 결과 → 진행 상태 (종료 코드 0/3/4)
+axnavi test plan --spec <명세.json> [--framework junit5|vitest]   명세 → 계획 (_workspace/tests/<요청 번호>.plan.json)
+axnavi test scaffold <요청 번호> [--out <파일>]                   계획 → 테스트 골격
+axnavi test status [요청 번호] [--junit <폴더>]                    테스트 결과 → 진행 상태 (종료 코드 0/3/4)
 axnavi coverage [--jacoco <xml>] [--lcov <info>] [--diff A..B|--staged] [--min <%>]
 ```
 

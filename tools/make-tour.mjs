@@ -19,7 +19,7 @@ const tmp = mkdtempSync(join(tmpdir(), "hnix-tour-"));
 const CARDS = [
   { id: "intro", eyebrow: "HNIX AX — 통합 ITO AI 생태계", title: "새벽 경보 하나가 지식이 되기까지", lines: ["AX Platform · PMS-X · AX-NAVI IDE · AX-DataLake", "고객망 안에 설치 — 모든 AI 호출·도구 호출·데이터 조회가 한 기반을 지난다"], img: "img/ecosystem-p2.png" },
   { id: "platform", eyebrow: "1 / 4 · 공통 AI 기반", title: "AX Platform", lines: ["LLM 게이트웨이 · MCP 허브와 승인함 · 에이전트와 트리거", "런북 · 현업 창구 · Insight · 현장 연결 점검"], video: "platform" },
-  { id: "pmsx", eyebrow: "2 / 4 · 관리 · 운영", title: "PMS-X", lines: ["경보 → 장애·SR 자동 생성 · AI 분류·배정 추천(사내 모델)", "As-Is 화면 분석(화면→버튼→SQL→테이블) · KB · 인수인계 퀴즈"], video: "pmsx" },
+  { id: "pmsx", eyebrow: "2 / 4 · 관리 · 운영", title: "PMS-X", lines: ["경보 → 장애·서비스 요청 자동 생성 · AI 분류·배정 추천(사내 모델)", "As-Is 화면 분석(화면→버튼→SQL→테이블) · 지식 문서 · 인수인계 퀴즈"], video: "pmsx" },
   { id: "axnavi", eyebrow: "3 / 4 · 개발", title: "AX-NAVI IDE", lines: ["변경 리뷰 STOP → 지적 상세 → AX-NAVI 로 수정", "읽기·수정은 개발자 승인 → 다시 리뷰 — CI 게이트와 같은 판정"], video: "axnavi" },
   { id: "datalake", eyebrow: "4 / 4 · 데이터", title: "AX-DataLake", lines: ["개인정보 가림·소속 행 제한 · 온톨로지(장애 → 직전 72시간 변경)", "진단 요청은 승인 뒤 플랫폼 에이전트로 · 계보 · AI 질문"], video: "datalake" },
   { id: "outro", eyebrow: "HNIX AX", title: "사람은 판단과 승인만", lines: ["찾고 · 모으고 · 기록하는 일은 에이전트와 제품이", "에이전트도 사람과 같은 권한·가림·승인 규칙 — 고객망 안에서"], img: "img/ecosystem-p4.png" },

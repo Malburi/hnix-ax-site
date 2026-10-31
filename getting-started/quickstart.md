@@ -23,7 +23,7 @@ npm run web:build && npm run serve        # http://127.0.0.1:8700
 ## 2. PMS-X
 
 ```powershell
-# 시연용 오프라인 패키지 (샘플 시스템 3종 + SM 프로젝트 + SR 데모 데이터)
+# 시연용 오프라인 패키지 (샘플 시스템 3종 + SM 프로젝트 + 서비스 요청 데모 데이터)
 pmsx-<버전>\bin\start-demo.bat          # http://localhost:8080
 ```
 
@@ -74,6 +74,6 @@ node scripts\smoke.mjs                                    # 장애 한 건 ①~�
 ## 잘 됐는지 확인
 
 - 플랫폼 › MCP 허브 › 도구 승인에 `pmsx__*`, `axnavi__*` 도구가 보인다.
-- PMS-X SR 상세에서 **분류·배정 추천**을 누르면 몇 초 안에 추천이 나온다.
+- PMS-X 서비스 요청(SR) 상세에서 **분류·배정 추천**을 누르면 몇 초 안에 추천이 나온다.
 - `axnavi doctor`의 **과금** 줄이 의도한 경로를 가리킨다.
 - 플랫폼 › Insight에 `pmsx`, `axnavi` 호출이 쌓인다.

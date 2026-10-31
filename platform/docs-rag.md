@@ -2,7 +2,7 @@
 
 운영 매뉴얼, 설계서, API 명세 같은 사내 문서를 올려 두고 질문으로 찾는다. 키워드 검색과 의미 검색을 함께 돌려 순위를 합친다.
 
-<figure><img src="img/platform-docs-search.png" alt="문서 RAG 검색 결과 — 결과마다 컬렉션·키워드 순위·의미 순위 표시"><figcaption>"SLA 위반 경고는 언제 나오나" 검색. 결과마다 키워드 순위와 의미 순위가 붙는다.</figcaption></figure>
+<figure><img src="img/platform-docs-search.png" alt="문서 RAG 검색 결과 — 결과마다 컬렉션·키워드 순위·의미 순위 표시"><figcaption>"처리 기한 초과 경고는 언제 나오나" 검색. 결과마다 키워드 순위와 의미 순위가 붙는다.</figcaption></figure>
 
 ## 동작
 

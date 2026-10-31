@@ -84,20 +84,20 @@ export const SCENARIOS = {
       const P = A.pmsx.url;
       await r.login("pmsx", "op");
       await r.go(`${P}/sm/srs`);
-      await r.caption("PMS-X — 운영자(서운영)로 SM 프로젝트를 엽니다", "SR 접수·배정·처리, SLA 남은 시간은 1분마다 갱신");
+      await r.caption("PMS-X — 운영자(서운영)로 SM 프로젝트를 엽니다", "서비스 요청 접수·배정·처리, 처리 기한까지 남은 시간은 1분마다 갱신");
       await pause(1500);
       await r.click("차세대 SI");
       await r.click("인사시스템 운영");
       await r.waitFor("[...document.querySelectorAll('td')].some((t) => t.innerText.includes('SR-00'))", 15000);
       await pause(2000);
       await r.click("SR-0034", { selector: "td" });
-      await r.caption("경보가 장애·SR 로 자동 생성됐습니다", "모니터링 웹훅 → 같은 경보는 하나로 묶고, 처리 절차 체크가 붙습니다");
+      await r.caption("경보가 장애·서비스 요청으로 자동 생성됐습니다", "모니터링 웹훅 → 같은 경보는 하나로 묶고, 처리 절차 체크가 붙습니다");
       await pause(4000);
       await r.click("SR-0004", { selector: "td" });
-      await r.caption("현업 요청 SR — \"사원 조회 시 퇴사자가 함께 보여요\"");
+      await r.caption("현업 서비스 요청 — \"사원 조회 시 퇴사자가 함께 보여요\"");
       await pause(2500);
       await r.click("AI 분류 추천", { selector: "button" });
-      await r.caption("AI 분류·배정 추천 — 사내 모델이 유형·우선순위·대상 화면·담당자를 제안", "유사 SR·화면 그래프를 근거로, 반영은 사람이 합니다(게이트웨이 경유)");
+      await r.caption("AI 분류·배정 추천 — 사내 모델이 유형·우선순위·대상 화면·담당자를 제안", "비슷한 요청·화면 그래프를 근거로, 반영은 사람이 합니다(게이트웨이 경유)");
       await r.waitFor("[...document.querySelectorAll('button')].some((b) => /반영|적용/.test(b.innerText))", 40000);
       await pause(4500);
       await r.scroll(500, null);
@@ -111,16 +111,16 @@ export const SCENARIOS = {
       await r.click("코드 순서도", { selector: "button" });
       await pause(3000);
       await r.click("통합 추적", { selector: "button" });
-      await r.caption("통합 추적 — 버튼 하나가 어느 테이블까지 닿는지", "SR 의 영향 범위 · 구현 명세의 근거가 됩니다");
+      await r.caption("통합 추적 — 버튼 하나가 어느 테이블까지 닿는지", "요청의 영향 범위 · 구현 명세의 근거가 됩니다");
       await pause(4000);
       await r.click("한국어 설명", { selector: "button" });
       await r.caption("AI 설명 초안 — 근거 등급(녹·황·적)과 함께, 사람이 확정");
       await pause(4000);
       await r.go(`${P}/sm/kb`);
-      await r.caption("KB — 종료된 SR 에서 AI 가 초안(증상·원인·조치·재발 방지), 출처 SR 표시");
+      await r.caption("지식 문서 — 끝난 요청에서 AI 가 초안(증상·원인·조치·재발 방지), 출처 요청 표시");
       await pause(3500);
       await r.go(`${P}/sm/handover-quiz`);
-      await r.caption("인수인계 퀴즈 — 화면·데이터·SR 이력·업무 절차·SLA 문항으로 이해도 확인");
+      await r.caption("인수인계 퀴즈 — 화면·데이터·요청 이력·업무 절차·처리 기한 문항으로 이해도 확인");
       await pause(3500);
     },
   },
@@ -165,7 +165,7 @@ export const SCENARIOS = {
       await r.caption("런북 — 정해진 조치를 요청 → 다른 사람이 승인 → 실행·기록");
       await pause(3000);
       await r.go(`${L}/desks`);
-      await r.caption("현업 창구 — 매뉴얼·KB 근거로 1차 응답, 못 찾으면 PMS-X SR 로 접수");
+      await r.caption("현업 창구 — 매뉴얼·지식 문서 근거로 1차 응답, 못 찾으면 PMS-X 서비스 요청으로 접수");
       await pause(3000);
       await r.go(`${L}/insight`);
       await r.click("소스", { selector: "button", exact: true });

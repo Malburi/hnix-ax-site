@@ -29,7 +29,7 @@ flowchart LR
 - **데이터 등급**: `public` · `internal` · `confidential` · `restricted`. 요청 헤더 `x-hnix-data-class`로 키·워크스페이스 기본값보다 올릴 수만 있다. `restricted`는 사내 로컬 프로바이더로만 간다.
 - **개인정보 보호**: 주민등록번호, 전화번호, 이메일, 카드번호, 사업자번호와 직접 정한 패턴을 찾아 가명화하거나 가리거나 차단한다. 가명화한 값은 응답에서 되돌린다.
 - **예산**: 전체·워크스페이스·사용자·키 단위, 월·일 기준으로 금액이나 토큰 상한을 건다. 상한에 닿으면 경고만 하거나 429로 막는다(hard stop).
-- **선택 헤더**: `x-hnix-project`, `x-hnix-work-item`(SR·CR 번호), `x-hnix-client`. Insight가 이 값으로 묶는다.
+- **선택 헤더**: `x-hnix-project`, `x-hnix-work-item`(서비스 요청·CR 번호), `x-hnix-client`. Insight가 이 값으로 묶는다.
 
 ## 가상 키
 
