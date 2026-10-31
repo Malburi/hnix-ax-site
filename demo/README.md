@@ -2,7 +2,7 @@
 
 HNIX AX 네 제품이 실제로 도는 모습을 영상으로 담았다. 영상은 모두 **실제로 띄운 제품**(E2E 환경 — 플랫폼·PMS-X·AX-NAVI IDE·AX-DataLake를 한 PC에)을 조작하며 녹화했다. 꾸민 화면이나 목업이 아니다. 아래 자막은 녹화할 때 화면 위에 덧그린 설명이고, 주황 물결은 누른 곳이다.
 
-## 전체 투어 — 10분
+## 전체 투어 — 8분
 
 <video controls preload="metadata" poster="video/tour.jpg" src="video/tour.mp4" style="width:100%;border-radius:10px;background:#0f1d2b"></video>
 
@@ -10,25 +10,25 @@ HNIX AX 네 제품이 실제로 도는 모습을 영상으로 담았다. 영상�
 
 ## 제품별 영상
 
-### AX Platform — 공통 AI 기반 (1분 40초)
+### AX Platform — 공통 AI 기반 (1분 20초)
 
 <video controls preload="metadata" poster="video/platform.jpg" src="video/platform.mp4" style="width:100%;border-radius:10px"></video>
 
 LLM 게이트웨이(가상 키·모델 별칭·개인정보 가명화·요청 로그) → MCP 허브(서버·정책·승인함·호출 기록) → 에이전트와 트리거 → 런북 → 현업 창구 → Insight → 현장 연결 점검.
 
-### PMS-X — SM 운영 · AI 보조 · As-Is 분석 (1분 45초)
+### PMS-X — SM 운영 · AI 보조 · As-Is 분석 (1분 25초)
 
 <video controls preload="metadata" poster="video/pmsx.jpg" src="video/pmsx.mp4" style="width:100%;border-radius:10px"></video>
 
 SM 프로젝트로 바꾸고 → 경보로 자동 생성된 서비스 요청(SR) → 현업 요청에서 **AI 분류 추천**(사내 모델이 실제로 답한다) → 장애 → As-Is 화면 분석(코드 순서도·통합 추적·한국어 설명) → 지식 문서 → 인수인계 퀴즈.
 
-### AX-NAVI IDE — 변경 리뷰 · AI로 수정 · 다시 리뷰 (5분)
+### AX-NAVI IDE — 변경 리뷰 · AI로 수정 · 다시 리뷰 (3분)
 
 <video controls preload="metadata" poster="video/axnavi.jpg" src="video/axnavi.mp4" style="width:100%;border-radius:10px"></video>
 
 상태 표시줄의 변경 리뷰 → **STOP**(SQL 문자열 결합, 치명) → 지적 상세(OWASP A03·CWE-89·권장 조치) → **AX-NAVI 로 수정** → 에이전트가 파일을 읽고 고치는 동안 개발자가 읽기·저장을 승인 → 다시 리뷰하면 치명 지적이 사라지고 **HOLD**(중간 2건)로. 에이전트는 개발자 본인의 Claude 구독 로그인으로 돈다. 모델이 생각하는 동안 멈춘 화면은 영상에서 줄였다.
 
-### AX-DataLake — 온톨로지 · 거버넌스 · 계보 (2분 10초)
+### AX-DataLake — 온톨로지 · 거버넌스 · 계보 (2분)
 
 <video controls preload="metadata" poster="video/datalake.jpg" src="video/datalake.mp4" style="width:100%;border-radius:10px"></video>
 
@@ -57,9 +57,21 @@ SM 프로젝트로 바꾸고 → 경보로 자동 생성된 서비스 요청(SR)
 4. 브라우저 탭을 미리 연다 — 플랫폼 `:8710`, PMS-X `:8080`, AX-DataLake `:8790`. AX-NAVI IDE는 `start.ps1`이 연습 저장소로 띄운다.
 5. 막히면 이 쪽의 영상으로 넘어간다. 영상은 오프라인판에도 들어 있다.
 
+## 지난 판 영상
+
+위 영상은 2026-11-01 판(화면 용어 한글화 뒤 — 서비스 요청·지식 문서·처리 기한)이다. 그 전 판(2026-10-31, 화면에 SR·KB·SLA)은 지우지 않고 온라인 사이트에 보관한다(오프라인판에는 넣지 않는다).
+
+| 영상 | 2026-10-31 판 |
+|---|---|
+| 전체 투어 | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/tour.mp4) |
+| AX Platform | [platform.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/platform.mp4) |
+| PMS-X | [pmsx.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/pmsx.mp4) |
+| AX-NAVI IDE | [axnavi.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/axnavi.mp4) |
+| AX-DataLake | [datalake.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/datalake.mp4) |
+
 ## 영상 다시 만들기
 
-제품을 고친 뒤 영상을 새로 찍는 방법이다. E2E 환경을 띄운 상태에서 이 저장소의 `tools/`로 한다.
+제품을 고친 뒤 영상을 새로 찍는 방법이다. 바꾸기 전 영상은 `video/<날짜>/`로 옮겨 두고 찍는다. E2E 환경을 띄운 상태에서 이 저장소의 `tools/`로 한다.
 
 ```powershell
 node tools/record-demo.mjs --scenario all        # video/platform·pmsx·axnavi·datalake.mp4

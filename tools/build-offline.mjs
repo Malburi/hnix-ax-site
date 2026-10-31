@@ -284,7 +284,8 @@ const APP_JS = `(function () {
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, "assets"), { recursive: true });
 cpSync(join(ROOT, "img"), join(OUT, "img"), { recursive: true });
-if (existsSync(join(ROOT, "video"))) cpSync(join(ROOT, "video"), join(OUT, "video"), { recursive: true });
+// 지금 판 영상만 — 날짜 폴더(지난 판 보관)는 오프라인판에 넣지 않는다
+if (existsSync(join(ROOT, "video"))) cpSync(join(ROOT, "video"), join(OUT, "video"), { recursive: true, filter: (src) => !/[\\/]video[\\/]\d{4}-\d{2}-\d{2}/.test(src) });
 cpSync(join(ROOT, "tools", "node_modules", "mermaid", "dist", "mermaid.min.js"), join(OUT, "assets", "mermaid.min.js"));
 writeFileSync(join(OUT, "assets", "style.css"), stylesheet());
 writeFileSync(join(OUT, "assets", "app.js"), APP_JS);
