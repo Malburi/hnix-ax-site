@@ -12,7 +12,7 @@
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-10-31**(`server-kit-20261031`) (비공개 저장소).
+GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11-01**(`server-kit-20261101`) (비공개 저장소).
 
 | 파일 | 크기 | 어디에 |
 |---|---|---|
