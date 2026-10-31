@@ -9,6 +9,7 @@
   - [Claude 연결 — 구독·키·게이트웨이](/getting-started/connect.md)
   - [장애 한 건 따라가기](/getting-started/scenario.md)
   - [회사 PC에서 따라 하기](/getting-started/e2e-kit.md)
+  - [회사 서버에 설치하기](/getting-started/server-kit.md)
   - [고객사 설치와 연결 점검](/getting-started/onsite.md)
 
 - **AX Platform**

@@ -1,12 +1,14 @@
 # 회사 PC에서 따라 하기 — E2E 꾸러미
 
+> 이 꾸러미는 PC 한 대에서 혼자 보는 용도다(모두 `127.0.0.1`). 여러 사람이 각자 PC에서 함께 시험하려면 [회사 서버에 설치하기 — 서버판](/getting-started/server-kit.md)을 쓴다.
+
 네 제품을 다른 PC(회사 PC)에 띄워 [장애 한 건](/getting-started/scenario.md)을 끝까지 점검한다. 꾸러미 하나에 실행에 필요한 것이 다 들어 있어 **Node·Java·npm 설치나 저장소 접근이 필요 없다.** 관리자 권한도 필요 없다.
 
 <figure><img src="img/hnix-ax-e2e-flow.png" alt="E2E 워크플로우 — 모니터링·고객, PMS-X, AX Platform, 개발자, 모델 레인의 ①~⑨"><figcaption>꾸러미가 점검하는 흐름 ①~⑨. 그림을 누르면 크게 보인다.</figcaption></figure>
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **E2E 꾸러미 2026-10-30 (3판 — AX-DataLake)**(`e2e-kit-20261030-3`) (비공개 저장소 — 접근 권한으로 로그인). 모델 zip 두 개는 바뀌지 않아 `e2e-kit-20261028` 릴리스에 있다.
+GitHub `Malburi/hnix-ax-platform` › Releases › **E2E 꾸러미 2026-10-31 (4판 — 온톨로지·커넥터·계보)**(`e2e-kit-20261031`) (비공개 저장소 — 접근 권한으로 로그인). 모델 zip 두 개는 바뀌지 않아 `e2e-kit-20261028` 릴리스에 있다.
 
 | 파일 | 크기 | 필요 |
 |---|---|---|
@@ -20,8 +22,8 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **E2E 꾸러미 2026-10-30 (3
 | 구성 | 내용 |
 |---|---|
 | AX Platform 오프라인 패키지 | 서버 번들·웹·**Node 24 런타임** 포함 |
-| AX-DataLake 0.1.1 설치본 | **Node·SQL 엔진·확장** 포함, 시연 테이블(장애·운영 인력)·가림·행 제한, 허브에 외부 MCP 서버로 등록 |
-| PMS-X 1.3.0 오프라인 패키지 | **JRE 21** 포함, 시연 데이터(○○공사 인사시스템 SI·SM), 업무 템플릿·인수인계 퀴즈 |
+| AX-DataLake 0.2.0 설치본 | **Node·SQL 엔진·확장** 포함, 시연 테이블(장애·운영 인력)·ITO 온톨로지·가림·행 제한, 허브에 외부 MCP 서버로 등록 |
+| PMS-X 1.3.1 오프라인 패키지 | **JRE 21** 포함, 시연 데이터(○○공사 인사시스템 SI·SM), 업무 템플릿·인수인계 퀴즈 |
 | AX-NAVI IDE 1.0.4 | 사용자 폴더에 설치 |
 | AX-NAVI CLI | 판정 엔진 — 실행에 필요한 의존성만 |
 | Ollama CPU 판 | 약 120MB(GPU 라이브러리 뺌). 이미 설치된 Ollama가 있으면 그것을 쓴다 |
