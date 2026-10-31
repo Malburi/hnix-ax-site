@@ -1,6 +1,11 @@
 # AX-DataLake
 
-AX-DataLake는 고객사 폐쇄망에서 도는 **레이크하우스**다. 흩어진 업무 DB·파일·이벤트를 표준 파일 형식으로 한곳에 모으고, 사람(SQL·BI)과 AI 에이전트가 **같은 권한·가림 규칙**으로 읽게 한다. 서버 하나로 시작해 저장소와 계산 노드를 나눠 늘릴 수 있다.
+AX-DataLake는 고객사 폐쇄망에서 도는 **레이크하우스**다. 흩어진 업무 DB·파일·이벤트를 표준 파일 형식으로 한곳에 모으고, 사람(SQL·BI)과 AI 에이전트가 **같은 권한·가림 규칙**으로 읽게 한다. 서버 하나로 시작해 저장소와 계산 노드를 나눠 늘릴 수 있다. 테이블 위에는 장애·서비스·변경·담당자 같은 **업무 객체(온톨로지)**를 얹어 SQL 없이 따라가고, **계보**로 데이터가 어디서 와서 어디로 가는지 본다.
+
+<video controls preload="metadata" poster="video/datalake.jpg" src="video/datalake.mp4" style="width:100%;border-radius:10px"></video>
+
+> 가림 · 객체 탐색(장애 → 직전 72시간 변경) · 진단 요청 승인 → 플랫폼 에이전트 · 계보 · AI 질문을 실제로(2분 10초). [시연 영상 전체](/demo/README.md)
+
 
 <figure><img src="img/datalake-catalog-analyst.png" alt="AX-DataLake 카탈로그 — 분석가가 본 인사 테이블. 이름·주민번호·전화·이메일이 가려지고 자기 소속 행만 보인다"><figcaption>분석가(소속 HD01)가 본 <code>hr.employee</code>. 이름·주민등록번호·전화·이메일은 형식별로 가려지고, 행 제한으로 HD01 행만 보인다.</figcaption></figure>
 
@@ -18,12 +23,13 @@ AX-DataLake는 고객사 폐쇄망에서 도는 **레이크하우스**다. 흩�
 
 ```mermaid
 flowchart LR
-    SRC["원본 DB<br/>Oracle · PostgreSQL · MySQL"]
+    SRC["원본 연결<br/>Oracle · SQL Server · PG · MySQL<br/>Snowflake · REST · 폴더/S3"]
     FILE["파일<br/>CSV · Excel · Parquet · JSON"]
     EVT["이벤트<br/>Kafka · HTTP · 변경 이력(CDC)"]
     subgraph LAKE["AX-DataLake"]
         ING["수집<br/>동기화 · 업로드 · 스트림"]
         GOV["SQL 검사<br/>권한 · 열 가림 · 행 제한"]
+        ONT["온톨로지 · 계보<br/>객체 · 관계 · 액션"]
         ENG["SQL 엔진<br/>조회(읽기 전용) · 작업 · 수집"]
     end
     CAT[("카탈로그<br/>SQLite · PostgreSQL")]
@@ -35,7 +41,8 @@ flowchart LR
     EVT --> ING
     ING --> ENG
     USR --> GOV
-    AGT --> GOV
+    AGT --> ONT
+    ONT --> GOV
     GOV --> ENG
     ENG --> CAT
     ENG --> DATA
@@ -49,18 +56,20 @@ flowchart LR
 
 | 영역 | 내용 | 문서 |
 |---|---|---|
-| 수집 | 파일 올리기(EUC-KR CSV 자동 변환), 원본 DB 동기화(주기 실행), Kafka·HTTP 실시간(붙이기·키로 바꾸기·변경 반영) | [수집](/datalake/ingest.md) |
+| 수집 | 파일 올리기(EUC-KR CSV 자동 변환), 원본 연결 동기화(Oracle·SQL Server·PostgreSQL·MySQL·Snowflake·REST API·폴더/S3, 주기 실행), Kafka·HTTP 실시간(붙이기·키로 바꾸기·변경 반영) | [수집](/datalake/ingest.md) |
+| 온톨로지 | 업무 객체·관계(열=열·조건식)·액션(메모·웹훅, 승인), ITO 표준 템플릿(유형 7·관계 11), 관계 그래프 | [온톨로지](/datalake/ontology.md) |
+| 계보 | 원본 → 테이블 → 파생·뷰 → 객체 유형 → 소비 경로, 영향 범위 | [계보](/datalake/lineage.md) |
 | 거버넌스 | 역할(관리자·데이터 엔지니어·분석가), 테이블 조회 권한, 열 가림, 행 제한, 감사·조회 이력 | [거버넌스](/datalake/governance.md) |
 | 카탈로그 | 테이블 설명·담당·등급·태그·열 설명, 시점 이력, 바뀐 행, 미리 보기 | [거버넌스](/datalake/governance.md#카탈로그) |
-| AI | 자연어 → SQL(플랫폼 게이트웨이, 기밀은 사내 모델만), MCP(에이전트가 같은 규칙으로 조회) | [AI 질문과 에이전트](/datalake/ai.md) |
+| AI | 자연어 → SQL(플랫폼 게이트웨이, 기밀은 사내 모델만), MCP 도구 11개(조회·시점·계보·객체 탐색·액션 제안 — 같은 규칙) | [AI 질문과 에이전트](/datalake/ai.md) |
 | 운영 | 폐쇄망 설치본(Windows·Linux 서비스), 매일 파일 정리, API 키(조회·수집·에이전트 범위) | [설치와 운영](/datalake/operations.md) |
 
 ## 다른 제품과의 관계
 
 | 제품 | 이어지는 방식 |
 |---|---|
-| [AX Platform](/platform/README.md) | AI 질문은 **LLM 게이트웨이**로(데이터 등급 라우팅·계량), 레이크 조회 도구는 **MCP 허브**에 외부 서버로 등록 — 허브의 정책·승인·감사 아래에서 에이전트가 쓴다 |
+| [AX Platform](/platform/README.md) | AI 질문은 **LLM 게이트웨이**로(데이터 등급 라우팅·계량), 레이크 조회·온톨로지 도구는 **MCP 허브**에 외부 서버로 등록 — 허브의 정책·승인·감사 아래에서 에이전트가 쓴다. 진단 요청 액션은 승인 뒤 플랫폼 에이전트 트리거(웹훅)를 부른다 |
 | [PMS-X](/pmsx/README.md) · 고객 ITSM | 장애·SR·운영 이력을 레이크에 쌓아 기간·계열사별 분석, 경보 진단 에이전트의 근거 데이터로 |
 | [AX-NAVI](/axnavi/README.md) | 개발자가 IDE 에서 허브를 거쳐 운영 데이터(가린 값)를 조회해 원인 분석에 쓴다 |
 
-통합 점검: [E2E 꾸러미](/getting-started/e2e-kit.md)의 ⑱(허브 경유 레이크 조회 — 분석가 권한의 가림·행 제한 그대로)과 ⑲(AI 질문 — 사내 모델이 SQL 작성, 행 제한 적용)이 실제로 돈다.
+통합 점검: [E2E 꾸러미](/getting-started/e2e-kit.md)의 ⑱(허브 경유 레이크 조회 — 분석가 권한의 가림·행 제한 그대로), ⑲(AI 질문 — 사내 모델이 SQL 작성, 행 제한 적용), ⑳(허브로 장애 → 직전 72시간 변경, 진단 요청은 승인 뒤 플랫폼 에이전트로)이 실제로 돈다.

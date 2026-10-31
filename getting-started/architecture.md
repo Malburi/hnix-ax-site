@@ -19,7 +19,7 @@ HNIX AX는 네 제품으로 이루어진다. 각 제품은 혼자서도 동작�
 
 ## 전체 아키텍처
 
-<figure><img src="img/hnix-ax-architecture.png" alt="HNIX AX 전체 아키텍처 — 개발자 PC(AX-NAVI IDE·CLI·Claude Code), AX Platform 모듈, PMS-X 모듈, AX-DataLake, 모델, 외부 시스템과 연결 ①~⑲"><figcaption>네 제품과 모델·외부 시스템의 연결. 번호는 연결마다의 경로와 인증이다. 그림을 누르면 크게 보인다.</figcaption></figure>
+<figure><img src="img/hnix-ax-architecture.png" alt="HNIX AX 전체 아키텍처 — 개발자 PC(AX-NAVI IDE·CLI·Claude Code), AX Platform 모듈, PMS-X 모듈, AX-DataLake, 모델, 외부 시스템과 연결 ①~⑳"><figcaption>네 제품과 모델·외부 시스템의 연결. 번호는 연결마다의 경로와 인증이다. 그림을 누르면 크게 보인다.</figcaption></figure>
 
 | 번호 | 연결 | 경로 · 인증 |
 |---|---|---|
@@ -38,6 +38,7 @@ HNIX AX는 네 제품으로 이루어진다. 각 제품은 혼자서도 동작�
 | ⑭ | PMS-X 구현 명세 → 개발자 | MD·JSON 파일 |
 | ⑱ | 허브 → AX-DataLake | `datalake__*`(외부 MCP), 분석가 권한 키 — 가림·행 제한 그대로 |
 | ⑲ | AX-DataLake AI 질문 → 게이트웨이 | llm 키, 테이블 구조만(값 없음), 기밀 → 사내 모델만 |
+| ⑳ | AX-DataLake 온톨로지 액션 → 플랫폼 에이전트 트리거 | 진단 요청 웹훅(X-HNIX-Token), 레이크에서 사람이 승인한 뒤 한 번 — 요청자가 본 객체(가림 적용)를 보낸다 |
 
 원본: [hnix-ax-architecture.drawio](download/hnix-ax-architecture.drawio ':ignore') — diagrams.net(draw.io)이나 VS Code의 Draw.io Integration 확장으로 연다. 2쪽에 [장애 한 건](/getting-started/scenario.md)의 E2E 워크플로우가 있다.
 

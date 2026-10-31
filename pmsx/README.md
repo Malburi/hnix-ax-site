@@ -2,6 +2,11 @@
 
 PMS-X는 레거시 화면의 버튼 하나가 어떤 함수·API·SQL·테이블로 이어지는지 보여 주는 SI·SM 통합 프로젝트 관리 시스템이다. 구축(SI)에서 분석한 화면 자산이 운영(SM)으로 그대로 넘어가, SR을 받으면 그 화면과 영향 범위를 바로 본다.
 
+<video controls preload="metadata" poster="video/pmsx.jpg" src="video/pmsx.mp4" style="width:100%;border-radius:10px"></video>
+
+> 경보 SR · AI 분류 추천(사내 모델) · As-Is 화면 분석 · KB · 인수인계 퀴즈를 실제 화면으로(1분 45초). [시연 영상 전체](/demo/README.md)
+
+
 <figure><img src="img/pmsx-home.png" alt="PMS-X 홈 대시보드"><figcaption>홈 대시보드 — 진척, SPI, 이슈, 결함, MM, 마일스톤</figcaption></figure>
 
 ## 왜 필요한가

@@ -1,3 +1,7 @@
+- **시연**
+  - [시연 영상과 진행 순서](/demo/README.md)
+  - [AI 생태계 워크플로우](/demo/ecosystem.md)
+
 - **시작하기**
   - [HNIX AX란](/)
   - [제품 구성과 구조](/getting-started/architecture.md)
@@ -40,7 +44,9 @@
 
 - **AX-DataLake**
   - [개요](/datalake/README.md)
-  - [수집 — 파일·원본 DB·실시간](/datalake/ingest.md)
+  - [수집 — 파일·원본 연결·실시간](/datalake/ingest.md)
+  - [온톨로지 — 업무 객체·관계·액션](/datalake/ontology.md)
+  - [계보와 영향 범위](/datalake/lineage.md)
   - [거버넌스 — 권한·가림·행 제한](/datalake/governance.md)
   - [AI 질문과 에이전트](/datalake/ai.md)
   - [설치와 운영](/datalake/operations.md)

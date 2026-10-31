@@ -2,7 +2,7 @@
 
 통합ITO 운영에 필요한 기능을 영역별로 정리한 표다. **제품에 있음**은 각 저장소의 자동 시험과 네 제품 통합 점검([E2E 꾸러미](/getting-started/e2e-kit.md))을 통과한 것, **현장 확인**은 기능은 있지만 고객 시스템(ITSM·GitLab·AI 조직 계정·GPU 서버)에 붙여 봐야 끝나는 것, **계획**은 아직 만들지 않은 것이다.
 
-> 2026-10-30 기준 · 자동 시험: AX Platform 243건 · AX-NAVI 529건 · PMS-X 서버 260건·웹 237건 · AX-DataLake 49건 · 통합 점검 20단계
+> 2026-10-30 기준 · 자동 시험: AX Platform 243건 · AX-NAVI 529건 · PMS-X 서버 260건·웹 237건 · AX-DataLake 80건 · 통합 점검 21단계
 
 ## 접수 — 요청·경보가 들어오는 곳
 
@@ -47,6 +47,7 @@
 | 기능 | 상태 | 문서 | 남은 것 |
 |---|---|---|---|
 | 레이크(표준 Parquet · 시점 조회 · 바뀐 행), 카탈로그(설명·등급·태그) | 제품에 있음 | [AX-DataLake](/datalake/README.md) | — |
+| ITO 온톨로지(객체·관계·액션·승인), 계보·영향 범위, 커넥터(SQL Server·Snowflake·REST·폴더/S3) | 제품에 있음(0.2.0) | [온톨로지](/datalake/ontology.md) · [계보](/datalake/lineage.md) | SQL Server·Snowflake 실서버 연결은 PoC, 열 단위 계보 |
 | 파일 수집(EUC-KR CSV·Excel·Parquet·JSON) | 제품에 있음 | [수집](/datalake/ingest.md#파일) | — |
 | 원본 DB 동기화(PostgreSQL·MySQL — 통째로·증분·병합, 주기) | 제품에 있음 | [수집](/datalake/ingest.md#원본-db) | — |
 | 원본 DB 동기화 — Oracle(클라이언트 설치 불필요) | 현장 확인 | [수집](/datalake/ingest.md#원본-db) | 고객 Oracle 서버로 연결 확인(타입 변환은 시험 완료) |

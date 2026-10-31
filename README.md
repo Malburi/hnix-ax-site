@@ -2,6 +2,10 @@
 
 HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시 코드와 화면을 **스크립트로 전수 분석해 근거를 먼저 만들고**, AI는 그 근거 위에서 설명·분류·요약·변경 검토를 돕는다. 네 제품이 하나의 공통 기반 위에서 같은 데이터를 본다.
 
+<video controls preload="metadata" poster="video/tour.jpg" src="video/tour.mp4" style="width:100%;border-radius:10px;background:#0f1d2b"></video>
+
+> 실제로 띄운 네 제품을 조작하며 녹화한 **전체 투어(10분)**. 제품별 영상과 시연회 진행 순서는 [시연](/demo/README.md), 전체 흐름 그림은 [AI 생태계 워크플로우](/demo/ecosystem.md)에 있다.
+
 <div class="home-grid">
   <a class="home-card" href="#/platform/README">
     <span class="eyebrow">공통 기반</span>
@@ -21,7 +25,7 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
   <a class="home-card" href="#/datalake/README">
     <span class="eyebrow">데이터</span>
     <strong>AX-DataLake</strong>
-    <span class="desc">폐쇄망 레이크하우스. 업무 DB·파일·실시간 이벤트를 표준 파일로 모으고, 사람과 AI 에이전트가 같은 권한·개인정보 가림·행 제한으로 읽는다. 자연어 질문은 사내 모델로.</span>
+    <span class="desc">폐쇄망 레이크하우스. 업무 DB·Snowflake·REST·실시간 이벤트를 모으고, 장애·변경·담당자를 업무 객체(온톨로지)로 잇는다. 사람과 에이전트가 같은 권한·개인정보 가림·행 제한으로 읽고, 계보로 영향 범위를 본다.</span>
   </a>
 </div>
 

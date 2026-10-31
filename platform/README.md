@@ -2,6 +2,11 @@
 
 AX Platform은 HNIX AX 제품군이 함께 쓰는 AI 기반이다. 모델 호출, 도구 호출, 사용량, 승인, 문서 검색을 한곳에서 다룬다. 기존 도구(PMS-X, AX-NAVI)는 고치지 않고 커넥터로 연결한다.
 
+<video controls preload="metadata" poster="video/platform.jpg" src="video/platform.mp4" style="width:100%;border-radius:10px"></video>
+
+> 게이트웨이 · MCP 허브 · 에이전트 · 런북 · 현업 창구 · Insight 를 실제 화면으로(1분 40초). [시연 영상 전체](/demo/README.md)
+
+
 | 모듈 | 하는 일 |
 |---|---|
 | [LLM 게이트웨이](/platform/gateway.md) | OpenAI·Anthropic 호환 API, 가상 키, 라우팅·폴백, 한국형 개인정보 마스킹, 예산, 데이터 등급별 로컬 모델 강제 |

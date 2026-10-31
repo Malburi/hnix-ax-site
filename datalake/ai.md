@@ -30,6 +30,9 @@ SQL 작업창 위의 **AI 에게 묻기**에 "지난달 계열사별 수주 금�
 | `query` | SELECT 한 문장(최대 200행). 거부·오류도 에이전트가 읽고 고칠 수 있게 결과로 돌려준다 |
 | `table_history` | 테이블이 바뀐 시점 |
 | `table_changes` | 두 시점 사이 바뀐 행 — "장애 직전에 무엇이 바뀌었나" |
+| `table_lineage` | 테이블이 어디서 와서 어디로 가나 — [계보](/datalake/lineage.md) |
+| `ontology_types` · `find_objects` · `get_object` · `linked_objects` | 업무 객체를 SQL 없이 — 장애 → 직전 72시간 변경 → 요청자. [온톨로지](/datalake/ontology.md) |
+| `propose_action` | 객체에 액션 제안 — 메모는 바로, 웹훅은 사람 승인 뒤(유일하게 읽기 전용이 아닌 도구) |
 
 붙이는 곳:
 

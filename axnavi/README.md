@@ -2,6 +2,11 @@
 
 AX-NAVI IDE는 레거시 개발용 AI IDE다. VS Code처럼 설치해 쓰면 AX-NAVI 에이전트가 기본으로 들어 있다. 채팅으로 코드를 찾고 고치고, 변경을 리뷰받고, 보안 지적을 AI로 고치고, 단계 게이트를 넘는 일을 한 화면에서 한다. 쓰던 VS Code가 있다면 같은 확장(.vsix)만 깔아도 된다.
 
+<video controls preload="metadata" poster="video/axnavi.jpg" src="video/axnavi.mp4" style="width:100%;border-radius:10px"></video>
+
+> 변경 리뷰 STOP → 지적 상세 → AX-NAVI 로 수정(읽기·저장은 개발자 승인) → 다시 리뷰 HOLD 를 실제로(5분). [시연 영상 전체](/demo/README.md)
+
+
 <figure><img src="img/axnavi-ide-welcome.png" alt="AX-NAVI IDE — 오른쪽 AX-NAVI 채팅과 마스코트 나침이, 아래 Findings와 상세 칸"><figcaption>오른쪽은 AX-NAVI 채팅(첫 화면에서 나침이가 인사한다), 아래는 변경 리뷰 결과 Findings와 상세 칸. 상태 표시줄에 판정 <code>리뷰 STOP</code>이 뜬다.</figcaption></figure>
 
 <div class="home-grid">

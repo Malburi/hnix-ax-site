@@ -81,7 +81,8 @@ function render(src) {
   // 마크다운 안에 직접 쓴 HTML(홈 카드·그림)의 경로도 고친다
   html = html
     .replace(/href="#(\/[^"]*)"/g, (_m, r) => `href="${linkOf(r, prefix)}"`)
-    .replace(/src="img\//g, `src="${prefix}img/`);
+    .replace(/src="img\//g, `src="${prefix}img/`)
+    .replace(/(src|poster)="video\//g, (_m, a) => `${a}="${prefix}video/`);
   return { html, toc, text: plain(md) };
 }
 
@@ -283,6 +284,7 @@ const APP_JS = `(function () {
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, "assets"), { recursive: true });
 cpSync(join(ROOT, "img"), join(OUT, "img"), { recursive: true });
+if (existsSync(join(ROOT, "video"))) cpSync(join(ROOT, "video"), join(OUT, "video"), { recursive: true });
 cpSync(join(ROOT, "tools", "node_modules", "mermaid", "dist", "mermaid.min.js"), join(OUT, "assets", "mermaid.min.js"));
 writeFileSync(join(OUT, "assets", "style.css"), stylesheet());
 writeFileSync(join(OUT, "assets", "app.js"), APP_JS);
