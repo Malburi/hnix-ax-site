@@ -32,6 +32,20 @@ python tools/render_drawio.py download/hnix-ax-ecosystem.drawio img/ecosystem 4 
 - AX-DataLake 영상을 다시 찍을 때마다 `demo-prep.mjs` 를 먼저 돌린다 — 지난 스트림·테이블을 지우고 새 이름의 토픽을 만든다(Windows Kafka 는 토픽을 지우면 브로커가 멈춘다).
 - 공개 영상에 비교 대상(타사) 제품 이름이 나오는 화면은 넣지 않는다.
 
+## SM 업무 흐름 시나리오
+
+요청 한 건을 여러 제품에 걸쳐 끝까지 처리하는 영상 — `demo/scenarios.md`. 시나리오는 `scenario-scenarios.mjs`, 영상은 `video/scenarios/sm-a.mp4`·`sm-b.mp4`.
+
+```bash
+node tools/scenario-prep.mjs     # 시험용 고객 ITSM 연결·새 티켓, 현업 창구 모양, 지난 녹화 흔적 정리 → tools/.scenario-prep.json
+node tools/record-demo.mjs --scenarios scenario-scenarios.mjs --scenario sm-a --out video/scenarios
+node tools/record-demo.mjs --scenarios scenario-scenarios.mjs --scenario sm-b --out video/scenarios
+```
+
+- 녹화마다 `scenario-prep.mjs` 를 먼저 돌린다. 시험용 ITSM 티켓은 플랫폼 메모리에만 있어, 플랫폼을 다시 띄우면 처음 5건으로 돌아간다(목록이 깔끔해진다).
+- 시험용 ITSM 비밀번호는 플랫폼 비밀 저장소에만 있어 이 PC 의 E2E 데이터에서 읽는다(`PLATFORM_REPO`).
+- 포스터: `ffmpeg -ss 4 -i sm-a.mp4 -frames:v 1 -q:v 4 sm-a.jpg`(B 는 9초).
+
 ## 기능 전체 영상(장별)
 
 메뉴·탭·버튼을 하나씩 실제로 써 보는 영상 — `demo/features.md`. 시나리오는 `feature-scenarios.mjs`, 영상은 `video/features/<제품>-<장>.mp4`.

@@ -18,14 +18,14 @@ const prep = () => (existsSync(new URL("./.feature-prep.json", import.meta.url))
 /* ---------- 공통 조작 ---------- */
 
 /** Naive UI 탭 */
-async function tab(r, label, cap, sub = "", wait = 3500) {
+export async function tab(r, label, cap, sub = "", wait = 3500) {
   await r.click(label, { selector: ".n-tabs-tab", exact: true });
   if (cap) await r.caption(cap, sub);
   await pause(wait);
 }
 
 /** Naive UI 선택 칸 — 칸 안 글자(자리표시·현재 값)로 찾아 열고 항목을 고른다 */
-async function pick(r, inBox, option, opts = {}) {
+export async function pick(r, inBox, option, opts = {}) {
   const p = await r.find(inBox, { selector: ".n-base-selection", timeout: 3000, ...(opts.nth ? { nth: opts.nth } : {}) });
   if (!p) {
     console.warn(`  ! 선택 칸 못 찾음: ${inBox}`);
@@ -39,7 +39,7 @@ async function pick(r, inBox, option, opts = {}) {
 }
 
 /** 열린 창(모달·서랍)을 닫는다 */
-async function closeModal(r) {
+export async function closeModal(r) {
   await r.press("Escape");
   await pause(600);
   // Escape 로 안 닫히는 창(Naive 카드 모달 일부)은 오른쪽 위 × 로
@@ -51,16 +51,16 @@ async function closeModal(r) {
 
 /** 바깥 스크롤(플랫폼·레이크는 레이아웃 안쪽이 스크롤된다) */
 const NV = ".n-layout-content .n-scrollbar-container";
-async function down(r, dy = 600, sel = NV) {
+export async function down(r, dy = 600, sel = NV) {
   await r.scroll(dy, sel);
 }
-async function top(r, sel = NV) {
+export async function top(r, sel = NV) {
   await r.eval(`(() => { const el = document.querySelector(${JSON.stringify(sel)}); if (el) el.scrollTo({ top: 0, behavior: 'instant' }); window.scrollTo(0, 0); })()`).catch(() => undefined);
   await pause(400);
 }
 
 /** 글자(text)가 든 가장 작은 줄·카드 안의 버튼(button)을 누른다 — 표의 '수정'·'시험'처럼 같은 버튼이 여러 개일 때 */
-async function clickNear(r, text, button, opts = {}) {
+export async function clickNear(r, text, button, opts = {}) {
   const p = await r.eval(`(() => {
     const norm = (s) => (s || '').replace(/\\s+/g, ' ').trim();
     const sel = ${JSON.stringify(opts.buttonSel ?? "button, a, .n-button, .v-btn")};
@@ -87,13 +87,13 @@ async function clickNear(r, text, button, opts = {}) {
 }
 
 /** 체크 칸을 켠다(이미 켜져 있으면 그대로) — Naive UI n-checkbox */
-async function ensureChecked(r, text) {
+export async function ensureChecked(r, text) {
   const on = await r.eval(`[...document.querySelectorAll('.n-checkbox')].some((c) => c.innerText.includes(${JSON.stringify(text)}) && c.classList.contains('n-checkbox--checked'))`);
   if (!on) await r.click(text, { selector: ".n-checkbox", after: 800 });
 }
 
 /** Vuetify 입력 칸(라벨 글자로) — PMS-X */
-async function vtype(r, label, text, delay = 40) {
+export async function vtype(r, label, text, delay = 40) {
   const p = await r.eval(`(() => {
     const f = [...document.querySelectorAll('.v-field')].find((x) => [...x.querySelectorAll('.v-label')].some((l) => l.innerText.replace(/\\s+/g, ' ').trim() === ${JSON.stringify(label)}) && x.getBoundingClientRect().width > 0);
     const el = f && f.querySelector('input, textarea');
@@ -116,7 +116,7 @@ async function vtype(r, label, text, delay = 40) {
 }
 
 /** 모달 안의 버튼 */
-const modalBtn = (r, label, after = 900) => r.click(label, { selector: ".n-modal button, .n-dialog button, .n-drawer button, .n-popconfirm button, .n-popover button", exact: true, after });
+export const modalBtn = (r, label, after = 900) => r.click(label, { selector: ".n-modal button, .n-dialog button, .n-drawer button, .n-popconfirm button, .n-popover button", exact: true, after });
 
 /* ---------- 시나리오 ---------- */
 
@@ -1551,7 +1551,7 @@ const DL_READY = "document.readyState === 'complete' && !!document.querySelector
 
 /* ---------- PMS-X 프로젝트 고르기 — SI·SM 을 화면 주소와 함께 쓰기 위해 localStorage 에 둔다. SI 면 인사(HR) 시스템 ID 를 돌려준다 ---------- */
 const P = APPS.pmsx.url;
-async function pmsxProject(r, type, who = "admin") {
+export async function pmsxProject(r, type, who = "admin") {
   return r.eval(`(async () => {
     const t = await fetch('/api/v1/auth/login', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(${JSON.stringify(APPS.pmsx.users[who] ?? APPS.pmsx.users.admin)}) }).then((x) => x.json()).then((j) => j.accessToken);
     const h = { authorization: 'Bearer ' + t };

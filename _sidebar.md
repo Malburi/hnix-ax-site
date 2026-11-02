@@ -1,6 +1,7 @@
 - **시연**
   - [시연 영상과 진행 순서](/demo/README.md)
   - [기능 전체 영상](/demo/features.md)
+  - [SM 업무 흐름 시나리오](/demo/scenarios.md)
   - [AI 생태계 워크플로우](/demo/ecosystem.md)
 
 - **시작하기**
