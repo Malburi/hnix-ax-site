@@ -106,7 +106,7 @@ export const SCENARIOS = {
         if (lock) await r.pointAt(lock);
         // 승인 코드 — IDE 출력 창 로그("기기 승인 대기 — 코드 XXXX-XXXX")에서 읽는다
         let code = null;
-        for (let t = 0; t < 40 && !code; t++) {
+        for (let t = 0; t < 120 && !code; t++) {
           code = ideLoginCode(r.profile);
           if (!code) await pause(1000);
         }
@@ -128,6 +128,8 @@ export const SCENARIOS = {
         await pause(7000);
 
         // ── 2. 스킬 — /find
+        // 로그인 직후에는 채팅 웹뷰가 다시 그려지는 중일 수 있다 — 입력 칸이 뜰 때까지
+        for (let t = 0; t < 30 && !(await r.webFind("", { selector: "textarea", timeout: 1000 })); t++) await pause(1000);
         await r.webType("textarea", "/find 사원 목록 조회 기능");
         await r.caption("스킬 — /find 로 기능 위치 찾기", "에이전트가 전수 색인을 MCP 도구(QueryIndex)로 조회합니다 — 읽기 전용 조회는 승인 없이 바로");
         await r.press("Enter");
@@ -193,6 +195,17 @@ export const SCENARIOS = {
       await r.click("SR-0034", { selector: "td" });
       await r.caption("경보가 장애·서비스 요청으로 자동 생성됐습니다", "모니터링 웹훅 → 같은 경보는 하나로 묶고, 처리 절차 체크가 붙습니다");
       await pause(4000);
+      // 요청이 많아져 목록 첫 쪽에 없을 수 있다 — 검색 칸(Vuetify '조회')에 쳐서 찾는다
+      const q = await r.eval(`(() => { const f = [...document.querySelectorAll('.v-field')].find((x) => [...x.querySelectorAll('.v-label')].some((l) => l.innerText.trim() === '조회')); const el = f && f.querySelector('input'); if (!el) return null; el.scrollIntoView({ block: 'center' }); const b = el.getBoundingClientRect(); return { x: Math.round(b.left + 60), y: Math.round(b.top + b.height / 2) }; })()`);
+      if (q) {
+        await r.clickAt(q);
+        for (const ch of "퇴사자가 함께") {
+          await r.send("Input.insertText", { text: ch });
+          await pause(70);
+        }
+        await r.press("Enter");
+        await pause(1500);
+      }
       await r.click("SR-0004", { selector: "td" });
       await r.caption("현업 서비스 요청 — \"사원 조회 시 퇴사자가 함께 보여요\"");
       await pause(2500);
@@ -292,10 +305,12 @@ export const SCENARIOS = {
     async run(r, A) {
       const L = A.platform.url;
       await r.login("platform", "admin");
-      // 대시보드는 건너뛴다 — 카드에 비교 대상(타사) 제품 이름이 있어 공개 영상에 넣지 않는다
+      await r.go(`${L}/`);
+      await r.caption("AX Platform — 모든 AI 호출과 도구 호출이 지나는 공통 기반", "대시보드 — 오늘 AI 사용·비용, 승인 대기·정책 차단·개인정보 처리, 현업 창구, 지금 확인할 일");
+      await pause(4500);
       await r.go(`${L}/gateway`);
-      await r.caption("AX Platform — 모든 AI 호출과 도구 호출이 지나는 공통 기반", "LLM 게이트웨이 — 제품·사람마다 가상 키, 허용 모델·데이터 등급·분당 한도");
-      await pause(3000);
+      await r.caption("LLM 게이트웨이 — 앱 → 개인정보 보호 → 라우트·예산 → 모델 → 기록", "제품·사람마다 가상 키, 허용 모델·데이터 등급·분당 한도 · 오늘 현황과 모델 연결 상태");
+      await pause(3500);
       await r.click("모델 별칭", { selector: ".n-tabs-tab" });
       await r.caption("모델 별칭 — 제품은 hnix-local 같은 별칭만 압니다", "조직 키 · 사내 GPU · 사내 CPU 모델로 라우팅·폴백, 기밀 등급은 사내 모델만");
       await pause(3000);
@@ -304,7 +319,8 @@ export const SCENARIOS = {
       await r.go(`${L}/chat`);
       await r.caption("워크스페이스 채팅 — 사내 모델에 근거 문서와 내 권한의 도구를 붙여 묻습니다");
       await pause(2000);
-      await r.click("운영 매뉴얼", { selector: "label, .n-checkbox" });
+      // 이미 켜져 있으면 그대로(누르면 꺼진다)
+      if (!(await r.eval("[...document.querySelectorAll('.n-checkbox')].some((c) => c.innerText.includes('운영 매뉴얼') && c.classList.contains('n-checkbox--checked'))"))) await r.click("운영 매뉴얼", { selector: ".n-checkbox" });
       await pause(800);
       await r.type("질문을 입력하세요", "사원 조회 화면에 퇴사자가 같이 나온다는 문의가 왔어요. 원인과 현업 안내 방법을 알려 주세요.", { delay: 40 });
       await r.click("보내기", { selector: "button" });
@@ -361,6 +377,8 @@ export const SCENARIOS = {
 
       // ── MCP 허브
       await r.go(`${L}/hub`);
+      await r.caption("MCP 허브 — 에이전트가 쓰는 업무 도구를 한 주소로", "에이전트 → 권한 확인 → 정책 검사 → 사람 승인 → 도구 서버 → 호출 기록");
+      await pause(3500);
       await r.click("서버", { selector: ".n-tabs-tab", exact: true });
       await r.caption("MCP 허브 — PMS-X · AX-NAVI · AX-DataLake 도구를 한곳에", "새 도구는 관리자가 승인해야 쓰이고, 도구마다 허용 · 거부 · 승인 후 실행");
       await pause(3500);

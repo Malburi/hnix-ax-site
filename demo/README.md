@@ -2,7 +2,7 @@
 
 HNIX AX 네 제품이 실제로 도는 모습을 영상으로 담았다. 영상은 모두 **실제로 띄운 제품**(E2E 환경 — 플랫폼·PMS-X·AX-NAVI IDE·AX-DataLake를 한 PC에)을 조작하며 녹화했다. 꾸민 화면이나 목업이 아니다. 아래 자막은 녹화할 때 화면 위에 덧그린 설명이고, 주황 물결은 누른 곳이다.
 
-## 전체 투어 — 17분 30초
+## 전체 투어 — 15분 45초
 
 <video controls preload="metadata" poster="video/tour.jpg" src="video/tour.mp4" style="width:100%;border-radius:10px;background:#0f1d2b"></video>
 
@@ -12,22 +12,23 @@ HNIX AX 네 제품이 실제로 도는 모습을 영상으로 담았다. 영상�
 
 ## 제품별 영상
 
-### AX Platform — 공통 AI 기반 (5분)
+### AX Platform — 공통 AI 기반 (3분)
 
 <video controls preload="metadata" poster="video/platform.jpg" src="video/platform.mp4" style="width:100%;border-radius:10px"></video>
 
 AX Platform이 실제로 무엇을 하는지 기능마다 한 번씩 써 본다. 답은 모두 사내 로컬 모델(`hnix-local`)이 그 자리에서 낸 것이다.
 
-- **LLM 게이트웨이** — 가상 키와 모델 별칭. 모든 AI 호출이 여기를 지난다.
+- **대시보드** — 오늘 AI 사용·비용, 승인 대기·정책 차단·개인정보 처리, 현업 창구, 지금 확인할 일.
+- **LLM 게이트웨이** — 흐름 그림과 오늘 현황, 가상 키와 모델 별칭. 모든 AI 호출이 여기를 지난다.
 - **워크스페이스 채팅** — 근거 문서(운영 매뉴얼)를 고르고 "사원 조회에 퇴사자가 같이 나와요"라고 물으면, 매뉴얼 절을 근거로 답하고 근거 문서를 접어 보여 준다. 오른쪽에서 내 권한의 MCP 도구도 함께 고른다.
 - **문서 RAG** — 매뉴얼·절차서를 올리면 절 단위로 나눠 색인한다. "급여 배치가 실패하면 뭘 먼저 봐야 해?"로 키워드+의미 검색.
 - **업무 흐름 개선** — 업무 절차서(인사 발령)를 넣으면 As-Is 흐름(담당·단계·시스템·입력→산출) → Pain point → **To-Be(AI 제안)** → 설계도(BPMN·Mermaid). 새 분석 창을 연 뒤, 미리 돌려 둔 결과를 본다(한 문서에 2~3분).
 - **에이전트** — `sm-helper`가 PMS-X 도구(`pmsx__srs`)를 불러 퇴사자 관련 서비스 요청을 찾아 정리한다. 모델 → 도구 → 모델 단계와 시간이 기록된다.
-- **MCP 허브** — PMS-X·AX-NAVI·AX-DataLake 도구를 한 곳에, 정책과 승인함.
+- **MCP 허브** — 흐름 그림과 서버별 도구, PMS-X·AX-NAVI·AX-DataLake 도구를 한 곳에, 정책과 승인함.
 - **현업 창구** — 현업 직원이 쓰는 화면. 매뉴얼에 있는 질문은 근거와 함께 답하고, 근거가 없는 질문("회의실 예약은 어떻게 하나요?")은 지어내지 않고 **담당자에게 넘기기** → 대화 기록과 함께 PMS-X 서비스 요청으로 접수(요청 번호가 돌아온다).
 - **런북 · Insight** — 승인 뒤 실행하는 조치, 호출 주체별 AI 사용 현황.
 
-### PMS-X — SM 운영 · AI 보조 · As-Is 분석 · WBS (2분 50초)
+### PMS-X — SM 운영 · AI 보조 · As-Is 분석 · WBS (2분 35초)
 
 <video controls preload="metadata" poster="video/pmsx.jpg" src="video/pmsx.mp4" style="width:100%;border-radius:10px"></video>
 
@@ -36,7 +37,7 @@ AX Platform이 실제로 무엇을 하는지 기능마다 한 번씩 써 본다.
 - **일정** — **WBS·간트**(계획·실적·SPI, 베이스라인·크리티컬 패스, 월 단위) → 칸반.
 - **인수인계 퀴즈**(SM) — As-Is 분석·요청 이력에서 자동 출제된 문제를 풀어 본다.
 
-### AX-NAVI IDE — 로그인 · 스킬 · 변경 리뷰 · AI로 수정 (7분 45초)
+### AX-NAVI IDE — 로그인 · 스킬 · 변경 리뷰 · AI로 수정 (6분 20초)
 
 <video controls preload="metadata" poster="video/axnavi.jpg" src="video/axnavi.mp4" style="width:100%;border-radius:10px"></video>
 
@@ -47,7 +48,7 @@ AX Platform이 실제로 무엇을 하는지 기능마다 한 번씩 써 본다.
 
 에이전트는 개발자 본인의 Claude 구독 로그인으로 돈다. 모델이 생각하는 동안 멈춘 화면은 영상에서 줄였다.
 
-### AX-DataLake — Kafka 실시간 수집 · 온톨로지 · 거버넌스 · 계보 (3분 50초)
+### AX-DataLake — Kafka 실시간 수집 · 온톨로지 · 거버넌스 · 계보 (3분 20초)
 
 <video controls preload="metadata" poster="video/datalake.jpg" src="video/datalake.mp4" style="width:100%;border-radius:10px"></video>
 
@@ -84,15 +85,15 @@ AX Platform이 실제로 무엇을 하는지 기능마다 한 번씩 써 본다.
 
 ## 지난 판 영상
 
-위 영상은 2026-11-01 확장판이다 — 플랫폼은 채팅·문서 RAG·업무 흐름 개선·에이전트·현업 창구를 실제로 써 보고, PMS-X는 As-Is 분석 산출물과 WBS를, AX-DataLake는 Kafka 실시간 수집을 더했다. 같은 날 오후 AX-NAVI IDE 1.1(로그인·기기 승인, 스킬, 관리자 화면)로 AX-NAVI 영상과 전체 투어를 다시 찍었다. 그 전 판들은 지우지 않고 온라인 사이트에 보관한다(오프라인판에는 넣지 않는다).
+위 영상은 2026-11-02 판이다 — 세 웹 제품에 공통 화면 테마(기본 "선명한 업무형"·고르기·사용자 지정)와 대시보드 운영 현황, 게이트웨이·허브 개요 탭이 들어간 뒤 같은 각본으로 다시 찍었다. 그 전 판들은 지우지 않고 온라인 사이트에 보관한다(오프라인판에는 넣지 않는다).
 
-| 영상 | 2026-11-01 확장판(AX-NAVI 로그인 전) | 2026-11-01 짧은 판(용어 한글화 직후) | 2026-10-31 판(화면에 SR·KB·SLA) |
-|---|---|---|---|
-| 전체 투어 | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-ext/tour.mp4) | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/tour.mp4) | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/tour.mp4) |
-| AX Platform | 지금 영상과 같음 | [platform.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/platform.mp4) | [platform.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/platform.mp4) |
-| PMS-X | 지금 영상과 같음 | [pmsx.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/pmsx.mp4) | [pmsx.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/pmsx.mp4) |
-| AX-NAVI IDE | 짧은 판과 같음 | [axnavi.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/axnavi.mp4) | [axnavi.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/axnavi.mp4) |
-| AX-DataLake | 지금 영상과 같음 | [datalake.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/datalake.mp4) | [datalake.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/datalake.mp4) |
+| 영상 | 2026-11-01 판(테마 전, AX-NAVI 1.1) | 2026-11-01 확장판(AX-NAVI 로그인 전) | 2026-11-01 짧은 판(용어 한글화 직후) | 2026-10-31 판(화면에 SR·KB·SLA) |
+|---|---|---|---|---|
+| 전체 투어 | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-v1.1/tour.mp4) | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-ext/tour.mp4) | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/tour.mp4) | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/tour.mp4) |
+| AX Platform | [platform.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-v1.1/platform.mp4) | v1.1 판과 같음 | [platform.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/platform.mp4) | [platform.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/platform.mp4) |
+| PMS-X | [pmsx.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-v1.1/pmsx.mp4) | v1.1 판과 같음 | [pmsx.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/pmsx.mp4) | [pmsx.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/pmsx.mp4) |
+| AX-NAVI IDE | [axnavi.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-v1.1/axnavi.mp4) | 짧은 판과 같음 | [axnavi.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/axnavi.mp4) | [axnavi.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/axnavi.mp4) |
+| AX-DataLake | [datalake.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-v1.1/datalake.mp4) | v1.1 판과 같음 | [datalake.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/datalake.mp4) | [datalake.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/datalake.mp4) |
 
 ## 영상 다시 만들기
 
