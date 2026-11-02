@@ -18,9 +18,9 @@ const tmp = mkdtempSync(join(tmpdir(), "hnix-tour-"));
 
 const CARDS = [
   { id: "intro", eyebrow: "HNIX AX — 통합 ITO AI 생태계", title: "새벽 경보 하나가 지식이 되기까지", lines: ["AX Platform · PMS-X · AX-NAVI IDE · AX-DataLake", "고객망 안에 설치 — 모든 AI 호출·도구 호출·데이터 조회가 한 기반을 지난다"], img: "img/ecosystem-p2.png" },
-  { id: "platform", eyebrow: "1 / 4 · 공통 AI 기반", title: "AX Platform", lines: ["LLM 게이트웨이 · 워크스페이스 채팅(문서 근거 + 도구) · 문서 RAG · Process Studio", "에이전트와 트리거 · MCP 허브와 승인함 · 현업 창구(답 → 담당자 접수) · 런북 · Insight"], video: "platform" },
+  { id: "platform", eyebrow: "1 / 4 · 공통 AI 기반", title: "AX Platform", lines: ["LLM 게이트웨이 · 워크스페이스 채팅(문서 근거 + 도구) · 문서 RAG · 업무 흐름 개선", "에이전트와 트리거 · MCP 허브와 승인함 · 현업 창구(답 → 담당자 접수) · 런북 · Insight"], video: "platform" },
   { id: "pmsx", eyebrow: "2 / 4 · 관리 · 운영", title: "PMS-X", lines: ["경보 → 서비스 요청 · AI 분류·배정 추천 · 지식 문서", "As-Is 분석 — 화면 분석 · 테이블 정의서 · ERD · CRUD · 화면 이동 맵 · 영향도 · WBS"], video: "pmsx" },
-  { id: "axnavi", eyebrow: "3 / 4 · 개발", title: "AX-NAVI IDE", lines: ["변경 리뷰 STOP → 지적 상세 → AX-NAVI 로 수정", "읽기·수정은 개발자 승인 → 다시 리뷰 — CI 게이트와 같은 판정"], video: "axnavi" },
+  { id: "axnavi", eyebrow: "3 / 4 · 개발", title: "AX-NAVI IDE", lines: ["로그인 — 플랫폼에서 이 기기 승인 · 허가된 사람·기기만 · 스킬과 엔진은 플랫폼이 배포", "/find 스킬 · 변경 리뷰 STOP → AX-NAVI 로 수정 → 다시 리뷰 — CI 게이트와 같은 판정"], video: "axnavi" },
   { id: "datalake", eyebrow: "4 / 4 · 데이터", title: "AX-DataLake", lines: ["Kafka 실시간 수집 — 화면에서 스트림을 만들면 초 단위로 테이블에 · Debezium CDC", "개인정보 가림 · 온톨로지(장애 → 직전 72시간 변경) · 승인 · 계보 · AI 질문"], video: "datalake" },
   { id: "outro", eyebrow: "HNIX AX", title: "사람은 판단과 승인만", lines: ["찾고 · 모으고 · 기록하는 일은 에이전트와 제품이", "에이전트도 사람과 같은 권한·가림·승인 규칙 — 고객망 안에서"], img: "img/ecosystem-p4.png" },
 ];

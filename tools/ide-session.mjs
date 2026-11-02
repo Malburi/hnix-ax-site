@@ -7,10 +7,12 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:f
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 
-const IDE = "C:/Users/onlys/AppData/Local/Programs/AX-NAVI IDE/AX-NAVI IDE.exe";
+// 설치본 대신 막 빌드한 IDE 로 찍을 때는 AXNAVI_IDE_EXE 로 실행 파일을 준다
+const IDE = process.env.AXNAVI_IDE_EXE || "C:/Users/onlys/AppData/Local/Programs/AX-NAVI IDE/AX-NAVI IDE.exe";
 const E2E = "C:/Users/onlys/hnix-ax-platform/e2e";
 
-export async function launchIde({ folder, port = 9560 + Math.floor(Math.random() * 300) }) {
+/** env — 시나리오가 더 줄 환경 변수(예: AXNAVI_SELFTEST=login 이면 로그인 승인 주소를 브라우저 대신 출력 창에) */
+export async function launchIde({ folder, env: extra = {}, port = 9560 + Math.floor(Math.random() * 300) }) {
   if (!existsSync(IDE)) throw new Error(`AX-NAVI IDE 가 없습니다: ${IDE}`);
   const secrets = JSON.parse(readFileSync(join(E2E, "run", "secrets.json"), "utf8"));
   const cfg = JSON.parse(readFileSync(join(E2E, "e2e.config.json"), "utf8"));
@@ -30,6 +32,7 @@ export async function launchIde({ folder, port = 9560 + Math.floor(Math.random()
     AXNAVI_OPENAI_BASE_URL: `${cfg.platform.url}/v1`,
     AXNAVI_OPENAI_API_KEY: secrets.ideLlm,
     AXNAVI_OPENAI_MODEL: "hnix-local",
+    ...extra,
   };
   const proc = spawn(IDE, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, "--locale=ko", "--disable-workspace-trust", "--skip-welcome", "--new-window", folder], { env, stdio: "ignore", detached: false });
   let target;

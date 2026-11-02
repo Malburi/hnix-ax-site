@@ -40,12 +40,13 @@ AI를 켜지 않으면 PMS-X는 외부로 아무것도 호출하지 않는다.
 
 ## 3. AX-NAVI IDE
 
-1. 판정 엔진을 설치한다: `npm i -g axnavi`
-2. AX-NAVI IDE zip을 풀고 `설치.cmd`를 실행한다. VS Code를 쓰던 사람은 `code --install-extension axnavi-<버전>.vsix`만 해도 된다.
-3. IDE에서 프로젝트 폴더를 열고 명령 팔레트 › **AX-NAVI: 인덱스 만들기**.
-4. 오른쪽 AX-NAVI 채팅에서 `/find 사원 저장` 처럼 물어본다.
+1. 플랫폼 관리자가 **AX-NAVI 사용 허가**에서 개발자에게 허가를 준다.
+2. AX-NAVI IDE zip을 풀고 `설치.cmd`를 실행한다. 판정 엔진(CLI)이나 Node·Python은 따로 깔지 않는다.
+3. IDE 상태 표시줄의 **🔒 AX-NAVI 로그인** → 브라우저에서 사내 계정으로 **이 기기 승인**. 스킬과 판정 엔진을 플랫폼에서 받아 온다.
+4. 프로젝트 폴더를 열고 명령 팔레트 › **AX-NAVI: 인덱스 만들기**.
+5. 오른쪽 AX-NAVI 채팅에서 `/find 사원 저장` 처럼 물어본다.
 
-자세한 순서는 [설치와 첫 사용](/axnavi/start.md)에 있다. 터미널에서는 `axnavi doctor`로 실행 경로와 과금을 확인한다.
+자세한 순서는 [설치와 첫 사용](/axnavi/start.md)과 [사용 허가](/axnavi/license.md)에 있다. 명령 팔레트 › **AX-NAVI: 환경 점검**으로 엔진 위치와 과금을 확인한다.
 
 Claude 연결은 개발자마다 다르다. 구독·좌석·API 키·게이트웨이 중 무엇으로 쓸지는 [Claude 연결](/getting-started/connect.md)을 본다. 플랫폼의 **내 연결 설정** 화면에서 내 상황을 고르면 붙여 넣을 설정이 나온다.
 

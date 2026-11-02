@@ -4,7 +4,9 @@ AX-NAVI IDE는 레거시 개발용 AI IDE다. VS Code처럼 설치해 쓰면 AX-
 
 <video controls preload="metadata" poster="video/axnavi.jpg" src="video/axnavi.mp4" style="width:100%;border-radius:10px"></video>
 
-> 변경 리뷰 STOP → 지적 상세 → AX-NAVI 로 수정(읽기·저장은 개발자 승인) → 다시 리뷰 HOLD 를 실제로(3분). [시연 영상 전체](/demo/README.md)
+> 로그인(플랫폼에서 이 기기 승인) → `/find` 스킬 → 변경 리뷰 STOP → 지적 상세 → AX-NAVI 로 수정(읽기·저장은 개발자 승인) → 다시 리뷰를 실제로. [시연 영상 전체](/demo/README.md)
+
+> **1.1부터 로그인이 필요하다.** 설치본은 HNIX AX 플랫폼에서 승인받은 기기에서만 동작하고, 스킬·에이전트·판정 엔진은 로그인하면 플랫폼이 내려 준다. CLI를 따로 깔지 않아도 IDE 하나로 모든 기능을 쓴다. [사용 허가 — 로그인과 기기 승인](/axnavi/license.md)
 
 
 <figure><img src="img/axnavi-ide-welcome.png" alt="AX-NAVI IDE — 오른쪽 AX-NAVI 채팅과 마스코트 나침이, 아래 Findings와 상세 칸"><figcaption>오른쪽은 AX-NAVI 채팅(첫 화면에서 나침이가 인사한다), 아래는 변경 리뷰 결과 Findings와 상세 칸. 상태 표시줄에 판정 <code>리뷰 STOP</code>이 뜬다.</figcaption></figure>
@@ -25,6 +27,11 @@ AX-NAVI IDE는 레거시 개발용 AI IDE다. VS Code처럼 설치해 쓰면 AX-
     <strong>SDLC 산출물과 단계 게이트</strong>
     <span class="desc">조직 양식으로 산출물을 만들고, 요구 → 설계 → 개발 → 테스트 단계 전환을 판정한다.</span>
   </a>
+  <a class="home-card" href="#/axnavi/license">
+    <span class="eyebrow">보호</span>
+    <strong>사용 허가 — 로그인과 기기 승인</strong>
+    <span class="desc">허가된 사람·기기만. 스킬·엔진은 플랫폼이 내려 주고, 새면 누가 흘렸는지 안다.</span>
+  </a>
   <a class="home-card" href="#/axnavi/cli">
     <span class="eyebrow">CI</span>
     <strong>CLI와 CI 게이트</strong>
@@ -38,7 +45,8 @@ AX-NAVI IDE는 레거시 개발용 AI IDE다. VS Code처럼 설치해 쓰면 AX-
 |---|---|---|
 | **AX-NAVI IDE** | 설치형 IDE. 이름·아이콘·데이터 폴더가 따로라 VS Code와 함께 깔아도 서로 영향이 없다. 한국어 표시, 폐쇄망 빌드(확장 마켓 연결 없음) | VSCodium 재포장 |
 | **AX-NAVI 확장** | 채팅 에이전트, 변경 리뷰·Findings, 보안 점검, 단계 게이트, 코드 인덱스 연결, AI 연결 관리. IDE에 내장되어 있고 VS Code에도 깔 수 있다 | Roo Code 포크 |
-| **AX-NAVI CLI** (판정 엔진) | 색인, 리뷰, 보안 점검, 게이트를 실제로 계산한다. IDE가 이것을 불러 쓰고, CI도 같은 것을 쓴다 | `npm i -g axnavi` |
+| **판정 엔진** (AX-NAVI CLI) | 색인, 리뷰, 보안 점검, 게이트를 실제로 계산한다. IDE는 로그인하면 플랫폼에서 받아 자기 안에서 돌리고(PC에 따로 설치하지 않는다), CI와 플랫폼 서버는 같은 엔진을 CLI로 쓴다 | 플랫폼이 배포 |
+| **HNIX AX 플랫폼** (사용 허가) | 로그인·기기 승인, 허가(좌석) 관리, 스킬·엔진 배포, 서버 엔진 | [사용 허가](/axnavi/license.md) |
 
 IDE와 CI가 같은 엔진을 쓰므로 **개발자가 IDE에서 본 판정과 머지 요청에서 받는 판정이 같다.** 리뷰·보안 점검·게이트·색인은 AI를 부르지 않아 같은 변경에는 늘 같은 결과가 나온다.
 
@@ -49,7 +57,8 @@ IDE와 CI가 같은 엔진을 쓰므로 **개발자가 IDE에서 본 판정과 �
 | 오른쪽 채팅 패널 | 채팅은 **오른쪽 보조 사이드바**에 열린다. 첫 화면에서 마스코트 **나침이**가 인사하고 최근 작업을 보여 준다 |
 | 채팅 에이전트와 모드 | Architect · Code · Ask · Debug · Orchestrator 모드. 파일 수정은 diff로 보여 주고 승인받는다. 체크포인트로 되돌린다 |
 | 슬래시 명령 | `/`를 누르면 AX-NAVI 스킬 26개 — `/find`, `/flow`, `/impact`, `/safe-modify`, `/review-sql`, `/security-scan`, `/plan-migration` 등 |
-| 코드베이스 이해 | **코드 인덱스** — AI 없이 만든 전수 색인(화면 → 버튼 → 함수 → SQL → 테이블)을 에이전트가 MCP 도구로 바로 조회한다. grep으로 추측하지 않는다 |
+| 코드베이스 이해 | **코드 인덱스** — AI 없이 만든 전수 색인(화면 → 버튼 → 함수 → SQL → 테이블)을 에이전트가 MCP 도구로 바로 조회한다. 읽기 전용 조회라 승인 없이 바로 돈다. grep으로 추측하지 않는다 |
+| 사용자 인증·라이선스 | **사용 허가** — 사내 계정으로 기기를 승인받아야 동작. 관리자가 허가·기기를 회수하면 바로 잠기고, 스킬 문서의 표식으로 유출 경로를 찾는다 |
 | `/review`, 리뷰 패널 | **변경 리뷰** — 소스 제어 뷰 버튼이나 상태 표시줄로 실행. GO / HOLD / STOP과 영향 범위(호출자, 테이블, 화면 이벤트) |
 | Findings | **Findings 패널 + 상세 칸 + 문제 탭** — 항목을 고르면 오른쪽 상세 칸에 **파일로 이동 / AX-NAVI로 수정 / 닫기**. 심각도 필터, 심각도별·파일별 묶기 |
 | 보안 점검 | **보안 점검** — OWASP 기준. 탐색기에서 폴더를 우클릭해도 된다 |

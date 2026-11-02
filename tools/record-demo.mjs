@@ -7,6 +7,7 @@
  *   node tools/record-demo.mjs --scenario all
  *   node tools/record-demo.mjs --probe http://127.0.0.1:8710/hub --app platform   # 화면의 버튼·탭 글자 보기
  *   node tools/record-demo.mjs --scenario pmsx --dry          # 녹화 없이 돌려 보기
+ *   node tools/record-demo.mjs --scenarios feature-scenarios.mjs --scenario platform-2 --out video/features   # 기능 전체 영상(장별)
  *
  * 필요: Edge(또는 Chrome), ffmpeg(PATH 또는 --ffmpeg), E2E 환경(hnix-ax-platform/e2e/start.ps1)이 떠 있을 것.
  * 시나리오는 tools/demo-scenarios.mjs.
@@ -17,13 +18,15 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import { APPS, SCENARIOS } from "./demo-scenarios.mjs";
+import { APPS } from "./demo-scenarios.mjs";
 import { launchIde } from "./ide-session.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const { values } = parseArgs({
   options: {
     scenario: { type: "string" },
+    /** 시나리오 파일(tools/ 기준) — 기본 demo-scenarios.mjs, 기능 전체 영상은 feature-scenarios.mjs */
+    scenarios: { type: "string", default: "demo-scenarios.mjs" },
     probe: { type: "string" },
     app: { type: "string" },
     out: { type: "string", default: resolve(HERE, "..", "video") },
@@ -34,9 +37,12 @@ const { values } = parseArgs({
     keep: { type: "boolean", default: false },
     /** 녹화하지 않고 시나리오만 돌린다(짤 때) */
     dry: { type: "boolean", default: false },
+    /** 못 찾은 곳마다 화면을 이 폴더에 찍는다(시나리오 고칠 때) */
+    shots: { type: "string" },
   },
 });
 
+const { SCENARIOS } = await import(new URL(`./${values.scenarios}`, import.meta.url).href);
 const W = Number(values.width);
 const H = Number(values.height);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -93,7 +99,7 @@ class Recorder {
   async start(opts = {}) {
     let target;
     if (opts.ide) {
-      const s = await launchIde({ folder: opts.ide });
+      const s = await launchIde({ folder: opts.ide, env: opts.ideEnv });
       Object.assign(this, { port: s.port, profile: s.profile, proc: s.proc, ide: true });
       target = s.target;
     } else {
@@ -238,6 +244,7 @@ class Recorder {
     const p = await this.find(text, opts);
     if (!p) {
       console.warn(`  ! 못 찾음: "${text}"`);
+      await this.miss(text);
       return false;
     }
     await this.clickAt(p);
@@ -264,6 +271,7 @@ class Recorder {
       : await this.eval(`(() => { const el = [...document.querySelectorAll('input, textarea')].find((e) => (e.getAttribute('placeholder') || '').includes(${JSON.stringify(target)}) && e.getBoundingClientRect().width > 0); if (!el) return null; el.scrollIntoView({block:'center'}); const r = el.getBoundingClientRect(); return {x: Math.round(r.left + Math.min(r.width/2, 120)), y: Math.round(r.top + r.height/2)}; })()`);
     if (!p) {
       console.warn(`  ! 입력 칸 못 찾음: ${target}`);
+      await this.miss(target);
       return false;
     }
     await this.clickAt(p);
@@ -341,9 +349,9 @@ class Recorder {
         const id = /[?&]id=([^&]+)/.exec(fr.url)?.[1];
         const inner = await cdpEval(fr.webSocketDebuggerUrl, `(() => {
           const f = document.querySelector('iframe'); if (!f || !f.contentDocument) return null;
-          const d = f.contentDocument; const want = ${JSON.stringify(text)};
+          const d = f.contentDocument; const want = ${JSON.stringify(text)}; const exact = ${!!opts.exact};
           const norm = (s) => (s || '').replace(/\\s+/g, ' ').trim();
-          const els = [...d.querySelectorAll(${JSON.stringify(sel)})].filter((e) => { const r = e.getBoundingClientRect(); return r.width > 2 && r.height > 2 && norm(e.innerText || e.getAttribute('aria-label') || e.getAttribute('title')).includes(want); })
+          const els = [...d.querySelectorAll(${JSON.stringify(sel)})].filter((e) => { const r = e.getBoundingClientRect(); const t = norm(e.innerText || e.getAttribute('aria-label') || e.getAttribute('title')); return r.width > 2 && r.height > 2 && (exact ? t === want : t.includes(want)); })
             .sort((a, b) => norm(a.innerText).length - norm(b.innerText).length);
           const el = els[${opts.nth ?? 0}]; if (!el) return null;
           el.scrollIntoView({ block: 'center' });
@@ -378,6 +386,56 @@ class Recorder {
     return out.join("\n---\n");
   }
 
+  /**
+   * 녹화 중에 브라우저 장면을 끼워 넣는다 — 헤드리스 Edge 를 하나 더 띄워 fn(b) 로 조작하고, 그 장면을 이 영상에 이어 붙인다.
+   * IDE 가 연 승인 화면(플랫폼 웹)처럼 IDE 밖에서 일어나는 일을 한 영상에 담을 때.
+   */
+  async browser(fn) {
+    const b = new Recorder();
+    await b.start();
+    const wasRecording = this.recording;
+    try {
+      if (wasRecording) {
+        await b.send("Page.startScreencast", { format: "jpeg", quality: 82, maxWidth: W, maxHeight: H, everyNthFrame: 1 });
+        this.recording = false;
+        b.recording = true;
+      }
+      return await fn(b);
+    } finally {
+      b.recording = false;
+      await b.send("Page.stopScreencast").catch(() => undefined);
+      if (wasRecording) {
+        this.frames.push(...b.frames);
+        this.recording = true;
+      }
+      await b.close();
+    }
+  }
+
+  /** 웹뷰 입력 칸(채팅)에 친다 — 칸을 눌러 초점을 준 뒤 글자를 넣는다 */
+  async webType(selector, text, opts = {}) {
+    if (!(await this.webClick("", { selector, after: 300 }))) return false;
+    for (const ch of text) {
+      await this.send("Input.insertText", { text: ch });
+      await sleep(opts.delay ?? 45);
+    }
+    await sleep(400);
+    return true;
+  }
+
+  /** 파일 올리기 — 파일 선택 창 대신 input[type=file] 에 바로 넣는다(선택자는 그 input, 없으면 화면의 첫 파일 칸) */
+  async upload(files, selector = "input[type=file]") {
+    const { root } = await this.send("DOM.getDocument", { depth: -1, pierce: true });
+    const { nodeId } = await this.send("DOM.querySelector", { nodeId: root.nodeId, selector });
+    if (!nodeId) {
+      console.warn(`  ! 파일 칸 못 찾음: ${selector}`);
+      return false;
+    }
+    await this.send("DOM.setFileInputFiles", { nodeId, files: [].concat(files) });
+    await sleep(1200);
+    return true;
+  }
+
   /** 단축키 — 예: key('p', { ctrl: true }) */
   async key(k, mods = {}) {
     const m = (mods.alt ? 1 : 0) | (mods.ctrl ? 2 : 0) | (mods.shift ? 8 : 0);
@@ -392,6 +450,14 @@ class Recorder {
   async dump(label = "") {
     const texts = await this.eval(`[...document.querySelectorAll('button, a, [role=tab], .n-tabs-tab, .v-tab, .v-btn, .v-list-item-title, th, input, textarea')].filter(e => e.getBoundingClientRect().width > 0).map(e => (e.tagName + ': ' + ((e.innerText || e.getAttribute('placeholder') || '').replace(/\\s+/g, ' ').trim())).slice(0, 90)).filter(t => !t.endsWith(': '))`);
     console.log(`--- ${label}\n` + [...new Set(texts)].join("\n"));
+  }
+
+  /** --shots 를 주면 못 찾은 순간의 화면을 남긴다 */
+  async miss(what) {
+    if (!values.shots) return;
+    mkdirSync(values.shots, { recursive: true });
+    this.missN = (this.missN ?? 0) + 1;
+    await this.snap(join(values.shots, `${String(this.missN).padStart(2, "0")}-${String(what).replace(/[^0-9a-zA-Z가-힣]+/g, "_").slice(0, 30)}.png`)).catch(() => undefined);
   }
 
   async snap(file) {
@@ -484,12 +550,12 @@ try {
     writeFileSync(join(tmpdir(), "hnix-probe.png"), Buffer.from(data, "base64"));
     console.log("화면:", join(tmpdir(), "hnix-probe.png"));
   } else {
-    const names = values.scenario === "all" ? Object.keys(SCENARIOS) : [values.scenario];
+    const names = values.scenario === "all" ? Object.keys(SCENARIOS) : values.scenario.includes("*") ? Object.keys(SCENARIOS).filter((k) => new RegExp(`^${values.scenario.replace(/\*/g, ".*")}$`).test(k)) : values.scenario.split(",");
     for (const n of names) {
       if (!SCENARIOS[n]) throw new Error(`없는 시나리오: ${n} (있는 것: ${Object.keys(SCENARIOS).join(", ")})`);
       console.log(`▶ ${n} — ${SCENARIOS[n].title}`);
       rec = new Recorder();
-      await rec.start({ ide: SCENARIOS[n].ide });
+      await rec.start({ ide: SCENARIOS[n].ide, ideEnv: SCENARIOS[n].ideEnv });
       try {
         if (values.dry) await SCENARIOS[n].run(rec, APPS);
         else await rec.record(n, (r) => SCENARIOS[n].run(r, APPS), SCENARIOS[n].maxGap);

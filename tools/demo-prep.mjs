@@ -4,7 +4,7 @@
  *   node tools/demo-prep.mjs [--kafka localhost:9092]
  *
  *  플랫폼   현업 창구 'hr-help'(인사시스템 도움 창구 — 운영 매뉴얼 근거, 못 찾으면 PMS-X 요청)
- *          Process Studio '인사 발령 프로세스' 분석(To-Be 까지 나온 것 하나 — 3B 모델이라 몇 번 돌릴 수 있다, 한 번에 2~3분)
+ *          업무 흐름 개선 '인사 발령 프로세스' 분석(To-Be 까지 나온 것 하나 — 3B 모델이라 몇 번 돌릴 수 있다, 한 번에 2~3분)
  *  레이크   Kafka 토픽 — 실시간 시연용 모니터링 경보 토픽(새 이름), Debezium CDC 시연(주문 토픽 → erp.orders)
  *          지난 시연의 'monitoring-alerts' 스트림·ops.alert_events 테이블은 지운다(화면에서 새로 만든다)
  *  결과는 tools/.demo-prep.json — 시나리오가 토픽 이름을 읽는다.
@@ -39,7 +39,7 @@ const items = (j) => (Array.isArray(j) ? j : j.items ?? j.content ?? []);
 const out = {};
 
 // ---------- 플랫폼
-log("플랫폼 — 현업 창구 · Process Studio");
+log("플랫폼 — 현업 창구 · 업무 흐름 개선");
 const pl = await client("platform", "admin");
 const px = await client("pmsx", "admin");
 const sm = (await px("GET", "/projects")).find((p) => p.type === "SM");
@@ -66,7 +66,7 @@ for (const a of await has()) {
   else await pl("DELETE", `/process/analyses/${a.id}`);
 }
 for (let i = 1; !good && i <= 4; i++) {
-  console.log(`  · Process Studio 분석 ${i}번째(2~3분)…`);
+  console.log(`  · 업무 흐름 개선 분석 ${i}번째(2~3분)…`);
   const { id } = await pl("POST", "/process/analyses", { title: "인사 발령 프로세스", collectionId: col.id, documentIds: [doc.id], modelAlias: "hnix-local" });
   let full;
   for (let t = 0; t < 120; t++) {
@@ -77,7 +77,7 @@ for (let i = 1; !good && i <= 4; i++) {
   if (full.status === "succeeded" && full.result?.toBe?.length) good = full;
   else await pl("DELETE", `/process/analyses/${id}`);
 }
-if (good) ok(`Process Studio — As-Is ${good.result.asIs.length} · Pain point ${good.result.painPoints?.length ?? 0} · To-Be ${good.result.toBe.length}`);
+if (good) ok(`업무 흐름 개선 — As-Is ${good.result.asIs.length} · Pain point ${good.result.painPoints?.length ?? 0} · To-Be ${good.result.toBe.length}`);
 else console.log("  ! To-Be 까지 나온 분석을 얻지 못했습니다 — 시연에서는 As-Is·Pain point 까지만 보입니다");
 
 // ---------- 레이크

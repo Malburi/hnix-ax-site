@@ -4,7 +4,7 @@ AX Platform은 HNIX AX 제품군이 함께 쓰는 AI 기반이다. 모델 호출
 
 <video controls preload="metadata" poster="video/platform.jpg" src="video/platform.mp4" style="width:100%;border-radius:10px"></video>
 
-> 게이트웨이 · 워크스페이스 채팅 · 문서 RAG · Process Studio · 에이전트 · MCP 허브 · 현업 창구 · 런북 · Insight 를 사내 모델이 실제로 답하는 화면으로(5분). [시연 영상 전체](/demo/README.md)
+> 게이트웨이 · 워크스페이스 채팅 · 문서 RAG · 업무 흐름 개선 · 에이전트 · MCP 허브 · 현업 창구 · 런북 · Insight 를 사내 모델이 실제로 답하는 화면으로(5분). [시연 영상 전체](/demo/README.md)
 
 
 | 모듈 | 하는 일 |
@@ -14,6 +14,7 @@ AX Platform은 HNIX AX 제품군이 함께 쓰는 AI 기반이다. 모델 호출
 | [생산성 보고서](/platform/productivity.md) | 커밋·MR을 서비스 요청(SR)과 잇고 AI 관여를 표시, 기준선 대비 공수·리드타임 절감률(30% 약정) 보고 |
 | [전사 AI 관측](/platform/enterprise-ai.md) | 고객 회사의 Claude(Admin API)·Copilot·그 밖의 AI 사용량, AI 자산 대장과 검토·허브 통제, 그림자 AI 찾기 |
 | [AX-NAVI 조직 설정](/axnavi/integration.md#조직-설정-배포) | 규칙·스킬·SDLC 양식·MCP·인증 정책을 묶어 전사·팀에 배포, 버전·되돌리기·받아 간 기록 |
+| [AX-NAVI 사용 허가](/axnavi/license.md) | IDE 로그인·기기 승인, 허가(좌석)와 엔진 위치, 기기 폐기, 스킬·판정 엔진 배포, 유출본의 받은 사람 찾기 |
 | [MCP 허브와 승인함](/platform/hub.md) | 도구 레지스트리, 정책(허용·거부·승인), 스키마 변경 차단, 호출 감사, PMS-X·AX-NAVI 커넥터 |
 | [에이전트 실행기와 A2A](/platform/agents.md) | 게이트웨이와 허브를 거쳐 도는 에이전트, 트리거(경보·예약·새 요청), 외부 A2A 에이전트 연결 |
 | [현업 창구](/platform/desk.md) | 매뉴얼·처리 사례 근거로 현업 질문에 답하고, 못 찾으면 사용자 확인 후 티켓으로 접수 |

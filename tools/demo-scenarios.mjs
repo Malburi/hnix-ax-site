@@ -5,36 +5,139 @@
  */
 export const APPS = {
   platform: { url: "http://127.0.0.1:8710", loginApi: "/api/v1/auth/login", users: { admin: { loginId: "admin", password: "Admin!2026" }, dev: { loginId: "dev1", password: "Dev1!2026" } } },
-  pmsx: { url: "http://127.0.0.1:8080", loginApi: "/api/v1/auth/login", users: { op: { loginId: "op.seo", password: "pmsx1234!" }, admin: { loginId: "admin", password: "pmsx1234!" } } },
+  pmsx: { url: "http://127.0.0.1:8080", loginApi: "/api/v1/auth/login", users: { op: { loginId: "op.seo", password: "pmsx1234!" }, admin: { loginId: "admin", password: "pmsx1234!" }, customer: { loginId: "customer", password: "pmsx1234!" } } },
   datalake: { url: "http://127.0.0.1:8790", loginApi: "/api/v1/auth/login", users: { ana: { loginId: "ana01", password: "Lake!2026" }, eng: { loginId: "eng", password: "Lake!2026" }, admin: { loginId: "admin", password: "Lake!2026" } } },
 };
 
 import { spawn } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
-const DEMO_REPO = "C:/Users/onlys/axnavi-ide-demo";
+export const DEMO_REPO = "C:/Users/onlys/axnavi-ide-demo";
 /** kafkajs 를 빌려 쓰는 AX-DataLake 저장소(시연 준비·생산기) */
 export const DATALAKE_REPO = "C:/Users/onlys/ax-datalake";
 const DL_READY = "document.readyState === 'complete' && !!document.querySelector('.n-layout-header')";
 
+/** AX-NAVI IDE 임시 프로필의 출력 창 로그에서 기기 승인 코드를 찾는다 */
+export function ideLoginCode(profile) {
+  const walk = (d) => {
+    try {
+      return readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(d, e.name)) : [join(d, e.name)]));
+    } catch {
+      return [];
+    }
+  };
+  for (const f of walk(join(profile, "logs")).filter((f) => /AX-NAVI\.log$/.test(f))) {
+    const m = /기기 승인 대기 — 코드 ([A-Z]{4}-[A-Z]{4})/.exec(readFileSync(f, "utf8"));
+    if (m) return m[1];
+  }
+  return null;
+}
+
+/** 화면 언어(한국어·영어)에 상관없이 채팅 버튼을 글자로 — 정확히 같은 글자만('자동 승인' 같은 다른 칸을 누르지 않게) */
+export async function chatButton(r, ...labels) {
+  for (const l of labels) {
+    const p = await r.webFind(l, { selector: "button, vscode-button", exact: true, timeout: 400 });
+    if (p) return p;
+  }
+  return null;
+}
+
+/**
+ * 에이전트 작업이 끝날 때까지 승인 요청을 처리한다 — '작업 완료'가 하나 더 늘면 끝.
+ * 명령 실행은 연습 저장소의 AX-NAVI 스크립트·색인 조회일 때만 승인하고, 그 밖은 거절한다.
+ * captions[n] — n 번째 승인 직전에 띄울 자막
+ */
+export async function runAgent(r, captions = {}, limitSec = 180) {
+  const done = (t) => (t.match(/Task Completed|작업 완료/g) || []).length;
+  const start = done(await r.webText());
+  let approvals = 0;
+  for (let t = 0; t < limitSec; t += 3) {
+    const text = await r.webText();
+    if (done(text) > start) return true;
+    const run = await chatButton(r, "명령", "실행", "Run");
+    if (run) {
+      const chat = text.split("\n---\n")[0].slice(-800);
+      const safe = /axnavi|_workspace|\.claude[\/]/i.test(chat) && !/\b(rm|del|curl|wget|Invoke-WebRequest|git\s+push)\b/i.test(chat);
+      console.log(`  명령 실행 요청 — ${safe ? "승인" : "거절"}: ${chat.slice(-300).replace(/\s+/g, " ")}`);
+      await pause(1500);
+      if (safe) await r.clickAt(run);
+      else {
+        const deny = await chatButton(r, "거부", "Deny");
+        if (deny) await r.clickAt(deny);
+      }
+      await pause(3000);
+      continue;
+    }
+    const btn = (await chatButton(r, "승인", "Approve")) ?? (await chatButton(r, "저장", "Save"));
+    if (btn) {
+      approvals++;
+      if (captions[approvals]) await r.caption(...captions[approvals]);
+      await pause(1800);
+      await r.clickAt(btn);
+    }
+    await pause(3000);
+  }
+  console.warn("  ! 에이전트 작업이 제한 시간 안에 끝나지 않았습니다");
+  return false;
+}
+
 export const SCENARIOS = {
   axnavi: {
-    title: "AX-NAVI IDE — 변경 리뷰 · AI 로 수정 · 다시 리뷰",
+    title: "AX-NAVI IDE — 로그인(기기 승인) · 스킬 · 변경 리뷰 · AI 로 수정",
     ide: DEMO_REPO,
+    // 로그인 승인 주소를 PC 브라우저 대신 출력 창에 남긴다 — 승인은 영상 안의 브라우저 장면에서 한다
+    ideEnv: { AXNAVI_SELFTEST: "login" },
     // 모델이 생각하는 동안 멈춘 화면은 1.2초까지만(영상 시간 압축)
     maxGap: 1.2,
-    async run(r) {
+    async run(r, A) {
       const file = `${DEMO_REPO}/src/main/java/com/hd/hr/EmpDao.java`;
       const before = readFileSync(file);
+      const statusText = () => r.eval(`[...document.querySelectorAll('.statusbar-item')].map((e) => e.innerText).join(' | ')`).catch(() => "");
       try {
-        await pause(6000);
+        // ── 1. 잠긴 설치본 → 로그인(기기 승인)
+        await pause(3000);
         await r.clickAt({ x: 1290, y: 400 });
-        await r.caption("AX-NAVI IDE — 레거시를 함께 읽고 안전하게 고치는 AI 동료", "VSCodium 기반 · 전수 색인(화면→버튼→SQL→테이블) 위에서 일합니다");
+        await r.caption("AX-NAVI IDE — 허가된 사람·기기에서만 동작합니다", "설치 파일이 밖으로 새도 로그인 전에는 AI·스킬·엔진이 모두 잠겨 있습니다");
+        await pause(4000);
+        const lock = await r.find("AX-NAVI 로그인", { selector: ".statusbar-item", timeout: 3000 });
+        if (lock) await r.pointAt(lock);
+        // 승인 코드 — IDE 출력 창 로그("기기 승인 대기 — 코드 XXXX-XXXX")에서 읽는다
+        let code = null;
+        for (let t = 0; t < 40 && !code; t++) {
+          code = ideLoginCode(r.profile);
+          if (!code) await pause(1000);
+        }
+
+        if (!code) throw new Error("IDE 화면에서 승인 코드를 읽지 못했습니다");
+        await r.caption(`로그인 — 이 기기의 승인 코드 ${code}`, "IDE 가 플랫폼 승인 화면을 엽니다. 평소 쓰는 플랫폼 계정(사내 LDAP)으로 로그인해 승인합니다");
+        await pause(4500);
+        await r.browser(async (b) => {
+          await b.login("platform", "dev");
+          await b.go(`${A.platform.url}/axnavi/activate?code=${code}`);
+          await b.caption("플랫폼 승인 화면 — 승인 코드·기기 이름·등록한 기기 수를 확인합니다", "허가(좌석)를 받은 사람만, 한 사람당 기기 2대까지 — 관리자가 언제든 회수");
+          await pause(5000);
+          await b.click("이 기기 승인", { selector: "button" });
+          await b.caption("승인했습니다 — IDE 로 돌아갑니다");
+          await pause(3000);
+        });
+        for (let t = 0; t < 40 && !/AX-NAVI · /.test(await statusText()); t++) await pause(1000);
+        await r.caption("잠금이 풀렸습니다 — 스킬 26개와 판정 엔진을 플랫폼에서 받아 옵니다", "CLI 를 따로 깔지 않아도 IDE 하나로 · 스킬은 기기 표식을 넣은 암호화 캐시로만 남습니다");
+        await pause(7000);
+
+        // ── 2. 스킬 — /find
+        await r.webType("textarea", "/find 사원 목록 조회 기능");
+        await r.caption("스킬 — /find 로 기능 위치 찾기", "에이전트가 전수 색인을 MCP 도구(QueryIndex)로 조회합니다 — 읽기 전용 조회는 승인 없이 바로");
+        await r.press("Enter");
+        await runAgent(r, {}, 150);
+        await r.caption("화면 → JS → 컨트롤러 → SQL → 테이블까지 파일 위치와 함께", "grep 으로 추측하지 않고 색인으로 — 같은 질문에는 같은 근거");
         await pause(6000);
+
+        // ── 3. 변경 리뷰 → AI 로 수정 → 다시 리뷰
         await r.clickSel('[aria-label*="변경 리뷰"]');
-        await r.caption("변경 리뷰 — 상태 표시줄 한 번으로 GO / HOLD / STOP", "CI 와 같은 판정 엔진(AX-NAVI CLI) — 모델 없이 규칙과 색인으로");
+        await r.caption("변경 리뷰 — 상태 표시줄 한 번으로 GO / HOLD / STOP", "CI 와 같은 판정 엔진 — 모델 없이 규칙과 색인으로");
         await pause(9000);
         await r.caption("STOP — SQL 문자열 결합(인젝션 가능) 치명 1건, 머지 차단");
         await pause(3000);
@@ -44,39 +147,30 @@ export const SCENARIOS = {
         await r.webClick("AX-NAVI 로 수정");
         await r.caption("AX-NAVI 로 수정 — 지적을 그대로 에이전트에 넘깁니다", "에이전트는 개발자 본인 Claude 구독(로그인)으로 — 자격 증명은 PC 밖으로 안 나갑니다");
         await pause(3000);
-        // 파일 읽기·수정 승인 — 뜰 때마다 누른다. 끝났다는 표시가 나오거나 3분이 지나면 멈춘다
-        let approvals = 0;
-        for (let t = 0; t < 180; t += 3) {
-          const text = await r.webText();
-          if (/Task Completed|작업 완료/.test(text)) break;
-          // 명령 실행은 연습 저장소의 AX-NAVI 스크립트·색인 조회일 때만 승인하고, 그 밖은 거절한다
-          const run = await r.webFind("Run", { selector: "button, vscode-button", timeout: 500 });
-          if (run) {
-            const chat = text.split("\n---\n")[0].slice(-800);
-            const safe = /axnavi|_workspace|\.claude[\\/]/i.test(chat) && !/\b(rm|del|curl|wget|Invoke-WebRequest|git\s+push)\b/i.test(chat);
-            console.log(`  명령 실행 요청 — ${safe ? "승인" : "거절"}: ${chat.slice(-300).replace(/\s+/g, " ")}`);
-            await pause(1500);
-            if (safe) await r.clickAt(run);
-            else await r.webClick("Deny", { selector: "button, vscode-button", timeout: 500 });
-            await pause(3000);
-            continue;
-          }
-          const btn = (await r.webFind("Approve", { selector: "button, vscode-button", timeout: 500 })) ?? (await r.webFind("Save", { selector: "button, vscode-button", timeout: 500 }));
-          if (btn) {
-            approvals++;
-            if (approvals === 1) await r.caption("파일 읽기·수정은 개발자가 승인합니다", "에이전트가 무엇을 하려는지 보고 Approve");
-            if (approvals === 2) await r.caption("수정안 — 문자열 결합을 바인드 변수(PreparedStatement)로", "바뀐 부분을 diff 로 보고 저장");
-            await pause(1800);
-            await r.clickAt(btn);
-          }
-          await pause(3000);
-        }
+        await runAgent(r, {
+          1: ["파일 읽기·수정은 개발자가 승인합니다", "에이전트가 무엇을 하려는지 보고 승인"],
+          2: ["수정안 — 문자열 결합을 바인드 변수(PreparedStatement)로", "바뀐 부분을 diff 로 보고 저장"],
+        });
         await r.caption("수정이 끝났습니다 — 다시 리뷰합니다");
         await pause(2500);
         await r.clickSel('[aria-label*="리뷰"]');
         await pause(9000);
         await r.caption("다시 리뷰 — 치명 지적이 사라졌습니다", "같은 판정이 머지 요청의 CI 게이트에서도 돌아갑니다");
         await pause(6000);
+
+        // ── 4. 관리자 — 허가와 기기
+        await r.browser(async (b) => {
+          await b.login("platform", "admin");
+          await b.go(`${A.platform.url}/axnavi-seats`);
+          await b.caption("관리자 — AX-NAVI 사용 허가", "누구에게 허가를 줬는지 · 엔진 위치(PC 자동 설치 / 서버만) · 회수하면 그 사람의 기기가 모두 잠깁니다");
+          await pause(5500);
+          await b.click("기기 (", { selector: ".n-tabs-tab, [role=tab], div" });
+          await b.caption("기기 — 방금 승인한 PC 가 보입니다", "기기 이름·운영체제·마지막 확인 시각 · 기기 하나만 폐기할 수도 있습니다");
+          await pause(5000);
+          await b.click("유출본 확인", { selector: ".n-tabs-tab, [role=tab], div" });
+          await b.caption("유출본 확인 — 밖에서 발견된 스킬 문서를 붙여 넣으면", "기기마다 넣은 보이지 않는 표식으로 받은 사람과 기기를 찾습니다");
+          await pause(5000);
+        });
       } finally {
         writeFileSync(file, before);
       }
@@ -193,7 +287,7 @@ export const SCENARIOS = {
   },
 
   platform: {
-    title: "AX Platform — 채팅 · 문서 RAG · Process Studio · 에이전트 · 현업 창구",
+    title: "AX Platform — 채팅 · 문서 RAG · 업무 흐름 개선 · 에이전트 · 현업 창구",
     maxGap: 3,
     async run(r, A) {
       const L = A.platform.url;
@@ -228,9 +322,9 @@ export const SCENARIOS = {
       await r.click("검색", { selector: "button", exact: true });
       await pause(4500);
 
-      // ── Process Studio
+      // ── 업무 흐름 개선
       await r.go(`${L}/process`);
-      await r.caption("Process Studio — 업무 문서에서 As-Is 흐름·Pain point 를 뽑고 To-Be 를 제안");
+      await r.caption("업무 흐름 개선 — 업무 문서에서 As-Is 흐름·Pain point 를 뽑고 To-Be 를 제안");
       await pause(1500);
       await r.click("새 분석", { selector: "button" });
       await r.caption("분석할 업무 문서와 모델을 고르면 시작 — 한 문서에 2~3분", "아래는 '인사 발령 업무 절차서'로 미리 돌려 둔 결과");
@@ -246,8 +340,8 @@ export const SCENARIOS = {
       await r.click("To-Be (AI 제안)", { selector: ".n-tabs-tab" });
       await r.caption("To-Be — AI 제안, 사람이 고쳐 확정합니다");
       await pause(4000);
-      await r.click("Blueprint", { selector: ".n-tabs-tab" });
-      await r.caption("Blueprint — As-Is 와 To-Be 를 나란히, BPMN·Mermaid 로 내보내기");
+      await r.click("설계도(BPMN)", { selector: ".n-tabs-tab" });
+      await r.caption("설계도 — As-Is 와 To-Be 를 나란히, BPMN·Mermaid 로 내보내기");
       await pause(4500);
 
       // ── 에이전트

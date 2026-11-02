@@ -1,3 +1,5 @@
 tools/node_modules/
 offline/
 tools/.demo-prep.json
+tools/.feature-prep.json
+tools/.demo-erp.db

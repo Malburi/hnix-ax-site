@@ -4,7 +4,7 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
 
 <video controls preload="metadata" poster="video/tour.jpg" src="video/tour.mp4" style="width:100%;border-radius:10px;background:#0f1d2b"></video>
 
-> 실제로 띄운 네 제품을 조작하며 녹화한 **전체 투어(13분)**. 제품별 영상과 시연회 진행 순서는 [시연](/demo/README.md), 전체 흐름 그림은 [AI 생태계 워크플로우](/demo/ecosystem.md)에 있다.
+> 실제로 띄운 네 제품을 조작하며 녹화한 **전체 투어(17분 30초)**. 제품별 영상과 시연회 진행 순서는 [시연](/demo/README.md), 전체 흐름 그림은 [AI 생태계 워크플로우](/demo/ecosystem.md)에 있다.
 
 <div class="home-grid">
   <a class="home-card" href="#/platform/README">
@@ -15,7 +15,7 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
   <a class="home-card" href="#/axnavi/README">
     <span class="eyebrow">개발</span>
     <strong>AX-NAVI IDE</strong>
-    <span class="desc">VS Code처럼 쓰는 레거시 개발용 AI IDE. 전수 색인 위에서 채팅으로 찾고 고치고, 변경 리뷰·보안 Findings·단계 게이트·테스트·현대화 레시피까지 같은 판정 엔진으로.</span>
+    <span class="desc">VS Code처럼 쓰는 레거시 개발용 AI IDE. 전수 색인 위에서 채팅으로 찾고 고치고, 변경 리뷰·보안 Findings·단계 게이트·테스트·현대화 레시피까지 같은 판정 엔진으로. 사내 계정으로 승인받은 기기에서만 동작한다.</span>
   </a>
   <a class="home-card" href="#/pmsx/README">
     <span class="eyebrow">관리·운영</span>
@@ -110,7 +110,7 @@ flowchart LR
 | 제품 | 저장소 | 기술 |
 |---|---|---|
 | AX Platform | `Malburi/hnix-ax-platform` (비공개) | TypeScript, Fastify, Vue 3, SQLite·PostgreSQL |
-| AX-NAVI IDE | `Malburi/axnavi-ide` (비공개) | VSCodium 재포장 + Roo Code 포크 확장 |
+| AX-NAVI IDE | `Malburi/axnavi-ide` (비공개) | VSCodium 재포장 + Roo Code 포크 확장 — 로그인(기기 승인), 판정 엔진·스킬은 플랫폼이 배포 |
 | AX-NAVI CLI (판정 엔진) | [Malburi/AX-NAVI-CLI](https://github.com/Malburi/AX-NAVI-CLI) · [문서](https://malburi.github.io/AX-NAVI-CLI/) | Node.js CLI, Claude Code 플러그인 |
 | PMS-X | `Malburi/hnix-pmsx` (비공개) | Spring Boot 3·Java 21, Vue 3, Python 수집기 |
 | AX-DataLake | `Malburi/ax-datalake` (비공개) | TypeScript, Fastify, Vue 3, 내장 SQL 엔진 · Parquet |

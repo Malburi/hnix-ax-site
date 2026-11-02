@@ -1,5 +1,6 @@
 - **시연**
   - [시연 영상과 진행 순서](/demo/README.md)
+  - [기능 전체 영상](/demo/features.md)
   - [AI 생태계 워크플로우](/demo/ecosystem.md)
 
 - **시작하기**
@@ -30,6 +31,7 @@
 - **AX-NAVI IDE**
   - [개요](/axnavi/README.md)
   - [설치와 첫 사용](/axnavi/start.md)
+  - [사용 허가 — 로그인과 기기 승인](/axnavi/license.md)
   - [변경 리뷰와 보안 점검](/axnavi/review.md)
   - [SDLC 산출물과 단계 게이트](/axnavi/sdlc.md)
   - [플랫폼 연동](/axnavi/integration.md)
