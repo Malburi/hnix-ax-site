@@ -12,7 +12,7 @@
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11-01**(`server-kit-20261101`) (비공개 저장소).
+GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11-02**(`server-kit-20261102`) (비공개 저장소).
 
 | 파일 | 크기 | 어디에 |
 |---|---|---|
@@ -22,7 +22,7 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11
 
 | 서버 꾸러미 안 | 내용 |
 |---|---|
-| 설치본 셋 | AX Platform(Node 포함) · AX-DataLake 0.2.1(Node·SQL 엔진 포함) · PMS-X 1.3.2(JRE 21, 시연 데이터) |
+| 설치본 셋 | AX Platform(Node 포함) · AX-DataLake 0.3.0(Node·SQL 엔진 포함) · PMS-X 1.3.3(JRE 21, 시연 데이터) |
 | 사내 모델 | Ollama CPU 판 — 임베딩(문서 RAG)과 CPU 대화 모델 |
 | AX-NAVI CLI · 연습 저장소 | 허브의 `axnavi__` 도구와 자동 점검용 |
 | `server.ps1` · `server.config.json` | 설치·시작·멈춤·상태·내리기, 설정 하나 |
