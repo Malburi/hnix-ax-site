@@ -49,34 +49,24 @@ flowchart LR
 
 ## 내 연결 설정 화면
 
-AX Platform의 **내 연결 설정**에서 상황과 터미널 종류를 고르면, AX-NAVI 환경변수와 Claude Code 텔레메트리 설정이 만들어진다. **필요한 키 발급**을 누르면 수집 키와 게이트웨이 키가 발급되어 설정에 바로 채워진다. Claude 자격 증명은 이 화면에 넣지 않는다.
+AX Platform의 **내 연결 설정**은 세 단계다 — **설치**(서명한 IDE 설치 파일 받기) → **이 서버에 연결**(**AX-NAVI IDE 에서 열기**) → **확인**(연결된 내 기기). 브라우저에서 승인하면 IDE 가 이 PC 전용 키 3개(사내 게이트웨이·사용량 수집·MCP 허브)와 게이트웨이 모델을 플랫폼에서 받아 'AX-NAVI 사내 게이트웨이' 프로필·MCP 허브 `hnix-ax`·사용량 기록을 스스로 설정한다. 기기를 끊거나 허가를 회수하면 그 키도 함께 꺼진다. Claude 자격 증명은 이 화면에 넣지 않는다.
+
+IDE 없이 Claude Code 만 쓰는 사람은 접어 둔 **고급**에서 수집·게이트웨이 키를 발급해 `settings.json`·환경 변수 조각을 받는다.
 
 <figure>
-  <img src="img/platform-setup.png" alt="내 연결 설정 화면 — 상황 선택, AX-NAVI 설정, Claude Code 텔레메트리, 관리자용 정책 생성기">
-  <figcaption>내 연결 설정. 관리자에게는 조직 정책 파일과 Claude Code 관리 설정 생성기가 함께 보인다.</figcaption>
+  <img src="img/platform-setup.png" alt="내 연결 설정 화면 — 설치, 이 서버에 연결, 확인 세 단계와 접어 둔 고급·관리자 칸">
+  <figcaption>내 연결 설정. 관리자에게는 조용한 일괄 설치 명령, 조직 정책 파일, Claude Code 관리 설정 생성기가 함께 보인다.</figcaption>
 </figure>
 
-### 상황별 설정 예
+### 상황별로 할 일
 
-**구독·좌석** — 한 번 로그인하고, 선호 경로와 사용량 전송만 넣는다.
+| 가진 것 | IDE 에서 할 일 |
+| --- | --- |
+| 아무것도 없음 | 없음 — 로그인하면 사내 게이트웨이로 바로 쓴다. 비용은 조직에 잡힌다 |
+| Claude 구독·좌석 | PC 에 Claude Code 를 깔고 터미널에서 `claude` 를 한 번 실행해 로그인 — IDE 가 구독을 먼저 쓰고, 안 될 때만 사내 게이트웨이로 |
+| Anthropic API 키 | IDE 의 AI 설정에서 'AX-NAVI API 키' 프로필에 키를 넣는다 |
 
-```powershell
-claude      # 브라우저가 열리면 로그인
-[Environment]::SetEnvironmentVariable("AXNAVI_AUTH", "subscription", "User")
-[Environment]::SetEnvironmentVariable("HNIX_AX_SERVER", "http://ax-platform:8700", "User")
-[Environment]::SetEnvironmentVariable("HNIX_AX_KEY", "hx-<수집 키>", "User")
-```
-
-로그인 창을 띄울 수 없는 CI에서는 본인이 `claude setup-token`으로 만든 토큰을 그 작업의 비밀 변수 `CLAUDE_CODE_OAUTH_TOKEN`에 넣는다.
-
-**아무것도 없음** — 사내 게이트웨이로 쓴다. 비용은 조직에 잡힌다.
-
-```bash
-export AXNAVI_AUTH="gateway"
-export AXNAVI_OPENAI_BASE_URL="http://ax-platform:8700/v1"
-export AXNAVI_OPENAI_API_KEY="hx-<게이트웨이 키>"
-export AXNAVI_OPENAI_MODEL="hnix-claude"
-```
+로그인 창을 띄울 수 없는 CI에서는 본인이 `claude setup-token`으로 만든 토큰을 그 작업의 비밀 변수 `CLAUDE_CODE_OAUTH_TOKEN`에 넣는다. 예전처럼 환경 변수(`AXNAVI_AUTH`·`AXNAVI_OPENAI_*`·`HNIX_AX_*`)를 넣어 두었다면 그 값이 먼저 쓰인다 — 새로 받은 연결을 쓰려면 지운다.
 
 ## 조직 정책
 

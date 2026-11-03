@@ -5,8 +5,8 @@
 ```
 [사용자 PC]                           [중앙 서버 1대 — 서버판 꾸러미]
  브라우저 ─────────────────────────▶  AX Platform  :8700  게이트웨이 · MCP 허브 · 에이전트 · Insight
- 개발자: AX-NAVI IDE + CLI ────────▶  PMS-X        :8080  서비스 요청 · As-Is 분석 · SM (시연 데이터)
-   (client 꾸러미로 연결,              AX-DataLake  :8790  레이크 · 온톨로지 · 거버넌스
+ 개발자: AX-NAVI IDE ─────────────▶  PMS-X        :8080  서비스 요청 · As-Is 분석 · SM (시연 데이터)
+   (설치 → 로그인하면 연결 끝,         AX-DataLake  :8790  레이크 · 온톨로지 · 거버넌스
     Claude 구독은 각자 로그인)         사내 모델     :11434 Ollama — 서버 안에서만
 ```
 
@@ -14,11 +14,13 @@
 
 GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11-02**(`server-kit-20261102`) (비공개 저장소).
 
+설치 파일은 **서버 PC 용**과 **개인 PC 용** 두 가지다. 둘 다 회사 코드 서명이 된 설치 프로그램이다.
+
 | 파일 | 크기 | 어디에 |
 |---|---|---|
-| `hnix-ax-server-kit-<날짜>.zip` | 약 450MB | 서버 |
-| `ollama-model-qwen2.5-3b.zip` · `ollama-model-nomic-embed-text-latest.zip` | 약 1.8GB · 240MB | 서버 `packages\`에 풀지 않고 넣는다(`e2e-kit-20261028` 릴리스) |
-| `hnix-ax-client-<날짜>.zip` | 약 420MB | 개발자 PC마다 |
+| `HNIX-AX-Server-Setup-<날짜>.exe` | 약 650MB | **서버 PC** — 네 제품 설치·서비스·방화벽 |
+| `ollama-model-qwen2.5-3b.zip` · `ollama-model-nomic-embed-text-latest.zip` | 약 1.8GB · 240MB | 서버 — 서버 설치 파일과 **같은 폴더**에 둔다(`e2e-kit-20261028` 릴리스) |
+| `HNIX-AX-PC-Setup-<판>.exe` | 약 200MB | **개인 PC** — AX-NAVI IDE + 회사 연결. 서버에도 들어 있어 플랫폼 `내 연결 설정`에서 받는다 |
 
 | 서버 꾸러미 안 | 내용 |
 |---|---|
@@ -36,17 +38,16 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11
 | 메모리 | 32GB 권장, 최소 16GB |
 | 디스크 | 여유 100GB 권장(최소 20GB) |
 | 네트워크 | 사용자 PC → 서버 8700·8080·8790 |
-| 권한 | 관리자 PowerShell(서비스 등록·방화벽) |
+| 권한 | 관리자(서비스 등록·방화벽) — 설치 프로그램이 묻는다 |
 
-## 설치
+## 서버 PC 설치
 
-```powershell
-# 1) D:\hnix-ax-server 처럼 짧은 영문 경로에 푼다 — 이 폴더가 곧 설치 위치다
-# 2) 모델 zip 두 개를 packages\ 에 넣는다
-# 3) server.config.json — 주소·포트·비밀번호(비워 두면 만들어 적는다)·모델
-# 4) 관리자 PowerShell
-powershell -ExecutionPolicy Bypass -File server.ps1 install
-```
+1. `HNIX-AX-Server-Setup-<날짜>.exe` 와 모델 zip 두 개를 한 폴더에 두고 설치 파일을 실행한다.
+2. 설치 위치(기본 `C:\HNIX-AX` — 짧은 영문 경로), **접속 주소와 포트**(비우면 이 서버의 IP), 접속 허용 대역(선택)을 넣는다. 다시 설치하면 지난 값이 채워져 있다.
+3. '설치를 마치면 바로 서버 설치·시작'을 켜 두면 진행 창이 열려 아래 순서를 끝까지 돈다(처음에는 10분 넘게).
+4. 관리자 계정·비밀번호는 설치 폴더의 `server.config.json` 에 있다.
+
+화면 없이 깔 때: `HNIX-AX-Server-Setup-<날짜>.exe /VERYSILENT /ADDRESS=ax-test.corp.local /SUBNETS=10.20.30.0/24`. 제거('앱 및 기능')는 서비스·방화벽 규칙을 내리고 프로그램을 지우며, 데이터와 `server.config.json` 은 남긴다.
 
 | 순서 | 하는 일 |
 |---|---|
@@ -58,6 +59,7 @@ powershell -ExecutionPolicy Bypass -File server.ps1 install
 | 6 | PMS-X — 서비스(시연 프로필), AI 보조는 게이트웨이로 |
 | 7 | MCP 허브 — PMS-X·AX-NAVI·레이크 도구, 승인 정책, 에이전트, 문서 RAG |
 | 8 | Windows 방화벽 — 세 포트 인바운드 허용(도메인·개인 네트워크) |
+| 9 | 개인 PC 설치 파일을 플랫폼 내려받기 폴더에 — 개발자는 `내 연결 설정`에서 받는다 |
 
 다시 돌려도 된다 — 있는 것은 그대로, 빠진 것만 채운다. 끝나면 `관리 › 현장 연결 점검`에서 '연결 시험 포함 점검'으로 확인한다([고객사 설치와 연결 점검](/getting-started/onsite.md)과 같은 화면).
 
@@ -82,14 +84,15 @@ powershell -ExecutionPolicy Bypass -File server.ps1 install
 
 ## 개발자 PC 잇기
 
-```powershell
-# client 꾸러미 폴더에서 — 관리자 권한 불필요
-powershell -ExecutionPolicy Bypass -File connect-client.ps1 -Server http://<서버>:8700
-```
+개발자 PC 에서는 스크립트를 돌리지 않는다. 서버를 설치하면 개인 PC 설치 파일이 플랫폼에 올라가고, 각자 브라우저로 플랫폼에 로그인해 **내 연결 설정**에서:
 
-AX-NAVI IDE·CLI를 설치하고, 본인 플랫폼 계정으로 로그인해 **본인 키 3개**(사용량 수집·게이트웨이·MCP 허브)를 받는다. 받은 키는 사용자 환경 변수와 IDE MCP 설정(`hnix-ax`)에 넣고, AX-NAVI 조직 설정도 받는다. 키 원문은 화면에 찍지 않는다. 사용량·도구 호출은 키 주인의 권한과 예산으로 기록된다. Claude 구독이 있으면 IDE에서 각자 로그인한다([Claude 연결](/getting-started/connect.md)).
+1. **AX-NAVI IDE 받기** → 설치(관리자 권한 불필요, 코드 서명된 설치 파일)
+2. **AX-NAVI IDE 에서 열기** → **연결**
+3. 브라우저 승인 화면에서 **승인**
 
-`-Check`를 붙이면 서버 응답과 로그인만 확인하고 아무것도 바꾸지 않는다.
+승인하면 IDE 가 그 PC 전용 키 3개(사용량 수집·게이트웨이·MCP 허브)와 엔진·스킬을 받아 스스로 설정한다. 사용량·도구 호출은 키 주인의 권한과 예산으로 기록되고, 기기를 끊으면 키도 함께 꺼진다. Claude 구독이 있으면 각자 `claude` 로 로그인한다([Claude 연결](/getting-started/connect.md)).
+
+여러 PC 에 한꺼번에 깔 때는 `HNIX-AX-PC-Setup-<판>.exe /VERYSILENT /SERVER=http://<서버>:8700`. 보안 프로그램이 IDE 를 막거나 지우면 [설치와 첫 사용](/axnavi/start.md)의 '보안 프로그램이 막거나 지울 때'를 본다.
 
 ## 운영
 
@@ -102,7 +105,7 @@ tools\node\node.exe scripts\smoke.mjs   # 자동 점검 21단계 — 시험 기�
 
 - PMS-X 시연 계정(`admin`·`op.seo`·`customer` 등)은 비밀번호가 알려져 있다. 사내망에 열면 바꾼다. `admin`·`op.seo`(허브가 PMS-X를 읽는 서비스 계정)를 바꿨으면 `server.config.json`의 `pmsx.adminPassword`·`serviceAccountPassword`에도 적고 `install`을 다시 돌린다.
 - 사내 AD 로그인은 플랫폼 `auth.ldap`([설치와 운영](/platform/operations.md)).
-- 관리자 권한 없이 시험만 하려면 `server.ps1 install -NoService`. 지금 로그인한 사용자로 띄우고 방화벽은 열지 않는다.
+- 관리자 권한 없이 시험만 하려면 설치 프로그램에서 '현재 사용자만'을 고른다(`server.ps1 install -NoService` 와 같다). 지금 로그인한 사용자로 띄우고 방화벽은 열지 않는다.
 
 ## 확인한 것
 

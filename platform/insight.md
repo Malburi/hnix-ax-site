@@ -9,7 +9,7 @@
 | LLM 게이트웨이 | 자동 | 로컬 모델은 0원으로 집계 |
 | Claude Code (구독·키 모두) | 텔레메트리(OTLP/HTTP JSON) → `/v1/logs` | 모델 호출·실패·도구 호출. 본문은 오지 않는다 |
 | Claude Code 세션 기록 | `hnix-ax collect` 또는 서버 폴더 스캔 | 서브에이전트 포함, 요청 ID로 중복 제거 |
-| AX-NAVI | 실행 요약 전송(`HNIX_AX_SERVER`·`HNIX_AX_KEY`) | 에이전트·소요 시간·결과·작업번호 |
+| AX-NAVI IDE | 실행 요약 전송 — 로그인하면 자동(기기 전용 수집 키) | 에이전트·소요 시간·결과·작업번호 |
 | 에이전트 실행기·MCP 허브 | 자동 | 실행과 도구 호출 |
 
 ## Claude Code 텔레메트리
@@ -29,7 +29,9 @@
 }
 ```
 
-- 개인은 `~/.claude/settings.json`의 `env`에 넣는다. **내 연결 설정** 화면이 키까지 채워 준다.
+- **개인 PC 는 자동이다.** 개인 PC 설치 파일로 깐 AX-NAVI IDE 가 플랫폼에 로그인하면 이 값을 그 PC 전용 수집 키로 `~/.claude/settings.json` 의 `env` 에 넣는다(사람이 넣은 다른 설정은 그대로, 로그아웃하면 지운다). 끄려면 IDE 설정 `axnavi.claudeCode.autoConfigure`.
+- IDE 채팅이 구독(Claude Code)으로 돌 때는 Claude Code 가 보낸 사용량으로 센다 — IDE 의 실행 요약에는 토큰을 싣지 않아 두 번 세지 않는다.
+- IDE 없이 Claude Code 만 쓰는 곳(서버·CI)은 **내 연결 설정** › 고급에서 키를 발급해 같은 내용을 넣는다.
 - 전 직원에게는 같은 내용을 Claude Code **관리 설정(managed settings)**으로 배포하고, 키만 조직 수집 키(`ingest_org`)로 바꾼다. 관리 설정의 OTel 값은 개발자가 바꿀 수 없다.
 - 옮기는 것은 `api_request`(토큰·캐시·비용), `api_error`, `tool_result`뿐이다. 프롬프트·응답 본문은 Claude Code가 기본으로 가리고, 플랫폼도 저장하지 않는다.
 - `request_id`가 세션 기록의 요청 ID와 같아서, 텔레메트리와 세션 기록 수집을 함께 써도 두 번 세지 않는다.

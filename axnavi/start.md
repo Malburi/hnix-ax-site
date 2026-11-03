@@ -4,8 +4,13 @@
 
 **AX-NAVI IDE** (Windows x64)
 
-1. 배포 zip(`AX-NAVI-IDE-win32-x64-<버전>.zip`)을 풀고 `설치.cmd`를 더블클릭한다. 관리자 권한은 필요 없다.
-2. 시작 메뉴에서 **AX-NAVI IDE**를 실행한다.
+1. AX Platform 에 로그인해 **내 연결 설정** › **개인 PC 설치 파일 받기** — 회사 코드 서명이 된 설치 파일(`HNIX-AX-PC-Setup-<버전>.exe`)을 실행한다. 관리자 권한은 필요 없다.
+2. 같은 화면의 **AX-NAVI IDE 에서 열기** → IDE 가 '이 플랫폼에 연결할까요?'를 물으면 **연결** → 브라우저 승인 화면에서 **승인**.
+3. 끝. IDE 가 플랫폼에서 이 PC 전용 연결(사내 모델 게이트웨이·사용량 기록·MCP 허브 키)과 AX-NAVI 엔진·스킬을 받아 스스로 설정한다. PC 에 Claude Code 가 있으면 Claude Code 의 사용량 전송과 MCP 허브(`hnix-ax`)도 넣는다. 키·환경 변수를 손으로 넣지 않는다.
+
+설치 화면에서 회사 플랫폼 주소를 물으면 '내 연결 설정'에 보이는 주소를 넣는다(비워 두면 IDE 를 처음 열 때 묻는다).
+
+버튼을 쓸 수 없으면 IDE 상태 표시줄의 **AX-NAVI 연결**을 눌러 플랫폼 주소를 넣는다.
 
 | 설치하면 | 위치 |
 |---|---|
@@ -14,14 +19,18 @@
 | 명령 | `axnavi-ide` (PATH에 추가) |
 | 설정·확장 | `%USERPROFILE%\.axnavi-ide`, `%APPDATA%\AX-NAVI IDE` — VS Code와 따로 저장 |
 
-설치 옵션은 PowerShell로 줄 수 있다.
+여러 PC 에 한꺼번에 깔 때(관리자):
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1 -InstallDir "D:\Tools\AX-NAVI IDE" -NoDesktopShortcut
-# -NoPath  PATH에 넣지 않음   -NoKorean  한국어 언어 팩을 넣지 않음
+HNIX-AX-PC-Setup-<버전>.exe /VERYSILENT /SERVER=http://<플랫폼>:8700            # 사용자별 설치
+HNIX-AX-PC-Setup-<버전>.exe /VERYSILENT /ALLUSERS /SERVER=http://<플랫폼>:8700  # PC 공용(Program Files)
 ```
 
-제거는 "앱 및 기능"에서 하거나 설치 폴더의 `uninstall.ps1`을 실행한다. `-Purge`를 붙이면 사용자 데이터까지 지운다.
+`/SERVER` 를 주면 플랫폼 주소까지 넣어 두어, 사용자는 IDE 를 열어 승인만 누른다. 제거는 "앱 및 기능"에서 한다. 예전 판(zip + `설치.cmd`)으로 깐 PC 도 새 설치 파일로 덮어 설치하면 된다.
+
+### 보안 프로그램이 막거나 지울 때
+
+1.2.0 부터 실행 파일과 설치 파일이 모두 코드 서명되어 있다. 그래도 사내 보안 프로그램(백신·EDR·응용 프로그램 통제)이 막으면, 보안 담당자에게 빌드와 함께 나오는 `AX-NAVI-IDE-<버전>-보안검토.md`(설치 위치·실행 프로세스·통신 대상·인증서 지문)와 `-hashes.csv` 를 주고 **게시자(코드 서명 인증서) 기준 예외**를 요청한다. 게시자 기준이면 판이 바뀌어도 다시 등록하지 않는다. 사내에서 직접 만든 인증서로 서명했다면 그 인증서(.cer)를 그룹 정책으로 PC 의 '신뢰할 수 있는 루트 인증 기관'과 '신뢰할 수 있는 게시자'에 먼저 배포해야 한다.
 
 **쓰던 VS Code에 넣기**
 
