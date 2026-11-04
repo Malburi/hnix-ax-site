@@ -12,14 +12,15 @@
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11-02**(`server-kit-20261102`) (비공개 저장소).
+GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11-04**(`server-kit-20261104`) (비공개 저장소).
 
 설치 파일은 **서버 PC 용**과 **개인 PC 용** 두 가지다. 둘 다 회사 코드 서명이 된 설치 프로그램이다.
 
 | 파일 | 크기 | 어디에 |
 |---|---|---|
 | `HNIX-AX-Server-Setup-<날짜>.exe` | 약 650MB | **서버 PC** — 네 제품 설치·서비스·방화벽 |
-| `ollama-model-qwen2.5-3b.zip` · `ollama-model-nomic-embed-text-latest.zip` | 약 1.8GB · 240MB | 서버 — 서버 설치 파일과 **같은 폴더**에 둔다(`e2e-kit-20261028` 릴리스) |
+| `ollama-model-qwen2.5-3b.zip` · `ollama-model-nomic-embed-text-latest.zip` | 약 1.8GB · 260MB | 서버 — 서버 설치 파일과 **같은 폴더**에 둔다(설치 프로그램이 함께 넣는다) |
+| `ollama-model-qwen3.5-4b.zip.001`·`.002` · `ollama-model-qwen3.5-2b.zip.001`·`.002` | 약 3.2GB · 2.6GB | 선택 — 다른 대화 모델. 2GB 가 넘어 조각으로 나뉘어 있다(조각을 모두 같은 폴더에). 고르는 법은 [서버 PC 설치](https://malburi.github.io/hnix-ax-site/#/getting-started/install-server) 4번 |
 | `HNIX-AX-PC-Setup-<판>.exe` | 약 200MB | **개인 PC** — AX-NAVI IDE + 회사 연결. 서버에도 들어 있어 플랫폼 `내 연결 설정`에서 받는다 |
 
 | 서버 꾸러미 안 | 내용 |

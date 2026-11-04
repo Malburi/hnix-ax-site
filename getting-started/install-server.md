@@ -26,8 +26,10 @@
 | 파일 | 크기 | 설명 |
 |---|---|---|
 | `HNIX-AX-Server-Setup-<날짜>.exe` | 약 650MB | 서버 설치 프로그램(코드 서명) |
-| `ollama-model-qwen2.5-3b.zip` | 약 1.8GB | 사내 대화 모델 — 설치 프로그램이 같은 폴더에서 찾아 넣는다 |
-| `ollama-model-nomic-embed-text-latest.zip` | 약 240MB | 문서 검색(임베딩) 모델 |
+| `ollama-model-qwen2.5-3b.zip` | 약 1.8GB | 사내 대화 모델(기본) — 설치 프로그램이 같은 폴더에서 찾아 넣는다 |
+| `ollama-model-nomic-embed-text-latest.zip` | 약 260MB | 문서 검색(임베딩) 모델 |
+| `ollama-model-qwen3.5-4b.zip.001` · `.002` | 약 3.2GB | 선택 — 더 나은 한국어 대화 모델(아래 4번 '대화 모델 고르기') |
+| `ollama-model-qwen3.5-2b.zip.001` · `.002` | 약 2.6GB | 선택 — 가벼운 대화 모델 |
 | `SHA256SUMS.txt` | — | 받은 파일 확인(선택) |
 
 ## 2. 설치
@@ -89,6 +91,16 @@ tools\node\node.exe scripts\smoke.mjs     # 자동 점검 21단계(시험 기록
 | AX-NAVI 사용 허가(좌석) | 플랫폼 **AX-NAVI › 사용 허가**에서 IDE 를 쓸 사람에게 허가 |
 | 사내 AD 로그인 | 플랫폼 설정 `auth.ldap`([설치와 운영](https://malburi.github.io/hnix-ax-site/#/platform/operations)) |
 
+**대화 모델 고르기** — 사내망에서는 `ollama pull` 이 막혀 있으므로 모델은 릴리스의 `ollama-model-*` 파일로 넣는다. 2GB 가 넘는 모델은 `.zip.001`·`.002` 조각으로 나뉘어 있다. 조각을 **모두** 받아 설치 파일과 같은 폴더에 두면 설치가 이어 붙여 넣는다.
+
+| 모델 | CPU 답 속도(짧은 답) | 메모리 | 쓰임 |
+|---|---|---|---|
+| `qwen2.5:3b`(기본) | 약 8초 | 약 2.5GB | 흐름 확인용. 자동 점검 21단계를 이 모델로 확인했다 |
+| `qwen3.5:2b` | 약 13초 | 약 3GB | 가벼운 대안 |
+| `qwen3.5:4b` | 약 18초 | 약 4GB | 한국어 답이 가장 자연스럽다. 메모리 32GB 서버 권장 |
+
+바꾸려면 `server.config.json` 의 `model.chatModel` 을 `qwen3.5:4b`(또는 `qwen3.5:2b`)로 고치고 설치를 다시 돌린다(`server.ps1 install`). 게이트웨이 별칭 `hnix-local`·`hnix-smart` 의 사내 모델이 새 모델로 바뀐다. qwen3.5 는 원래 답하기 전에 '생각'을 길게 해서 CPU 에선 답이 빈다 — 게이트웨이가 사내 Ollama 의 qwen3 계열에는 생각을 꺼서 보낸다. 속도는 이 개발 PC(노트북 CPU) 기준이다.
+
 ## 5. 개인 PC 에 배포하기
 
 개인 PC 에서는 스크립트를 돌리지 않는다. 각자 브라우저로 플랫폼에 로그인해 **내 연결 설정**에서 설치 파일을 받으면 된다([개인 PC 설치 가이드](https://malburi.github.io/hnix-ax-site/#/getting-started/install-pc)).
@@ -139,6 +151,8 @@ powershell -ExecutionPolicy RemoteSigned -File server.ps1 start       # 모두 �
 | 다른 PC 에서 안 열림 | 서버에서는 열리는가(`server.ps1 status`) → Windows 방화벽 규칙 `HNIX AX *` → 사내 방화벽·라우팅 → 개인 PC 의 프록시 예외 |
 | 포트 사용 중 | 설치 프로그램을 다시 실행해 포트를 바꾼다 |
 | PMS-X 가 3분 넘게 안 뜸 | `apps\pmsx\pmsx-*\logs`, 메모리. 처음에는 시연 데이터를 채우느라 오래 걸린다 |
-| AI 답이 엉뚱함 | CPU 3B 모델의 한계 — GPU 서버나 조직 API 키(`server.config.json` 의 `model.gpu`) |
+| AI 답이 엉뚱함 | CPU 작은 모델의 한계 — `qwen3.5:4b`(위 4번), GPU 서버(`server.config.json` 의 `model.gpu`)나 조직 API 키 |
+| 설치 중 '모델 … 을 풀지 못했습니다' | `.zip.001`·`.002` 조각 중 하나가 없거나 받다가 끊겼다 — `SHA256SUMS.txt` 와 대조해 다시 받는다 |
+| '모델 … 이 없습니다 — 인터넷으로 받습니다' 뒤 멈춤 | `model.chatModel` 에 적은 모델의 `ollama-model-*` 파일이 설치 폴더 옆에 없다 |
 | 설치 파일이 실행되자마자 지워짐 | 보안 프로그램 — 위 6번 |
 | 진행 창에서 스크립트 실행이 막힘 | 그룹 정책이 '서명된 스크립트만'이면 서명 인증서를 신뢰 목록에 넣거나 보안 담당자와 실행 정책을 맞춘다 |
