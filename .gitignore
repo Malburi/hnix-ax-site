@@ -4,3 +4,4 @@ tools/.demo-prep.json
 tools/.feature-prep.json
 tools/.scenario-prep.json
 tools/.demo-erp.db
+tools/.demo-servers.json

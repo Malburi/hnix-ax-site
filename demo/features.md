@@ -3,9 +3,9 @@
 네 제품의 **메뉴·탭·버튼을 하나씩 실제로 써 보는** 장별 영상이다. [시연 영상](/demo/README.md)이 이야기 흐름으로 핵심만 보여 준다면, 이 쪽은 기능을 빠짐없이 훑는다. 모두 실제로 띄운 제품(E2E 환경)을 조작하며 녹화했고, 화면 아래 자막은 녹화할 때 덧그린 설명, 주황 물결은 누른 곳이다. 모델이 답하는 장면은 사내 로컬 모델(`hnix-local`)이 그 자리에서 낸 답이다.
 
 <!-- CHAPTERS -->
-모두 56분 54초. [AX Platform](#ax-platform) · [PMS-X](#pms-x) · [AX-NAVI IDE](#ax-navi-ide) · [AX-DataLake](#ax-datalake)
+모두 65분 59초. [AX Platform](#ax-platform) · [PMS-X](#pms-x) · [AX-NAVI IDE](#ax-navi-ide) · [AX-DataLake](#ax-datalake)
 
-## AX Platform — 9장 · 17분 18초
+## AX Platform — 12장 · 26분 24초
 
 공통 AI 기반 — 모든 AI 호출·도구 호출·현업 문의가 지나는 곳.
 
@@ -82,6 +82,31 @@
 - **AX-NAVI 조직 설정** — 묶음 파일, 대상·우선순위, 배포 이력 · **사용 허가** — 허가·기기·유출본 확인
 - **사용자** · **워크스페이스**(멤버) · **감사 로그**(거르기)
 - **현장 연결 점검** — 연결 시험 포함 점검
+
+### 10. 자동화 흐름 — 캔버스 · 노드 · 판 기록 · 사람 확인 · 실행 디버거 (3분 24초)
+
+<video controls preload="none" poster="video/features/platform-10.jpg" src="video/features/platform-10.mp4" style="width:100%;border-radius:10px"></video>
+
+- **자동화 흐름** — 예시 흐름 '서비스 요청 분류·처리' 편집기: 모델 질문 · 조건 분기 · 에이전트 실행 · 사람 확인 노드 설정, **판 기록**, 트리거
+- 현업 담당자(dev1)가 **시험 실행**(자세히 기록) → 담당자 확인에서 멈춤 → 관리자가 **승인함**에서 승인 → 자동으로 이어 감
+- **실행 디버거** — 폭포형 단계, 모델 단계의 보낸 글·답, 도구 인자·결과, 사람 확인 · 에이전트 실행도 같은 디버거로
+
+### 11. 에이전트 평가 — 시험 문항 · 확인 항목 · 일괄 실행 · 이전 평가와 비교 (1분 21초)
+
+<video controls preload="none" poster="video/features/platform-11.jpg" src="video/features/platform-11.mp4" style="width:100%;border-radius:10px"></video>
+
+- **에이전트 평가** — sm-helper 시험 문항 4개(도구 사용·SR 번호 정규식·턴·범위 밖 질문·모델 채점), 문항 편집
+- 지난 평가 결과와 문항별 이유, 문항의 **디버거**
+- **평가 실행** → **이전과 비교**(통과율·점수·지연·토큰, 문항마다 좋아짐·나빠짐) — 사내 3B 모델의 답 흔들림이 그대로 드러남
+
+### 12. 업무 시스템 연결 · 외부 에이전트 가져오기 · 말로 묻기 (4분 21초)
+
+<video controls preload="none" poster="video/features/platform-12.jpg" src="video/features/platform-12.mp4" style="width:100%;border-radius:10px"></video>
+
+- **업무 시스템 연결** — SAP(OData) 연결: 주소·계정 → 연결 시험 → 도구·기본 정책(조회 허용·쓰기 승인 필요) → 허브 등록
+- **일반 REST** — OpenAPI 문서를 읽어 operation 고르기, API 키 헤더 → 연결 시험 → 저장 · MCP 허브 서버 목록
+- **외부 에이전트 가져오기** — LangGraph 서버(구매 담당 에이전트) → 연결 시험 → 공개 → 실행과 디버거의 '외부 에이전트' 단계
+- **음성** — 게이트웨이 음성 인식 별칭(voice-stt), 현업 창구에서 마이크로 묻기 → 사내 음성 인식(whisper) → 매뉴얼 근거 답
 
 ## PMS-X — 8장 · 12분 17초
 
@@ -211,6 +236,9 @@ SI 구축 관리와 SM 운영 — As-Is 분석, 일정·자원, 산출물·품�
 ```powershell
 node tools/demo-prep.mjs        # 현업 창구·업무 흐름 개선·퀴즈·Kafka 토픽
 node tools/feature-prep.mjs     # 승인함 대기 건·라우트·예산·사내 개인정보 규칙·원본 연결(ERP 계약)
+node tools/demo-servers.mjs     # (⑩~⑫) 시험용 SAP·사내 REST·구매 담당 에이전트 — 따로 띄워 둔다
+# (⑫ 음성) OpenAI 호환 음성 인식 서버를 http://127.0.0.1:8796/v1 에 띄운다(예: faster-whisper small)
+node tools/feature-prep-ai.mjs  # 음성 인식 별칭·창구 음성·예시 흐름·평가 문항과 기준 평가, 녹화에서 새로 만들 것 정리
 node tools/record-demo.mjs --scenarios feature-scenarios.mjs --scenario "platform-*" --out video/features
 node tools/make-features.mjs    # 길이·포스터·이 쪽의 장 목록
 ```

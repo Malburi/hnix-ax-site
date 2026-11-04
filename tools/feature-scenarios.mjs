@@ -671,6 +671,273 @@ export const SCENARIOS = {
     },
   },
 
+  "platform-10": {
+    title: "AX Platform ⑩ 자동화 흐름 — 캔버스 · 노드 · 판 기록 · 사람 확인 · 실행 디버거",
+    maxGap: 3,
+    async run(r) {
+      await r.login("platform", "admin");
+      await r.go(`${L}/flows`);
+      await r.caption("자동화 흐름 — 정해진 순서대로 실행", "에이전트가 알아서 판단하는 것과 달리, 흐름은 설계한 길만 갑니다 · 모델은 게이트웨이, 도구는 MCP 허브, 사람 확인은 승인함");
+      await pause(4500);
+      await clickNear(r, "서비스 요청 분류·처리", "열기", { after: 2500 });
+      await r.caption("편집기 — 노드를 끌어다 놓고 선으로 잇습니다", "새 서비스 요청 → 모델이 유형 분류 → 갈래(장애·문의·기타) → 담당 에이전트 / 지식 문서 검색 → 담당자 확인 → 끝");
+      await pause(5500);
+      await r.click("유형 분류", { selector: ".vue-flow__node", after: 1500 });
+      await r.caption("모델 질문 노드 — 게이트웨이 별칭 · 지시문 · 프롬프트 템플릿 · 결과를 담을 변수", "{{title}} 같은 자리에 앞 단계 값이 들어갑니다 · JSON 으로 받아 다음 노드에서 category.type 처럼 씁니다");
+      await pause(5500);
+      await r.click("유형별 갈래", { selector: ".vue-flow__node", after: 1500 });
+      await r.caption("조건 분기 — 규칙(category.type = 장애 · 문의)마다 갈래, 나머지는 '그 외'", "규칙 대신 모델에게 고르게 할 수도 있습니다");
+      await pause(5000);
+      await r.click("장애 담당 에이전트", { selector: ".vue-flow__node", after: 1500 });
+      await r.caption("에이전트 실행 노드 — 이미 만든 에이전트(alert-triage)를 흐름 한 단계로", "에이전트 안의 도구 호출도 같은 권한·정책·승인을 지납니다");
+      await pause(4500);
+      await r.click("담당자 확인", { selector: ".vue-flow__node", after: 1500 });
+      await r.caption("사람 확인 — 승인함에 올라가 결정을 기다립니다", "승인하면 '승인' 출구로, 거부하면 '거부' 출구로 · 실행한 사람은 스스로 승인할 수 없습니다");
+      await pause(5000);
+      await r.caption("노드 9종 — 모델 질문 · 도구 호출 · 에이전트 실행 · 조건 분기 · 반복 · 사람 확인 · 변수 정하기 · 시작 · 끝", "저장할 때마다 검증 — 끊긴 선·빠진 값은 '고칠 곳'으로 표시");
+      await pause(5000);
+      await r.click("판 기록", { selector: "button", exact: true, after: 1500 });
+      await r.caption("판 기록 — 저장할 때마다 판이 쌓입니다", "실행은 그때의 판으로 돌고, 옛 판을 불러와 되돌릴 수 있습니다");
+      await pause(4000);
+      await closeModal(r);
+      await down(r, 700);
+      await r.caption("트리거 — 사람 대신 흐름을 깨웁니다", "웹훅(경보·CI) · 예약 · 감시 · 다른 곳에서는 MCP 도구 flows__run, REST POST /api/v1/flows/<id>/runs");
+      await pause(4500);
+
+      // ── 현업 담당자(dev1)가 실행 → 사람 확인 대기
+      await r.login("platform", "dev");
+      await r.go(`${L}/flows`);
+      await clickNear(r, "서비스 요청 분류·처리", "열기", { after: 2500 });
+      await r.caption("현업 담당자(dev1)가 흐름을 실행합니다 — 시험 실행", "공개된 흐름은 보기·실행만 · 고치는 것은 만든 사람과 관리자");
+      await pause(3000);
+      await r.clickSel("[data-test=flow-test-run]", 1500);
+      await r.type("css:[data-test=flow-run-input-title] textarea", "사원 조회에 퇴사자가 같이 나와요", { delay: 45 });
+      await r.type("css:[data-test=flow-run-input-body] textarea", "인사팀에서 사원 조회 화면을 열면 퇴사한 사람까지 함께 나온다고 문의했습니다. 재직자만 보이게 하는 방법을 알려 주세요.", { delay: 18 });
+      await r.click("자세히 기록 (이번 실행)", { selector: ".n-checkbox", after: 600 });
+      await r.caption("입력값 · '자세히 기록'을 켜면 단계마다 보낸 글·받은 답을 남깁니다", "개인정보는 게이트웨이 규칙으로 가린 뒤 보관 기한(기본 7일)까지");
+      await pause(3000);
+      await r.clickSel("[data-test=flow-run-start]", 1500);
+      await r.waitFor("!!document.querySelector('[data-test=flow-run-result]') && /사람 확인 대기|승인함에서 결정/.test(document.querySelector('[data-test=flow-run-result]').innerText)", 120000);
+      await pause(1200);
+      await r.caption("모델이 '문의'로 분류 → 지식 문서 검색 → 담당자 확인에서 멈춤", "캔버스에 지나간 노드가 표시되고, 아래 실행 디버거에 단계가 쌓입니다");
+      await pause(5500);
+      await r.scroll(500, NV);
+      await pause(3500);
+
+      // ── 관리자가 승인함에서 승인
+      await r.login("platform", "admin");
+      await r.go(`${L}/hub?tab=approvals`);
+      await pause(1500);
+      await r.caption("관리자 — MCP 허브 승인함에 흐름의 사람 확인이 올라와 있습니다", "흐름 이름 · 단계 · 확인할 내용(분류 결과와 처리안)");
+      await pause(3500);
+      if (await clickNear(r, "flows__confirm", "검토", { after: 1500 })) {
+        await r.caption("검토 — 처리안을 읽고 결정합니다");
+        await pause(4000);
+        await r.type("결정 사유", "안내 문구 그대로 회신해 주세요", { delay: 45 });
+        await modalBtn(r, "승인", 2000);
+        await r.caption("승인 — 흐름이 멈춘 곳부터 자동으로 이어 갑니다");
+        await pause(3500);
+      }
+
+      // ── 실행 기록 · 실행 디버거
+      await r.login("platform", "dev");
+      await r.go(`${L}/flows`);
+      await tab(r, "실행 기록", "실행 기록 — 내가 실행한 흐름", "상태 · 판 · 단계 수 · 토큰", 3000);
+      await r.waitFor("/완료/.test(document.querySelector('.n-data-table')?.innerText ?? '')", 60000).catch(() => undefined);
+      await r.click("보기", { selector: "button", exact: true, after: 2500 });
+      await r.caption("실행 디버거 — 단계별 폭포형 시간 막대", "모델·도구·분기·사람 확인이 한 줄씩 · 걸린 시간과 토큰");
+      await pause(5000);
+      if (await r.clickSel("[data-test=run-span-1]", 1500)) {
+        await r.caption("모델 단계 — 보낸 메시지와 모델 답(분류 JSON)", "'자세히 기록'으로 남긴 본문 · 개인정보 가림 표시");
+        await pause(5500);
+      }
+      if (await r.clickSel("[data-test=run-span-3]", 1500)) {
+        await r.caption("도구 단계 — docs__search 에 넘긴 인자와 받은 결과");
+        await pause(5000);
+      }
+      if (await r.clickSel("[data-test=run-span-4]", 1500)) {
+        await r.caption("사람 확인 단계 — 누가 언제 승인했는지, 기다린 시간");
+        await pause(4500);
+      }
+
+      // ── 에이전트 실행도 같은 디버거로
+      await r.login("platform", "admin");
+      await r.go(`${L}/agents`);
+      await pause(1500);
+      await pick(r, "alert-triage", "sm-helper");
+      await r.type("무엇을 할까요", "pmsx__srs 도구에 q=퇴사자 로 검색해서 나온 서비스 요청 번호와 제목, 처리 방향을 한국어 세 줄로 정리해줘", { delay: 22 });
+      await r.clickSel("[data-test=run-debug]", 600);
+      await r.caption("에이전트 실행에도 '자세히 기록' — 이번 실행만 켤 수 있습니다", "에이전트 설정에서 켜 두면 모든 실행에");
+      await pause(3000);
+      await r.clickSel("[data-test=run-start]", 1500);
+      await r.waitFor("!!document.querySelector('[data-test=run-output]')", 180000).catch(() => undefined);
+      await pause(1500);
+      await r.caption("실행 디버거 — 턴마다 모델 → 도구 → 모델", "실패한 단계가 있으면 '첫 오류로' 한 번에");
+      await pause(4500);
+      if (await r.clickSel("[data-test=run-span-1]", 1500)) {
+        await r.caption("도구 호출 단계 — 모델이 고른 인자(projectId·q)와 PMS-X 가 돌려준 결과", "본문은 실행한 사람·관리자·감사자만 · 남의 본문을 열면 감사 기록");
+        await pause(6000);
+      }
+    },
+  },
+
+  "platform-11": {
+    title: "AX Platform ⑪ 에이전트 평가 — 시험 문항 · 확인 항목 · 일괄 실행 · 이전 평가와 비교",
+    maxGap: 3,
+    async run(r) {
+      await r.login("platform", "admin");
+      await r.go(`${L}/agents`);
+      await pause(1200);
+      await pick(r, "alert-triage", "sm-helper");
+      await r.clickSel("[data-test=agent-eval-open]", 2500);
+      await r.caption("에이전트 평가 — 고칠 때마다 같은 시험으로", "지시문·모델·도구를 바꾼 뒤 다시 돌려 이전 평가와 문항별로 비교 · 에이전트와 자동화 흐름 모두");
+      await pause(4000);
+      const hasSet = await r.eval("!!document.querySelector('[data-test=eval-cases]')");
+      if (!hasSet) await pick(r, "평가 세트", "서비스 요청 도우미 회귀");
+      await pause(1500);
+      await r.caption("시험 문항 4개 — 입력 + 확인 항목", "도구를 썼는지 · SR 번호가 있는지(정규식) · 턴 수 · 범위 밖 질문엔 도구 없이 · 모델 채점");
+      await pause(5500);
+      await clickNear(r, "답 품질(모델 채점)", "고치기", { after: 1500 });
+      await r.caption("문항 편집 — 확인 항목 9종", "포함·불포함 글자 · 정규식 · 쓴 도구·쓰지 말 도구 · 도구 호출 수 · 턴 · 시간 · 모델 채점(기준 문장)");
+      await pause(6000);
+      await closeModal(r);
+      await tab(r, "실행 결과", "실행 결과 — 지난 평가(기준)", "통과율 · 평균 점수 · 지연 · 토큰 · 평가한 설정(지시문·모델·도구의 해시)", 3000);
+      await r.click("기준", { selector: "td", after: 2500 });
+      await pause(3000);
+      await r.caption("문항마다 확인 항목별 결과와 이유", "'퇴사자 요청 찾기'는 답에 SR 번호가 없어 실패");
+      await pause(5500);
+      if (await clickNear(r, "퇴사자 요청 찾기", "디버거", { after: 2000 })) {
+        await r.caption("디버거 — 그 문항에서 에이전트가 실제로 한 일", "어느 단계에서 엇나갔는지 바로 봅니다");
+        await pause(5500);
+        await closeModal(r);
+      }
+      await top(r);
+      await r.clickSel("[data-test=eval-run]", 1500);
+      await r.caption("평가 실행 — 문항을 차례로 돌려 채점합니다", "실행은 내 권한 · 승인이 필요한 도구는 실제로 부르지 않고 '승인 필요로 멈춤'");
+      await r.waitFor("/완료|실패/.test(document.querySelector('[data-test=eval-run-detail]')?.innerText.slice(0, 40) ?? '') && !/실행 중/.test(document.querySelector('[data-test=eval-run-detail]')?.innerText.slice(0, 40) ?? '')", 400000);
+      await pause(2000);
+      await r.caption("새 평가 결과", "같은 설정으로 다시 돌려도 작은 모델은 답이 흔들립니다 — 그래서 문항으로 잽니다");
+      await pause(5000);
+      await r.click("이전과 비교", { selector: "button", exact: true, after: 2500 });
+      await r.caption("비교 — 통과율 · 점수 · 지연 · 토큰의 차이, 문항마다 좋아짐·나빠짐·같음", "바뀐 설정(지시문·모델·도구)도 함께 · 밤마다 돌리려면 자동화 흐름 + 예약 트리거 + evals__run");
+      await pause(7000);
+    },
+  },
+
+  "platform-12": {
+    title: "AX Platform ⑫ 업무 시스템 연결 · 외부 에이전트 가져오기 · 말로 묻기",
+    maxGap: 3,
+    browserArgs: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream", `--use-file-for-fake-audio-capture=${fileURLToPath(new URL("./demo-files/ask-voice.wav", import.meta.url)).replace(/\\/g, "/")}`],
+    async run(r) {
+      const srv = JSON.parse(readFileSync(new URL("./.demo-servers.json", import.meta.url), "utf8"));
+      await r.login("platform", "admin");
+      await r.go(`${L}/biz`);
+      await r.caption("업무 시스템 연결 — ERP·CRM·그룹웨어를 MCP 허브 도구로", "SAP · Salesforce · Microsoft 365 · 네이버웍스 · 사내 REST(OpenAPI) — 조회는 허용, 쓰기는 기본 '승인 필요'");
+      await pause(5000);
+      await r.click("연결 추가", { selector: "button", exact: true, after: 1200 });
+      await r.click("SAP (OData)", { selector: ".n-modal .kind", after: 1200 });
+      await r.caption("SAP — OData 서비스 주소 · 버전 · 인증(계정 또는 OAuth2) · 쓰기 전 CSRF 토큰");
+      await r.typeLabel("연결 이름", "sap_hr", { clear: true, delay: 60 });
+      await r.typeLabel("설명", "인사 OData — 사원 조회", { delay: 40 });
+      await r.typeLabel("OData 서비스 주소", srv.sap.url, { delay: 15 });
+      await r.typeLabel("계정", srv.sap.user, { clear: true, delay: 50 });
+      await r.typeLabel("비밀번호", srv.sap.password, { clear: true, delay: 50 });
+      await pause(1200);
+      await r.click("연결 시험", { selector: ".n-modal button", exact: true, after: 2500 });
+      await r.caption("연결 시험 — 가벼운 호출로 주소·인증·권한 확인", "비밀번호는 암호화해 저장하고 화면에 다시 보여 주지 않습니다");
+      await pause(4000);
+      await r.click("다음 — 도구 고르기", { selector: "button", after: 1800 });
+      await r.caption("도구·정책 — 켠 도구만 허브에 등록", "조회(엔터티 목록·조회·한 건)는 허용 · 만들기·고치기·함수 호출은 '승인 필요' · 차단도 가능");
+      await pause(6000);
+      await modalBtn(r, "저장", 2500);
+      await r.caption("등록됨 — sap_hr__query 처럼 연결 이름이 도구 앞에", "에이전트·자동화 흐름·IDE·Claude Code 가 같은 정책·승인·감사로 씁니다");
+      await pause(5000);
+
+      // 일반 REST — OpenAPI 문서를 읽어 도구로
+      await r.click("연결 추가", { selector: "button", exact: true, after: 1200 });
+      await r.click("일반 REST (OpenAPI)", { selector: ".n-modal .kind", after: 1200 });
+      await r.typeLabel("연결 이름", "incident_api", { clear: true, delay: 60 });
+      await r.typeLabel("설명", "사내 장애 접수 API", { delay: 40 });
+      await r.type("문서 주소", srv.rest.specUrl, { delay: 15 });
+      await r.click("문서 읽기", { selector: "button", exact: true, after: 2500 });
+      await r.caption("일반 REST — OpenAPI 문서를 읽어 operation 을 고르면 도구가 됩니다", "사내 장애 접수 API — 목록·한 건·접수·상태 바꾸기 · 파일 올리기 같은 것은 빼고");
+      await pause(5500);
+      await r.typeLabel("API 주소", `${srv.rest.url}/api`, { clear: true, delay: 15 });
+      await pick(r, "없음", "API 키 헤더", { exact: true });
+      await r.typeLabel("API 키", srv.rest.apiKey, { clear: true, delay: 50 });
+      await r.typeLabel("연결 시험 경로", "/health", { delay: 50 });
+      await r.click("연결 시험", { selector: ".n-modal button", exact: true, after: 2500 });
+      await pause(2500);
+      await r.click("다음 — 도구 고르기", { selector: "button", after: 1800 });
+      await r.caption("기본으로는 조회(GET) operation 만 골라 둡니다", "접수·상태 바꾸기 같은 쓰기를 고르면 '승인 필요'로 시작합니다");
+      await pause(4500);
+      await modalBtn(r, "저장", 2500);
+      await pause(2500);
+      await r.go(`${L}/hub`);
+      await tab(r, "서버", "MCP 허브 — 업무 시스템 연결이 허브 서버로 보입니다", "호출 기록·승인함·정책은 다른 도구와 똑같이", 4500);
+
+      // 외부 에이전트 가져오기
+      await r.go(`${L}/agents`);
+      await pause(1500);
+      await r.clickSel("[data-test=agent-import]", 1500);
+      await r.caption("외부 에이전트 가져오기 — 다른 팀이 만든 에이전트를 플랫폼 에이전트로", "A2A · LangGraph · OpenAI 호환 · 일반 HTTP");
+      await pause(4000);
+      await r.clickSel("[data-test=ext-type-langgraph]", 800);
+      await r.clickSel("[data-test=ext-next]", 1200);
+      await r.type("css:[data-test=ext-url] input", srv.agent.url, { delay: 25 });
+      await r.typeLabel("어시스턴트(그래프) 이름 또는 ID", srv.agent.assistantId, { clear: true, delay: 60 });
+      await r.caption("주소·인증 — 구매팀이 LangGraph 로 만든 '구매 담당 에이전트'", "사내 주소만 허용 · 비밀값은 시크릿 저장소에");
+      await pause(3500);
+      await r.clickSel("[data-test=ext-next]", 1200);
+      await r.type("css:[data-test=ext-test-input] input", "인사팀 노트북 구매 요청은 지금 어느 단계야?", { clear: true, delay: 45 });
+      await r.clickSel("[data-test=ext-test]", 1500);
+      await r.waitFor("!!document.querySelector('[data-test=ext-test-result]')", 90000);
+      await pause(1000);
+      await r.caption("연결 시험 — 한 번 불러 답을 꺼낼 수 있는지 봅니다(저장하지 않음)");
+      await pause(5000);
+      await r.clickSel("[data-test=ext-next]", 1200);
+      await r.type("css:[data-test=ext-name] input", "purchase-agent", { delay: 60 });
+      await r.typeLabel("설명", "구매팀 LangGraph 에이전트 — 구매 요청 진행 상황", { delay: 35 });
+      await r.click("공개 (워크스페이스)", { selector: ".n-radio-button", after: 600 });
+      await pause(1500);
+      await r.clickSel("[data-test=ext-save]", 2500);
+      await r.caption("플랫폼 에이전트가 됐습니다 — 실행 기록 · 디버거 · 평가 · 자동화 흐름 · MCP(agents__run) 에서 그대로");
+      await pause(4000);
+      await r.type("무엇을 할까요", "총무팀 사무용 의자 구매 요청은 지금 어느 단계야?", { delay: 45 });
+      await r.clickSel("[data-test=run-start]", 1500);
+      await r.waitFor("!!document.querySelector('[data-test=run-output]')", 120000).catch(() => undefined);
+      await pause(1500);
+      await r.caption("외부 에이전트의 답 — 실행 디버거에는 '외부 에이전트' 단계로", "부른 사람·시간·결과가 다른 에이전트와 같은 자리에 남습니다");
+      await pause(4000);
+      await r.clickSel("[data-test=run-span-0]", 1500);
+      await pause(4500);
+
+      // 음성 — 게이트웨이 음성 인식 별칭 + 현업 창구 마이크
+      await r.go(`${L}/gateway`);
+      await tab(r, "모델 별칭", "", "", 1500);
+      await r.caption("음성 — 게이트웨이에 사내 음성 인식 모델을 별칭으로", "voice-stt(종류: 음성 인식) → 사내 whisper 계열 서버 · 키·예산·감사·Insight 가 그대로");
+      await pause(5000);
+      await r.login("platform", "dev");
+      await r.go(`${L}/desk/hr-help`);
+      await pause(2000);
+      await r.caption("현업 창구 — 마이크로 묻습니다", "말한 내용은 게이트웨이를 거쳐 사내 음성 인식 모델이 글로 바꿉니다");
+      await pause(3500);
+      await r.clickSel("[data-test=mic-button]", 500);
+      await r.caption("말하는 중 — 「사원 조회 화면에 퇴사자가 같이 나와요. 어떻게 해야 하나요?」");
+      await pause(7000);
+      await r.clickSel("[data-test=mic-button]", 500);
+      await r.waitFor("[...document.querySelectorAll('textarea')].some((t) => t.value.includes('퇴사'))", 60000).catch(() => undefined);
+      await pause(1000);
+      await r.caption("글로 바뀌었습니다 — 확인하고 보내기", "바로 보내기로 설정할 수도 있습니다");
+      await pause(3500);
+      await r.clickSel("[data-test=desk-send]", 1000);
+      await r.waitFor("document.body.innerText.includes('재직')", 120000).catch(() => undefined);
+      await pause(1500);
+      await r.caption("매뉴얼 근거로 답합니다 — '읽어 주기'로 답을 소리로 들을 수 있습니다", "읽어 주기는 브라우저 음성 또는 게이트웨이 음성 합성 별칭");
+      await pause(6000);
+    },
+  },
+
   /* ================= PMS-X ================= */
 
   "pmsx-1": {

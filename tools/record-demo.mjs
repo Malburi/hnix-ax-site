@@ -105,7 +105,7 @@ class Recorder {
     } else {
       this.port = 9500 + Math.floor(Math.random() * 400);
       this.profile = mkdtempSync(join(tmpdir(), "hnix-demo-"));
-      this.proc = spawn(browserPath, ["--headless=new", "--disable-gpu", "--hide-scrollbars", `--remote-debugging-port=${this.port}`, `--user-data-dir=${this.profile}`, `--window-size=${W},${H}`, "--lang=ko-KR", "about:blank"], { stdio: "ignore" });
+      this.proc = spawn(browserPath, ["--headless=new", "--disable-gpu", "--hide-scrollbars", `--remote-debugging-port=${this.port}`, `--user-data-dir=${this.profile}`, `--window-size=${W},${H}`, "--lang=ko-KR", ...(opts.args ?? []), "about:blank"], { stdio: "ignore" });
       for (let i = 0; i < 60 && !target; i++) {
         await sleep(200);
         target = await fetch(`http://127.0.0.1:${this.port}/json/list`).then((r) => r.json()).then((l) => l.find((t) => t.type === "page"), () => null);
@@ -555,7 +555,7 @@ try {
       if (!SCENARIOS[n]) throw new Error(`없는 시나리오: ${n} (있는 것: ${Object.keys(SCENARIOS).join(", ")})`);
       console.log(`▶ ${n} — ${SCENARIOS[n].title}`);
       rec = new Recorder();
-      await rec.start({ ide: SCENARIOS[n].ide, ideEnv: SCENARIOS[n].ideEnv });
+      await rec.start({ ide: SCENARIOS[n].ide, ideEnv: SCENARIOS[n].ideEnv, args: SCENARIOS[n].browserArgs });
       try {
         if (values.dry) await SCENARIOS[n].run(rec, APPS);
         else await rec.record(n, (r) => SCENARIOS[n].run(r, APPS), SCENARIOS[n].maxGap);
