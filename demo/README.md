@@ -85,21 +85,9 @@ AX Platform이 실제로 무엇을 하는지 기능마다 한 번씩 써 본다.
 5. 브라우저 탭을 미리 연다 — 플랫폼 `:8710`, PMS-X `:8080`, AX-DataLake `:8790`. AX-NAVI IDE는 `start.ps1`이 연습 저장소로 띄운다. IDE 1.1은 로그인이 필요하다 — `dev1`에게 AX-NAVI 사용 허가가 있는지(꾸러미 시드가 준다) 플랫폼 › **AX-NAVI 사용 허가**에서 확인하고, 로그인 장면을 보여 주려면 시연 전에 **AX-NAVI: 로그아웃**으로 승인을 지워 둔다.
 6. 막히면 이 쪽의 영상으로 넘어간다. 영상은 오프라인판에도 들어 있다.
 
-## 지난 판 영상
-
-위 영상은 2026-11-02 판이다 — 세 웹 제품에 공통 화면 테마(기본 "선명한 업무형"·고르기·사용자 지정)와 대시보드 운영 현황, 게이트웨이·허브 개요 탭이 들어간 뒤 같은 각본으로 다시 찍었다. 그 전 판들은 지우지 않고 온라인 사이트에 보관한다(오프라인판에는 넣지 않는다).
-
-| 영상 | 2026-11-01 판(테마 전, AX-NAVI 1.1) | 2026-11-01 확장판(AX-NAVI 로그인 전) | 2026-11-01 짧은 판(용어 한글화 직후) | 2026-10-31 판(화면에 SR·KB·SLA) |
-|---|---|---|---|---|
-| 전체 투어 | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-v1.1/tour.mp4) | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-ext/tour.mp4) | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/tour.mp4) | [tour.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/tour.mp4) |
-| AX Platform | [platform.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-v1.1/platform.mp4) | v1.1 판과 같음 | [platform.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/platform.mp4) | [platform.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/platform.mp4) |
-| PMS-X | [pmsx.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-v1.1/pmsx.mp4) | v1.1 판과 같음 | [pmsx.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/pmsx.mp4) | [pmsx.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/pmsx.mp4) |
-| AX-NAVI IDE | [axnavi.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-v1.1/axnavi.mp4) | 짧은 판과 같음 | [axnavi.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/axnavi.mp4) | [axnavi.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/axnavi.mp4) |
-| AX-DataLake | [datalake.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01-v1.1/datalake.mp4) | v1.1 판과 같음 | [datalake.mp4](https://malburi.github.io/hnix-ax-site/video/2026-11-01/datalake.mp4) | [datalake.mp4](https://malburi.github.io/hnix-ax-site/video/2026-10-31/datalake.mp4) |
-
 ## 영상 다시 만들기
 
-제품을 고친 뒤 영상을 새로 찍는 방법이다. 바꾸기 전 영상은 `video/<날짜>/`로 옮겨 두고 찍는다. E2E 환경을 띄운 상태에서 이 저장소의 `tools/`로 한다.
+제품을 고친 뒤 영상을 새로 찍는 방법이다. 새로 찍으면 같은 이름의 영상을 덮어쓴다(지난 판은 보관하지 않는다). E2E 환경을 띄운 상태에서 이 저장소의 `tools/`로 한다.
 
 ```powershell
 node tools/demo-prep.mjs                         # 시연 데이터 준비(현업 창구·업무 흐름 개선·퀴즈·Kafka 토픽)
