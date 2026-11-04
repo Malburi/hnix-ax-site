@@ -12,7 +12,7 @@
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11-04**(`server-kit-20261104`) (비공개 저장소).
+GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11-05**(`server-kit-20261105` — 자동화 흐름·에이전트 평가·업무 시스템 연결·음성·외부 에이전트) (비공개 저장소). 사내 모델 파일(`ollama-model-*`)은 바뀌지 않아 `server-kit-20261104` 에서 받는다.
 
 설치 파일은 **서버 PC 용**과 **개인 PC 용** 두 가지다. 둘 다 회사 코드 서명이 된 설치 프로그램이다.
 
