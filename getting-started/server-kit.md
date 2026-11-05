@@ -12,20 +12,20 @@
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 2026-11-05**(`server-kit-20261105` — 자동화 흐름·에이전트 평가·업무 시스템 연결·음성·외부 에이전트) (비공개 저장소). 사내 모델 파일(`ollama-model-*`)은 바뀌지 않아 `server-kit-20261104` 에서 받는다.
+GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (AX-NAVI IDE 1.2.5 · PMS-X 1.3.5)**(`server-kit-20261105`) (비공개 저장소). 설치 파일과 사내 모델 파일(`ollama-model-*`)이 이 릴리스에 모두 있다.
 
 설치 파일은 **서버 PC 용**과 **개인 PC 용** 두 가지다. 둘 다 회사 코드 서명이 된 설치 프로그램이다.
 
 | 파일 | 크기 | 어디에 |
 |---|---|---|
-| `HNIX-AX-Server-Setup-<날짜>.exe` | 약 650MB | **서버 PC** — 네 제품 설치·서비스·방화벽 |
+| `HNIX-AX-Server-Setup-<날짜>.exe` | 약 740MB | **서버 PC** — 네 제품 설치·서비스·방화벽 |
 | `ollama-model-qwen2.5-3b.zip` · `ollama-model-nomic-embed-text-latest.zip` | 약 1.8GB · 260MB | 서버 — 서버 설치 파일과 **같은 폴더**에 둔다(설치 프로그램이 함께 넣는다) |
 | `ollama-model-qwen3.5-4b.zip.001`·`.002` · `ollama-model-qwen3.5-2b.zip.001`·`.002` | 약 3.2GB · 2.6GB | 선택 — 다른 대화 모델. 2GB 가 넘어 조각으로 나뉘어 있다(조각을 모두 같은 폴더에). 고르는 법은 [서버 PC 설치](https://malburi.github.io/hnix-ax-site/#/getting-started/install-server) 4번 |
 | `HNIX-AX-PC-Setup-<판>.exe` | 약 200MB | **개인 PC** — AX-NAVI IDE + 회사 연결. 서버에도 들어 있어 플랫폼 `내 연결 설정`에서 받는다 |
 
 | 서버 꾸러미 안 | 내용 |
 |---|---|
-| 설치본 셋 | AX Platform(Node 포함) · AX-DataLake 0.3.0(Node·SQL 엔진 포함) · PMS-X 1.3.4(JRE 21, 시연 데이터) |
+| 설치본 셋 | AX Platform(Node 포함) · AX-DataLake 0.3.0(Node·SQL 엔진 포함) · PMS-X 1.3.5(JRE 21, 시연 데이터, 소스 분석기) |
 | 사내 모델 | Ollama CPU 판 — 임베딩(문서 RAG)과 CPU 대화 모델 |
 | AX-NAVI CLI · 연습 저장소 | 허브의 `axnavi__` 도구와 자동 점검용 |
 | `server.ps1` · `server.config.json` | 설치·시작·멈춤·상태·내리기, 설정 하나 |

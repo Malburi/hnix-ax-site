@@ -25,7 +25,7 @@
 
 | 파일 | 크기 | 설명 |
 |---|---|---|
-| `HNIX-AX-Server-Setup-<날짜>.exe` | 약 650MB | 서버 설치 프로그램(코드 서명) |
+| `HNIX-AX-Server-Setup-<날짜>.exe` | 약 740MB | 서버 설치 프로그램(코드 서명) |
 | `ollama-model-qwen2.5-3b.zip` | 약 1.8GB | 사내 대화 모델(기본) — 설치 프로그램이 같은 폴더에서 찾아 넣는다 |
 | `ollama-model-nomic-embed-text-latest.zip` | 약 260MB | 문서 검색(임베딩) 모델 |
 | `ollama-model-qwen3.5-4b.zip.001` · `.002` | 약 3.2GB | **AX-NAVI IDE 를 사내 게이트웨이로 쓰면 필요** — IDE 에이전트용 코드 모델(`hnix-code`). 더 나은 한국어 대화 모델로도 쓴다(아래 4번) |
