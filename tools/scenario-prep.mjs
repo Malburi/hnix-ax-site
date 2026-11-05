@@ -81,6 +81,34 @@ const ticket = (await res.json()).result;
 out.itsm = { connectionId: conn.id, ticket: ticket.number.value };
 ok(`고객 티켓 ${ticket.number.value} 등록(아직 동기화 전)`);
 
+// ---------- 시나리오 A — 자동화 흐름: PMS-X 새 서비스 요청을 감시해 '서비스 요청 분류·처리' 흐름을 깨운다
+log("시나리오 A — 감시 트리거 → 자동화 흐름 '서비스 요청 분류·처리'");
+const flow = items(await pl("GET", "/flows")).find((f) => f.name === "서비스 요청 분류·처리");
+if (!flow) throw new Error("자동화 흐름 '서비스 요청 분류·처리' 가 없습니다 — feature-prep-ai.mjs 를 먼저 돌리세요");
+const smProject = items(await pl("GET", "/itsm/connections")).find((c) => c.id === conn.id)?.pmsx_project;
+if (!smProject) throw new Error("시험용 ITSM 연결의 PMS-X 프로젝트를 모릅니다");
+const devMe = await (await client("platform", "dev"))("GET", "/auth/me");
+const devId = devMe?.id ?? devMe?.user?.id ?? devMe?.sub;
+if (!devId) throw new Error(`dev1 사용자 ID 를 모릅니다: ${JSON.stringify(devMe).slice(0, 200)}`);
+for (const t of items(await pl("GET", `/triggers?flowId=${flow.id}`)).filter((x) => x.name === "새 서비스 요청 감시")) {
+  await pl("DELETE", `/triggers/${t.id}`);
+  ok("지난 감시 트리거 지움");
+}
+const trig = await pl("POST", "/triggers", {
+  flowId: flow.id,
+  name: "새 서비스 요청 감시",
+  kind: "poll",
+  enabled: true,
+  runAs: devId,
+  // 녹화에서 '지금 실행'으로 한 번 감시한다 — 평소 주기는 5분이지만 녹화 중에 저절로 돌지 않게 길게
+  config: { tool: "pmsx__srs", args: { projectId: smProject }, itemsPath: "items", idField: "srNo", intervalMinutes: 240, maxPerPoll: 3 },
+  inputTemplate: '{\n  "title": "{{item.title}}",\n  "body": "{{item.srNo}} · 유형 {{item.type}} · 우선순위 {{item.priority}} · 고객 ITSM 에서 이관된 서비스 요청"\n}',
+});
+// 지금 있는 요청은 기준선으로만 — 녹화에서 동기화로 생기는 새 요청 하나만 깨운다
+const base = await pl("POST", `/triggers/${trig.id}/fire`, { body: {} });
+out.flow = { id: flow.id, triggerId: trig.id };
+ok(`감시 트리거 ${trig.id} — pmsx__srs(프로젝트 ${smProject}) · 실행 사용자 dev1 · 기준선: ${base?.detail ?? base?.outcome ?? "?"}`);
+
 // ---------- 시나리오 B — 현업 창구 모양·매뉴얼 보강 문서
 log("시나리오 B — 현업 창구 hr-help 모양");
 const desk = items(await pl("GET", "/desks")).find((d) => d.slug === "hr-help");

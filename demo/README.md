@@ -2,19 +2,19 @@
 
 HNIX AX 네 제품이 실제로 도는 모습을 영상으로 담았다. 영상은 모두 **실제로 띄운 제품**(E2E 환경 — 플랫폼·PMS-X·AX-NAVI IDE·AX-DataLake를 한 PC에)을 조작하며 녹화했다. 꾸민 화면이나 목업이 아니다. 아래 자막은 녹화할 때 화면 위에 덧그린 설명이고, 주황 물결은 누른 곳이다.
 
-## 전체 투어 — 15분 45초
+## 전체 투어 — 18분 23초
 
 <video controls preload="metadata" poster="video/tour.jpg" src="video/tour.mp4" style="width:100%;border-radius:10px;background:#0f1d2b"></video>
 
 제목 카드 → AX Platform → PMS-X → AX-NAVI IDE → AX-DataLake 순서다. 시연회 첫 화면에 틀어 두거나, 라이브 시연이 막혔을 때 이어서 보여 준다. 전체 흐름 그림은 [AI 생태계 워크플로우](/demo/ecosystem.md)에 있다.
 
-> 메뉴·탭·버튼을 **하나씩 빠짐없이** 보고 싶으면 [기능 전체 영상](/demo/features.md) — 제품별 장(章) 24편으로 나눠, 화면마다 실제로 눌러 본다.
+> 메뉴·탭·버튼을 **하나씩 빠짐없이** 보고 싶으면 [기능 전체 영상](/demo/features.md) — 제품별 장(章) 27편으로 나눠, 화면마다 실제로 눌러 본다.
 >
-> 유지보수(SM) 요청 **한 건이 들어와서 닫히고 지식으로 남기까지** 여러 제품을 오가는 순서는 [SM 업무 흐름 시나리오](/demo/scenarios.md) — 시나리오 A(고객 ITSM 티켓)·B(메신저·메일과 전화) 두 편.
+> 유지보수(SM) 요청 **한 건이 들어와서 닫히고 지식으로 남기까지** 여러 제품을 오가는 순서는 [SM 업무 흐름 시나리오](/demo/scenarios.md) — 시나리오 A(고객 ITSM 티켓 → 자동화 흐름 → AX-NAVI IDE 로 수정)·B(메신저·메일·음성과 전화) 두 편.
 
 ## 제품별 영상
 
-### AX Platform — 공통 AI 기반 (3분)
+### AX Platform — 공통 AI 기반 (3분 30초)
 
 <video controls preload="metadata" poster="video/platform.jpg" src="video/platform.mp4" style="width:100%;border-radius:10px"></video>
 
@@ -26,11 +26,12 @@ AX Platform이 실제로 무엇을 하는지 기능마다 한 번씩 써 본다.
 - **문서 RAG** — 매뉴얼·절차서를 올리면 절 단위로 나눠 색인한다. "급여 배치가 실패하면 뭘 먼저 봐야 해?"로 키워드+의미 검색.
 - **업무 흐름 개선** — 업무 절차서(인사 발령)를 넣으면 As-Is 흐름(담당·단계·시스템·입력→산출) → Pain point → **To-Be(AI 제안)** → 설계도(BPMN·Mermaid). 새 분석 창을 연 뒤, 미리 돌려 둔 결과를 본다(한 문서에 2~3분).
 - **에이전트** — `sm-helper`가 PMS-X 도구(`pmsx__srs`)를 불러 퇴사자 관련 서비스 요청을 찾아 정리한다. 모델 → 도구 → 모델 단계와 시간이 기록된다.
+- **자동화 흐름 · 에이전트 평가 · 업무 시스템 연결** — '서비스 요청 분류·처리' 흐름(유형 분류 → 갈래 → 담당 에이전트·지식 문서 검색 → 담당자 확인)을 캔버스로, 시험 문항으로 에이전트를 채점·비교하는 평가, SAP·Salesforce·사내 REST 를 허브 도구로 붙이는 연결.
 - **MCP 허브** — 흐름 그림과 서버별 도구, PMS-X·AX-NAVI·AX-DataLake 도구를 한 곳에, 정책과 승인함.
 - **현업 창구** — 현업 직원이 쓰는 화면. 매뉴얼에 있는 질문은 근거와 함께 답하고, 근거가 없는 질문("회의실 예약은 어떻게 하나요?")은 지어내지 않고 **담당자에게 넘기기** → 대화 기록과 함께 PMS-X 서비스 요청으로 접수(요청 번호가 돌아온다).
 - **런북 · Insight** — 승인 뒤 실행하는 조치, 호출 주체별 AI 사용 현황.
 
-### PMS-X — SM 운영 · AI 보조 · As-Is 분석 · WBS (2분 35초)
+### PMS-X — SM 운영 · AI 보조 · As-Is 분석 · WBS (2분 43초)
 
 <video controls preload="metadata" poster="video/pmsx.jpg" src="video/pmsx.mp4" style="width:100%;border-radius:10px"></video>
 
@@ -39,7 +40,7 @@ AX Platform이 실제로 무엇을 하는지 기능마다 한 번씩 써 본다.
 - **일정** — **WBS·간트**(계획·실적·SPI, 베이스라인·크리티컬 패스, 월 단위) → 칸반.
 - **인수인계 퀴즈**(SM) — As-Is 분석·요청 이력에서 자동 출제된 문제를 풀어 본다.
 
-### AX-NAVI IDE — 로그인 · 스킬 · 변경 리뷰 · AI로 수정 (6분 20초)
+### AX-NAVI IDE — 로그인 · 스킬 · 변경 리뷰 · AI로 수정 (8분 10초)
 
 <video controls preload="metadata" poster="video/axnavi.jpg" src="video/axnavi.mp4" style="width:100%;border-radius:10px"></video>
 
@@ -50,7 +51,7 @@ AX Platform이 실제로 무엇을 하는지 기능마다 한 번씩 써 본다.
 
 에이전트는 개발자 본인의 Claude 구독 로그인으로 돈다. 모델이 생각하는 동안 멈춘 화면은 영상에서 줄였다.
 
-### AX-DataLake — Kafka 실시간 수집 · 온톨로지 · 거버넌스 · 계보 (3분 20초)
+### AX-DataLake — Kafka 실시간 수집 · 온톨로지 · 거버넌스 · 계보 (3분 32초)
 
 <video controls preload="metadata" poster="video/datalake.jpg" src="video/datalake.mp4" style="width:100%;border-radius:10px"></video>
 

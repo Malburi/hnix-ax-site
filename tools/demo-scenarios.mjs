@@ -10,7 +10,7 @@ export const APPS = {
 };
 
 import { spawn } from "node:child_process";
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -19,6 +19,47 @@ export const DEMO_REPO = "C:/Users/onlys/axnavi-ide-demo";
 /** kafkajs 를 빌려 쓰는 AX-DataLake 저장소(시연 준비·생산기) */
 export const DATALAKE_REPO = "C:/Users/onlys/ax-datalake";
 const DL_READY = "document.readyState === 'complete' && !!document.querySelector('.n-layout-header')";
+
+/*
+ * 녹화용 IDE 기기 — 녹화가 승인한 기기 ID 만 tools/.demo-devices.json 에 적어 두고 그것만 끊는다.
+ * 기기 이름은 PC 이름이라 사용자 본인 IDE 와 구별되지 않으므로, dev1 의 기기를 통째로 끊지 않는다(한 사람 2대 한도).
+ */
+const DEMO_DEVICES = new URL("./.demo-devices.json", import.meta.url);
+async function devApi() {
+  const a = APPS.platform;
+  const tok = (await (await fetch(`${a.url}${a.loginApi}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(a.users.dev) })).json()).accessToken;
+  const h = { authorization: `Bearer ${tok}` };
+  const list = async () => ((await (await fetch(`${a.url}/api/v1/axnavi/my/devices`, { headers: h })).json()).items ?? []).filter((x) => x.status === "active");
+  return { tok, h, list };
+}
+const remembered = () => (existsSync(DEMO_DEVICES) ? JSON.parse(readFileSync(DEMO_DEVICES, "utf8")) : []);
+/** 지금 dev1 의 활성 기기 ID — 승인 전에 찍어 두고 rememberNewDevices 에 넘긴다 */
+export async function devDeviceIds() {
+  return (await (await devApi()).list()).map((d) => d.id);
+}
+/** 승인 뒤 새로 생긴 기기를 녹화용으로 적어 둔다 — IDE 가 승인을 받아 로그인을 마쳐야 기기가 활성이 되므로 나타날 때까지 기다린다 */
+export async function rememberNewDevices(before, waitMs = 60000) {
+  const api = await devApi();
+  for (let t = 0; t <= waitMs; t += 2000) {
+    const fresh = (await api.list()).map((d) => d.id).filter((id) => !before.includes(id));
+    if (fresh.length) {
+      writeFileSync(DEMO_DEVICES, JSON.stringify([...new Set([...remembered(), ...fresh])]));
+      return fresh;
+    }
+    await pause(2000);
+  }
+  console.warn("  ! 새로 승인한 녹화용 기기가 목록에 나타나지 않았습니다 — 다음 녹화 전에 확인하세요");
+  return [];
+}
+/** 녹화가 승인했던 기기만 끊는다 — dev1 토큰을 돌려준다 */
+export async function freeDemoDevices() {
+  const { tok, h, list } = await devApi();
+  const mine = remembered();
+  for (const d of (await list()).filter((x) => mine.includes(x.id))) await fetch(`${APPS.platform.url}/api/v1/axnavi/my/devices/${d.id}`, { method: "DELETE", headers: h });
+  const left = await list();
+  if (left.length >= 2) throw new Error(`dev1 에 녹화용이 아닌 기기가 ${left.length}대 있어 새 기기를 승인할 수 없습니다 — 사용자 기기는 끊지 않습니다`);
+  return tok;
+}
 
 /** AX-NAVI IDE 임시 프로필의 출력 창 로그에서 기기 승인 코드를 찾는다 */
 export function ideLoginCode(profile) {
@@ -81,6 +122,10 @@ export async function runAgent(r, captions = {}, limitSec = 180) {
     await pause(3000);
   }
   console.warn("  ! 에이전트 작업이 제한 시간 안에 끝나지 않았습니다");
+  // 원인을 볼 수 있게 — 채팅 마지막 글과 그 순간 화면(--shots)
+  const tail = (await r.webText().catch(() => "")).split("\n---\n")[0].slice(-700).replace(/\s+/g, " ");
+  console.warn(`    채팅 끝: ${tail}`);
+  await r.miss("에이전트-시간초과").catch(() => undefined);
   return false;
 }
 
@@ -114,6 +159,8 @@ export const SCENARIOS = {
         if (!code) throw new Error("IDE 화면에서 승인 코드를 읽지 못했습니다");
         await r.caption(`로그인 — 이 기기의 승인 코드 ${code}`, "IDE 가 플랫폼 승인 화면을 엽니다. 평소 쓰는 플랫폼 계정(사내 LDAP)으로 로그인해 승인합니다");
         await pause(4500);
+        await freeDemoDevices();
+        const before = await devDeviceIds();
         await r.browser(async (b) => {
           await b.login("platform", "dev");
           await b.go(`${A.platform.url}/axnavi/activate?code=${code}`);
@@ -123,6 +170,7 @@ export const SCENARIOS = {
           await b.caption("승인했습니다 — IDE 로 돌아갑니다");
           await pause(3000);
         });
+        await rememberNewDevices(before);
         for (let t = 0; t < 40 && !/AX-NAVI · /.test(await statusText()); t++) await pause(1000);
         await r.caption("잠금이 풀렸습니다 — 스킬 26개와 판정 엔진을 플랫폼에서 받아 옵니다", "CLI 를 따로 깔지 않아도 IDE 하나로 · 스킬은 기기 표식을 넣은 암호화 캐시로만 남습니다");
         await pause(7000);
@@ -374,6 +422,27 @@ export const SCENARIOS = {
       await r.scroll(700, ".n-layout-scroll-container");
       await r.caption("트리거 — 경보 웹훅 · 예약 · 감시가 사람 대신 에이전트를 깨웁니다");
       await pause(3500);
+
+      // ── 자동화 흐름 · 에이전트 평가 · 업무 시스템 연결(2026-11 판)
+      const flowId = await (async () => {
+        const tok = (await (await fetch(`${L}/api/v1/auth/login`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(A.platform.users.admin) })).json()).accessToken;
+        const j = await (await fetch(`${L}/api/v1/flows`, { headers: { authorization: `Bearer ${tok}` } })).json();
+        return (j.items ?? j).find((f) => f.name === "서비스 요청 분류·처리")?.id ?? null;
+      })().catch(() => null);
+      await r.go(flowId ? `${L}/flows?flow=${flowId}` : `${L}/flows`);
+      await pause(1500);
+      await r.caption("자동화 흐름 — 정해진 순서대로 실행합니다", "모델 질문 · 도구 호출 · 에이전트 · 조건 분기 · 반복 · 사람 확인 노드를 캔버스에 · 트리거·MCP(flows__run)로 실행");
+      await pause(5500);
+      await r.caption("새 서비스 요청 → 유형 분류(사내 모델) → 갈래 → 장애 담당 에이전트 / 지식 문서 검색 → 담당자 확인(승인함)", "실행마다 실행 디버거에 단계별 시간·토큰 · 판 기록으로 되돌리기");
+      await pause(5000);
+      await r.go(`${L}/agent-eval`);
+      await pause(1500);
+      await r.caption("에이전트 평가 — 시험 문항으로 에이전트와 흐름을 채점하고 지난 평가와 문항별로 비교", "지시문·모델을 바꾸기 전에 회귀를 잡습니다");
+      await pause(4500);
+      await r.go(`${L}/biz`);
+      await pause(1500);
+      await r.caption("업무 시스템 연결 — SAP · Salesforce · Microsoft 365 · 사내 REST 를 MCP 허브 도구로", "조회는 허용, 쓰기는 기본 '승인 필요' · 외부 에이전트(A2A·LangGraph)도 플랫폼 에이전트로 가져옵니다");
+      await pause(5000);
 
       // ── MCP 허브
       await r.go(`${L}/hub`);

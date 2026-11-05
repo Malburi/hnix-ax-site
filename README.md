@@ -4,7 +4,7 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
 
 <video controls preload="metadata" poster="video/tour.jpg" src="video/tour.mp4" style="width:100%;border-radius:10px;background:#0f1d2b"></video>
 
-> 실제로 띄운 네 제품을 조작하며 녹화한 **전체 투어(15분 45초)**. 제품별 영상과 시연회 진행 순서는 [시연](/demo/README.md), 전체 흐름 그림은 [AI 생태계 워크플로우](/demo/ecosystem.md)에 있다.
+> 실제로 띄운 네 제품을 조작하며 녹화한 **전체 투어(18분 23초)**. 제품별 영상과 시연회 진행 순서는 [시연](/demo/README.md), 전체 흐름 그림은 [AI 생태계 워크플로우](/demo/ecosystem.md)에 있다.
 
 <div class="home-grid">
   <a class="home-card" href="#/platform/README">

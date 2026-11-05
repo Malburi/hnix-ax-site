@@ -9,7 +9,7 @@
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { APPS, DEMO_REPO, ideLoginCode, runAgent } from "./demo-scenarios.mjs";
+import { APPS, DEMO_REPO, devDeviceIds, freeDemoDevices, ideLoginCode, rememberNewDevices, runAgent } from "./demo-scenarios.mjs";
 
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 const L = APPS.platform.url;
@@ -19,6 +19,8 @@ const prep = () => (existsSync(new URL("./.feature-prep.json", import.meta.url))
 
 /** Naive UI 탭 */
 export async function tab(r, label, cap, sub = "", wait = 3500) {
+  // 긴 목록을 한참 내려간 뒤면 위쪽 탭이 찾기 범위 밖 — 맨 위로 올려 다시 찾는다
+  if (!(await r.find(label, { selector: ".n-tabs-tab", exact: true, timeout: 900 }))) await top(r);
   await r.click(label, { selector: ".n-tabs-tab", exact: true });
   if (cap) await r.caption(cap, sub);
   await pause(wait);
@@ -165,23 +167,26 @@ export const SCENARIOS = {
       await closeModal(r);
 
       await r.go(`${L}/setup`);
-      await r.caption("내 연결 설정 — 개발자 PC 에 무엇을 넣고 어떤 키를 쓰는지 상황별로", "Claude 자격 증명(구독 로그인·API 키)은 플랫폼에 넣지 않고 각자 PC 에만 둡니다");
-      await pause(4500);
-      await r.click("클라우드 계약", { selector: "button, label, div", after: 1200 });
-      await r.caption("상황을 고르면 안내가 바뀝니다 — 클라우드 계약 · API 키 · 아무것도 없음", "아무것도 없으면 사내 게이트웨이(사내 모델)만으로 씁니다");
-      await pause(3000);
-      await r.click("아무것도 없음", { selector: "button, label, div", after: 1200 });
-      await pause(2500);
-      await r.click("Claude 구독·좌석", { selector: "button, label, div", after: 1200 });
-      await r.click("필요한 키 발급", { selector: "button" });
-      await r.caption("필요한 키 발급 — 게이트웨이 키·사용량 수집 키를 한 번에", "아래 설정 명령에 발급한 키가 바로 채워집니다(PowerShell·bash)");
-      await pause(4000);
-      await down(r, 700);
-      await r.caption("AX-NAVI · Claude Code 사용량을 Insight 로 — 붙여 넣을 명령", "Claude 자격이 안 될 때는 사내 게이트웨이로 넘어갑니다");
-      await pause(4000);
-      await down(r, 900);
-      await r.caption("관리자 — 조직 정책과 전 직원 배포", "관리 설정 파일·조직 수집 키로 전 직원 PC 에 한 번에");
-      await pause(4000);
+      await r.caption("내 연결 설정 — 개인 PC 는 설치하고 로그인하면 끝", "키나 환경 변수를 넣지 않습니다 — 로그인하면 IDE 가 사내 모델·사용량 기록·MCP 허브·AX-NAVI 엔진을 스스로 설정");
+      await pause(5000);
+      const dl = await r.find("개인 PC 설치 파일", { selector: "button", timeout: 3000 });
+      if (dl) await r.pointAt(dl);
+      await r.caption("① 개인 PC 설치 — 서버에 올려 둔 서명된 설치 파일(HNIX-AX-PC-Setup)을 여기서 받습니다", "설치 화면에서 이 서버 주소를 물으면 넣습니다 · 새 판도 같은 방법으로 덮어 설치");
+      await pause(5000);
+      const open = await r.find("AX-NAVI IDE 에서 열기", { selector: "a, button", timeout: 3000 });
+      if (open) await r.pointAt(open);
+      await r.caption("② 이 서버에 연결 — 'AX-NAVI IDE 에서 열기' → IDE 가 '연결할까요?' → 브라우저 승인 화면에서 승인", "기기마다 전용 키가 발급되고, 기기를 끊으면 그 키도 함께 꺼집니다");
+      await pause(5000);
+      await r.caption("③ 확인 — 연결한 IDE 가 여기 기기로 나옵니다", "PC 에 Claude 구독(Claude Code)이 있으면 사용량 기록·MCP 허브도 IDE 가 함께 맞춥니다 — 구독 자격 증명은 서버로 오지 않습니다");
+      await pause(5500);
+      await r.click("고급 — 개인 PC 설치 없이", { selector: ".n-collapse-item__header", after: 1500 });
+      await down(r, 400);
+      await r.caption("고급 — IDE 없이 Claude Code 만 쓰는 서버·CI", "사용량 수집 키 · 사내 모델용 게이트웨이 키를 발급하면 붙여 넣을 설정에 바로 채워집니다");
+      await pause(5000);
+      await r.click("관리자 — 전 직원 일괄 배포", { selector: ".n-collapse-item__header", after: 1500 });
+      await down(r, 600);
+      await r.caption("관리자 — 전 직원 일괄 배포", "조용히 설치(/SERVER 로 주소까지) · 조직 정책 policy.json 으로 서버 주소와 허용할 AI 경로를 PC 마다 고정");
+      await pause(5000);
 
       await r.go(`${L}/axnavi/activate`);
       await r.caption("내 AX-NAVI 기기 — 내가 승인한 PC 목록", "IDE 의 승인 코드를 넣어 기기를 승인하고, 잃어버린 PC 는 여기서 끊습니다");
@@ -1065,7 +1070,7 @@ export const SCENARIOS = {
       await r.click("편집 모드", { selector: "button", exact: true, after: 1500 });
       await r.caption("편집 모드 — 요소 위치·연결을 사람이 고칩니다", "자동 수집 · 캡처 다시 찍기 · 첨부");
       await pause(4000);
-      await r.click("편집 모드", { selector: "button", exact: true, after: 1000 });
+      if (!(await r.click("편집 끝내기", { selector: "button", exact: true, after: 1000 }))) await r.click("편집 모드", { selector: "button", exact: true, after: 1000 });
       await r.click("화면 메모", { selector: "button", exact: true, after: 1500 });
       await r.caption("화면 메모 — 분석하며 남긴 메모와 질문(인수인계에도 쓰입니다)");
       await pause(3500);
@@ -1625,17 +1630,13 @@ async function palette(r, text) {
  * 녹화마다 IDE 를 새 임시 프로필로 띄우므로 dev1 의 기기가 쌓인다(한 사람 2대까지) — 지난 녹화의 기기를 본인 화면 API 로 끊는다.
  * dev1 토큰을 돌려준다.
  */
-async function freeDevices() {
-  const a = APPS.platform;
-  const tok = (await (await fetch(`${a.url}/api/v1/auth/login`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(a.users.dev) })).json()).accessToken;
-  const h = { authorization: `Bearer ${tok}` };
-  const list = (await (await fetch(`${a.url}/api/v1/axnavi/my/devices`, { headers: h })).json()).items ?? [];
-  for (const d of list.filter((x) => x.status === "active")) await fetch(`${a.url}/api/v1/axnavi/my/devices/${d.id}`, { method: "DELETE", headers: h });
-  return tok;
+function freeDevices() {
+  // 녹화가 승인했던 기기만 끊는다 — 사용자 본인 IDE 기기는 그대로(demo-scenarios.mjs 의 freeDemoDevices)
+  return freeDemoDevices();
 }
 
 /** IDE 로그인 — 승인 코드를 읽어 플랫폼 API 로 바로 승인(앞 장에서 화면으로 보여 줬으므로) */
-async function ideQuickLogin(r) {
+export async function ideQuickLogin(r) {
   let code = null;
   for (let t = 0; t < 120 && !code; t++) {
     code = ideLoginCode(r.profile);
@@ -1644,8 +1645,10 @@ async function ideQuickLogin(r) {
   if (!code) throw new Error("IDE 승인 코드를 못 읽었습니다");
   const a = APPS.platform;
   const tok = await freeDevices();
+  const before = await devDeviceIds();
   const res = await fetch(`${a.url}/api/v1/axnavi/device/approve`, { method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${tok}` }, body: JSON.stringify({ userCode: code, approve: true }) });
   if (!res.ok) throw new Error(`기기 승인 실패 ${res.status}`);
+  await rememberNewDevices(before);
   const status = () => r.eval(`[...document.querySelectorAll('.statusbar-item')].map((e) => e.innerText).join(' | ')`).catch(() => "");
   for (let t = 0; t < 40 && !/AX-NAVI · /.test(await status()); t++) await pause(1000);
   await pause(3000);
@@ -1689,6 +1692,7 @@ Object.assign(SCENARIOS, {
       if (!code) throw new Error("승인 코드를 못 읽었습니다");
       await r.caption(`로그인 — 이 기기의 승인 코드 ${code}`, "IDE 가 플랫폼 승인 화면을 엽니다 — 평소 쓰는 플랫폼 계정으로");
       await pause(4000);
+      const before = await devDeviceIds();
       await r.browser(async (b) => {
         await b.login("platform", "dev");
         await b.go(`${A.platform.url}/axnavi/activate?code=${code}`);
@@ -1698,6 +1702,7 @@ Object.assign(SCENARIOS, {
         await b.caption("승인했습니다 — IDE 로 돌아갑니다");
         await pause(2500);
       });
+      await rememberNewDevices(before);
       for (let t = 0; t < 40 && !/AX-NAVI · /.test(await statusText()); t++) await pause(1000);
       await r.caption("잠금이 풀렸습니다 — 스킬 26개와 판정 엔진을 플랫폼에서 받습니다", "CLI 를 따로 깔지 않아도 IDE 하나로 · 스킬은 기기 표식을 넣은 암호화 캐시로만");
       await pause(6000);

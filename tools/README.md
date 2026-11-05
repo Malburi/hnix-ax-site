@@ -43,6 +43,10 @@ node tools/record-demo.mjs --scenarios scenario-scenarios.mjs --scenario sm-b --
 ```
 
 - 녹화마다 `scenario-prep.mjs` 를 먼저 돌린다. 시험용 ITSM 티켓은 플랫폼 메모리에만 있어, 플랫폼을 다시 띄우면 처음 5건으로 돌아간다(목록이 깔끔해진다).
+- 시나리오 A 는 자동화 흐름 '서비스 요청 분류·처리'(`feature-prep-ai.mjs` 가 만든다)와 감시 트리거 '새 서비스 요청 감시'(`scenario-prep.mjs` 가 만들고 기준선을 잡는다)를 쓴다. 중간의 AX-NAVI IDE 장면은 `r.browser(fn, { ide, ideEnv }, prepare)` 로 웹 영상 안에 IDE 를 띄워 찍는다(로그인은 `prepare` 에서 — 영상에 넣지 않음). 연습 저장소 `EmpDao.java` 는 녹화 뒤 되돌린다.
+- 시나리오 B 의 '말로 묻기'는 사내 음성 인식 서버(OpenAI 호환 `/v1/audio/transcriptions`, 기본 `http://127.0.0.1:8796/v1`)가 떠 있어야 글로 바뀐다. 없으면 자주 묻는 질문 버튼으로 대신한다.
+- IDE 녹화 공통: 녹화가 승인한 기기만 `tools/.demo-devices.json` 에 적어 두고 그것만 끊는다(사용자 본인 IDE 기기는 건드리지 않음). IDE 가 로그인하며 이 PC 의 Claude Code 설정(`~/.claude.json` 의 MCP `hnix-ax`, `~/.claude/settings.json` 의 사용량 전송)에 써 넣는 녹화용 키는 녹화가 끝나면 되돌린다. 임시 프로필은 `window.dialogStyle: custom` 이라 확인 대화상자가 화면 안에 그려진다(OS 대화상자는 녹화를 멈춘다).
+- 영상은 CRF 27 로 나온다. 오프라인 zip(GitHub 100MB 한도) 때문에 올리기 전에 CRF 32 로 다시 압축한다: `ffmpeg -i x.mp4 -c:v libx264 -preset slow -crf 32 -pix_fmt yuv420p -movflags +faststart -an y.mp4`.
 - 시험용 ITSM 비밀번호는 플랫폼 비밀 저장소에만 있어 이 PC 의 E2E 데이터에서 읽는다(`PLATFORM_REPO`).
 - 포스터: `ffmpeg -ss 4 -i sm-a.mp4 -frames:v 1 -q:v 4 sm-a.jpg`(B 는 9초).
 

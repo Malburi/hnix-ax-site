@@ -100,7 +100,7 @@ class Recorder {
     let target;
     if (opts.ide) {
       const s = await launchIde({ folder: opts.ide, env: opts.ideEnv });
-      Object.assign(this, { port: s.port, profile: s.profile, proc: s.proc, ide: true });
+      Object.assign(this, { port: s.port, profile: s.profile, proc: s.proc, ide: true, restoreClaude: s.restoreClaude });
       target = s.target;
     } else {
       this.port = 9500 + Math.floor(Math.random() * 400);
@@ -389,10 +389,13 @@ class Recorder {
   /**
    * 녹화 중에 브라우저 장면을 끼워 넣는다 — 헤드리스 Edge 를 하나 더 띄워 fn(b) 로 조작하고, 그 장면을 이 영상에 이어 붙인다.
    * IDE 가 연 승인 화면(플랫폼 웹)처럼 IDE 밖에서 일어나는 일을 한 영상에 담을 때.
+   * startOpts 에 { ide, ideEnv } 를 주면 거꾸로 웹 영상 안에 AX-NAVI IDE 장면을 넣는다(prepare 로 로그인을 미리).
    */
-  async browser(fn) {
+  async browser(fn, startOpts = {}, prepare = null) {
     const b = new Recorder();
-    await b.start();
+    await b.start(startOpts);
+    // 녹화 전에 해 둘 일(예: IDE 로그인) — 이 부분은 영상에 넣지 않는다
+    if (prepare) await prepare(b);
     const wasRecording = this.recording;
     try {
       if (wasRecording) {
@@ -485,10 +488,19 @@ class Recorder {
   }
 
   async close() {
-    await this.send("Browser.close").catch(() => undefined);
+    // CDP Browser.close 응답을 기다리다 멈추는 일이 있어 2초까지만
+    await Promise.race([this.send("Browser.close").catch(() => undefined), sleep(2000)]);
     this.ws?.close();
+    // IDE 는 확장 호스트 등 자식 프로세스가 본체를 꺼도 남는다 — 트리째 끈다(남으면 아래 되돌린 설정을 다시 써 넣는다)
+    if (this.ide && this.proc?.pid) spawnSync("taskkill", ["/T", "/F", "/PID", String(this.proc.pid)], { stdio: "ignore" });
     this.proc?.kill();
-    await sleep(800);
+    await sleep(this.ide ? 2000 : 800);
+    // IDE 가 사용자 Claude Code 설정에 써 넣은 녹화용 기기 키를 되돌린다
+    try {
+      this.restoreClaude?.();
+    } catch (e) {
+      console.warn("  ! Claude Code 설정 되돌리기 실패:", e.message);
+    }
     try {
       rmSync(this.profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 400 });
     } catch {
@@ -500,15 +512,24 @@ class Recorder {
 /** 다른 DevTools 대상(웹뷰 iframe)에서 식 하나를 평가한다 */
 async function cdpEval(wsUrl, expression) {
   const ws = new WebSocket(wsUrl);
+  // IDE 가 꺼지거나 웹뷰가 답하지 않으면 영원히 기다리지 않게 — 10초 안에 답이 없으면 null
+  const limit = (ms) => new Promise((_, no) => setTimeout(() => no(new Error("웹뷰 응답 없음")), ms));
   try {
-    await new Promise((ok, no) => {
-      ws.addEventListener("open", ok, { once: true });
-      ws.addEventListener("error", no, { once: true });
-    });
-    const res = await new Promise((ok) => {
-      ws.addEventListener("message", (e) => ok(JSON.parse(e.data)), { once: true });
-      ws.send(JSON.stringify({ id: 1, method: "Runtime.evaluate", params: { expression, returnByValue: true } }));
-    });
+    await Promise.race([
+      new Promise((ok, no) => {
+        ws.addEventListener("open", ok, { once: true });
+        ws.addEventListener("error", no, { once: true });
+      }),
+      limit(10000),
+    ]);
+    const res = await Promise.race([
+      new Promise((ok, no) => {
+        ws.addEventListener("message", (e) => ok(JSON.parse(e.data)), { once: true });
+        ws.addEventListener("close", () => no(new Error("웹뷰 연결 닫힘")), { once: true });
+        ws.send(JSON.stringify({ id: 1, method: "Runtime.evaluate", params: { expression, returnByValue: true } }));
+      }),
+      limit(10000),
+    ]);
     return res.result?.result?.value ?? null;
   } catch {
     return null;
