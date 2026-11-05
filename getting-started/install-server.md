@@ -28,7 +28,7 @@
 | `HNIX-AX-Server-Setup-<날짜>.exe` | 약 650MB | 서버 설치 프로그램(코드 서명) |
 | `ollama-model-qwen2.5-3b.zip` | 약 1.8GB | 사내 대화 모델(기본) — 설치 프로그램이 같은 폴더에서 찾아 넣는다 |
 | `ollama-model-nomic-embed-text-latest.zip` | 약 260MB | 문서 검색(임베딩) 모델 |
-| `ollama-model-qwen3.5-4b.zip.001` · `.002` | 약 3.2GB | 선택 — 더 나은 한국어 대화 모델(아래 4번 '대화 모델 고르기') |
+| `ollama-model-qwen3.5-4b.zip.001` · `.002` | 약 3.2GB | **AX-NAVI IDE 를 사내 게이트웨이로 쓰면 필요** — IDE 에이전트용 코드 모델(`hnix-code`). 더 나은 한국어 대화 모델로도 쓴다(아래 4번) |
 | `ollama-model-qwen3.5-2b.zip.001` · `.002` | 약 2.6GB | 선택 — 가벼운 대화 모델 |
 | `SHA256SUMS.txt` | — | 받은 파일 확인(선택) |
 
@@ -101,6 +101,12 @@ tools\node\node.exe scripts\smoke.mjs     # 자동 점검 21단계(시험 기록
 
 바꾸려면 `server.config.json` 의 `model.chatModel` 을 `qwen3.5:4b`(또는 `qwen3.5:2b`)로 고치고 설치를 다시 돌린다(`server.ps1 install`). 게이트웨이 별칭 `hnix-local`·`hnix-smart` 의 사내 모델이 새 모델로 바뀐다. qwen3.5 는 원래 답하기 전에 '생각'을 길게 해서 CPU 에선 답이 빈다 — 게이트웨이가 사내 Ollama 의 qwen3 계열에는 생각을 꺼서 보낸다. 속도는 이 개발 PC(노트북 CPU) 기준이다.
 
+**AX-NAVI IDE 용 모델(`hnix-code`)과 문맥 길이** — IDE 의 AI 에이전트는 매번 도구(파일 읽기·고치기·완료 등)를 불러야 하고, 지시문과 도구 설명만 1만 토큰이 넘는다. 그래서 서버 설치가 두 가지를 맞춘다.
+
+- `model.codeModel`(기본 `qwen3.5:4b`) — 게이트웨이 별칭 `hnix-code` 를 만들고, IDE 가 로그인하면 이 별칭을 받는다(플랫폼 설정 `axnavi.gatewayModel`). 이 모델 파일이 없으면 `hnix-code` 는 대화 모델(`chatModel`)로 답하는데, `qwen2.5:3b` 는 IDE 에서 도구를 제대로 부르지 못해 채팅에 **'모델 응답 불완전'**이 뜬다. `ollama-model-qwen3.5-4b.zip.*` 를 꼭 함께 넣는다.
+- `model.contextLength`(기본 `32768`) — 사내 Ollama 의 문맥 길이(`OLLAMA_CONTEXT_LENGTH`). Ollama 기본값(4096)이면 IDE 의 긴 지시문이 잘려 같은 증상이 난다. IDE 요청 한 번이 2만~2만 5천 토큰(지시문 + 도구 설명 — MCP 허브 도구가 많을수록 커진다)이라 **32768 아래로 줄이지 않는다**. 실측: 문맥 4096 이면 2만 2천 토큰 중 2천 토큰만 남아 엉뚱한 도구를 부르고, 32768 이면 `qwen2.5:3b`·`qwen3.5:4b` 모두 맞는 도구(read_file)를 불렀다.
+- CPU 서버에서는 첫 질문에 긴 지시문을 읽느라 1~3분 걸릴 수 있다(같은 대화의 다음 질문은 앞부분을 다시 읽지 않아 빠르다). 여러 사람이 IDE 를 쓰면 GPU 서버(`model.gpu`)를 권장한다 — 있으면 `hnix-code` 도 GPU 모델을 먼저 쓴다.
+
 ## 5. 개인 PC 에 배포하기
 
 개인 PC 에서는 스크립트를 돌리지 않는다. 각자 브라우저로 플랫폼에 로그인해 **내 연결 설정**에서 설치 파일을 받으면 된다([개인 PC 설치 가이드](https://malburi.github.io/hnix-ax-site/#/getting-started/install-pc)).
@@ -151,6 +157,7 @@ powershell -ExecutionPolicy RemoteSigned -File server.ps1 start       # 모두 �
 | 다른 PC 에서 안 열림 | 서버에서는 열리는가(`server.ps1 status`) → Windows 방화벽 규칙 `HNIX AX *` → 사내 방화벽·라우팅 → 개인 PC 의 프록시 예외 |
 | 포트 사용 중 | 설치 프로그램을 다시 실행해 포트를 바꾼다 |
 | PMS-X 가 3분 넘게 안 뜸 | `apps\pmsx\pmsx-*\logs`, 메모리. 처음에는 시연 데이터를 채우느라 오래 걸린다 |
+| IDE 채팅에 '모델 응답 불완전' | 사내 게이트웨이의 `hnix-code` 가 작은 모델(`qwen2.5:3b`)로 답하거나 문맥이 잘림 — 위 4번 'AX-NAVI IDE 용 모델'대로 `qwen3.5:4b` 파일을 넣고 `server.ps1 install` 을 다시 |
 | AI 답이 엉뚱함 | CPU 작은 모델의 한계 — `qwen3.5:4b`(위 4번), GPU 서버(`server.config.json` 의 `model.gpu`)나 조직 API 키 |
 | 설치 중 '모델 … 을 풀지 못했습니다' | `.zip.001`·`.002` 조각 중 하나가 없거나 받다가 끊겼다 — `SHA256SUMS.txt` 와 대조해 다시 받는다 |
 | '모델 … 이 없습니다 — 인터넷으로 받습니다' 뒤 멈춤 | `model.chatModel` 에 적은 모델의 `ollama-model-*` 파일이 설치 폴더 옆에 없다 |
