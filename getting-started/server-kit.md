@@ -8,17 +8,18 @@
  개발자: AX-NAVI IDE ─────────────▶  PMS-X        :8080  서비스 요청 · As-Is 분석 · SM (시연 데이터)
    (설치 → 로그인하면 연결 끝,         AX-DataLake  :8790  레이크 · 온톨로지 · 거버넌스
     Claude 구독은 각자 로그인)         사내 모델     :11434 Ollama — 서버 안에서만
+                                      PostgreSQL   :5432  세 제품의 DB — 서버 안에서만
 ```
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (AX-NAVI IDE 1.2.5 · PMS-X 1.3.5)**(`server-kit-20261105`) (비공개 저장소). 설치 파일과 사내 모델 파일(`ollama-model-*`)이 이 릴리스에 모두 있다.
+GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (PostgreSQL · AX-NAVI IDE 1.2.5 · PMS-X 1.3.5)**(`server-kit-20261105`, 설치 파일은 `HNIX-AX-Server-Setup-20261106.exe`) (비공개 저장소). 설치 파일과 사내 모델 파일(`ollama-model-*`)이 이 릴리스에 모두 있다.
 
 설치 파일은 **서버 PC 용**과 **개인 PC 용** 두 가지다. 둘 다 회사 코드 서명이 된 설치 프로그램이다.
 
 | 파일 | 크기 | 어디에 |
 |---|---|---|
-| `HNIX-AX-Server-Setup-<날짜>.exe` | 약 740MB | **서버 PC** — 네 제품 설치·서비스·방화벽 |
+| `HNIX-AX-Server-Setup-<날짜>.exe` | 약 790MB | **서버 PC** — 네 제품 설치·서비스·방화벽 |
 | `ollama-model-qwen2.5-3b.zip` · `ollama-model-nomic-embed-text-latest.zip` | 약 1.8GB · 260MB | 서버 — 서버 설치 파일과 **같은 폴더**에 둔다(설치 프로그램이 함께 넣는다) |
 | `ollama-model-qwen3.5-4b.zip.001`·`.002` · `ollama-model-qwen3.5-2b.zip.001`·`.002` | 약 3.2GB · 2.6GB | 선택 — 다른 대화 모델. 2GB 가 넘어 조각으로 나뉘어 있다(조각을 모두 같은 폴더에). 고르는 법은 [서버 PC 설치](https://malburi.github.io/hnix-ax-site/#/getting-started/install-server) 4번 |
 | `HNIX-AX-PC-Setup-<판>.exe` | 약 200MB | **개인 PC** — AX-NAVI IDE + 회사 연결. 서버에도 들어 있어 플랫폼 `내 연결 설정`에서 받는다 |
@@ -26,6 +27,7 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (AX-NAV
 | 서버 꾸러미 안 | 내용 |
 |---|---|
 | 설치본 셋 | AX Platform(Node 포함) · AX-DataLake 0.3.0(Node·SQL 엔진 포함) · PMS-X 1.3.5(JRE 21, 시연 데이터, 소스 분석기) |
+| DB | PostgreSQL 18 — 세 제품의 DB 를 한곳에(서버 안에서만 열고, 매일 백업) |
 | 사내 모델 | Ollama CPU 판 — 임베딩(문서 RAG)과 CPU 대화 모델 |
 | AX-NAVI CLI · 연습 저장소 | 허브의 `axnavi__` 도구와 자동 점검용 |
 | `server.ps1` · `server.config.json` | 설치·시작·멈춤·상태·내리기, 설정 하나 |
@@ -48,19 +50,22 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (AX-NAV
 3. '설치를 마치면 바로 서버 설치·시작'을 켜 두면 진행 창이 열려 아래 순서를 끝까지 돈다(처음에는 10분 넘게).
 4. 관리자 계정·비밀번호는 설치 폴더의 `server.config.json` 에 있다.
 
-화면 없이 깔 때: `HNIX-AX-Server-Setup-<날짜>.exe /VERYSILENT /ADDRESS=ax-test.corp.local /SUBNETS=10.20.30.0/24`. 제거('앱 및 기능')는 서비스·방화벽 규칙을 내리고 프로그램을 지우며, 데이터와 `server.config.json` 은 남긴다.
+화면 없이 깔 때: `HNIX-AX-Server-Setup-<날짜>.exe /VERYSILENT /ADDRESS=ax-test.corp.local /SUBNETS=10.20.30.0/24`. 제거('앱 및 기능')는 서비스·방화벽 규칙·백업 예약을 내리고 프로그램을 지우며, DB·데이터·백업과 `server.config.json` 은 남긴다.
 
 | 순서 | 하는 일 |
 |---|---|
 | 1 | 패키지를 `apps\`·`tools\`·`work\`에 푼다 |
-| 2 | 사내 모델 — Ollama를 Windows 서비스로(127.0.0.1에서만), 모델 넣기 |
-| 3 | AX Platform — `0.0.0.0`·`publicUrl`·매일 백업·런북, 서비스, 관리자·점검용 계정 |
-| 4 | 게이트웨이 — 모델 별칭 `hnix-local`·`hnix-smart`·`hnix-embed`, 제품끼리 쓰는 가상 키 |
-| 5 | AX-DataLake — 서비스, AI 질문은 플랫폼 게이트웨이로, 시연 테이블·ITO 온톨로지·거버넌스, 허브 등록 |
-| 6 | PMS-X — 서비스(시연 프로필), AI 보조는 게이트웨이로 |
-| 7 | MCP 허브 — PMS-X·AX-NAVI·레이크 도구, 승인 정책, 에이전트, 문서 RAG |
-| 8 | Windows 방화벽 — 세 포트 인바운드 허용(도메인·개인 네트워크) |
-| 9 | 개인 PC 설치 파일을 플랫폼 내려받기 폴더에 — 개발자는 `내 연결 설정`에서 받는다 |
+| 2 | PostgreSQL 18 — Windows 서비스로(127.0.0.1에서만, 비밀번호 인증), 제품마다 계정·DB, 매일 02:00 백업 예약 |
+| 3 | 사내 모델 — Ollama를 Windows 서비스로(127.0.0.1에서만), 모델 넣기 |
+| 4 | AX Platform — `0.0.0.0`·`publicUrl`·런북, DB `hnix_ax`, 서비스, 관리자·점검용 계정 |
+| 5 | 게이트웨이 — 모델 별칭 `hnix-local`·`hnix-smart`·`hnix-embed`, 제품끼리 쓰는 가상 키 |
+| 6 | AX-DataLake — 서비스(DB `axdl`·`axdl_lake`), AI 질문은 플랫폼 게이트웨이로, 시연 테이블·ITO 온톨로지·거버넌스, 허브 등록 |
+| 7 | PMS-X — 서비스(DB `pmsx`, 시연 데이터), AI 보조는 게이트웨이로 |
+| 8 | MCP 허브 — PMS-X·AX-NAVI·레이크 도구, 승인 정책, 에이전트, 문서 RAG |
+| 9 | Windows 방화벽 — 세 포트 인바운드 허용(도메인·개인 네트워크). PostgreSQL·Ollama 는 열지 않는다 |
+| 10 | 개인 PC 설치 파일을 플랫폼 내려받기 폴더에 — 개발자는 `내 연결 설정`에서 받는다 |
+
+**DB** — 세 제품의 DB 를 서버 안의 PostgreSQL 하나에 모은다. 여러 사람이 동시에 써도 막히지 않고 돌아가는 중에도 백업된다. 따로 받거나 깔 것은 없다(설치 파일에 들어 있다). 예전 판(제품마다 내장 DB 파일)으로 깐 서버는 데이터를 잃지 않도록 내장 DB 를 계속 쓴다.
 
 다시 돌려도 된다 — 있는 것은 그대로, 빠진 것만 채운다. 끝나면 `관리 › 현장 연결 점검`에서 '연결 시험 포함 점검'으로 확인한다([고객사 설치와 연결 점검](/getting-started/onsite.md)과 같은 화면).
 
@@ -100,9 +105,12 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (AX-NAV
 ```powershell
 server.ps1 status       # 서비스·응답·접속 주소
 server.ps1 stop | start
+server.ps1 backup       # DB 백업을 지금 한 번(매일 02:00 에는 저절로)
 server.ps1 uninstall    # 서비스·방화벽 규칙 내림(데이터는 남김, -RemoveData 로 다 지움)
 tools\node\node.exe scripts\smoke.mjs   # 자동 점검 21단계 — 시험 기록이 서버에 남는다
 ```
+
+- 백업은 `backups\postgresql\<날짜-시각>\` 에 네 DB 의 덤프와 시크릿을 푸는 열쇠(`*.master.key`)가 함께 쌓인다(최근 14개). 서버 밖에 한 번 더 복사하되 DB 와 같은 수준으로 보관한다. 되살리는 법은 [서버 PC 설치](https://malburi.github.io/hnix-ax-site/#/getting-started/install-server) 7번.
 
 - PMS-X 시연 계정(`admin`·`op.seo`·`customer` 등)은 비밀번호가 알려져 있다. 사내망에 열면 바꾼다. `admin`·`op.seo`(허브가 PMS-X를 읽는 서비스 계정)를 바꿨으면 `server.config.json`의 `pmsx.adminPassword`·`serviceAccountPassword`에도 적고 `install`을 다시 돌린다.
 - 사내 AD 로그인은 플랫폼 `auth.ldap`([설치와 운영](/platform/operations.md)).
@@ -111,6 +119,8 @@ tools\node\node.exe scripts\smoke.mjs   # 자동 점검 21단계 — 시험 기�
 ## 확인한 것
 
 2026-10-31 개발 PC에서 `-NoService` 모드로 꾸러미를 새 폴더에 풀어 설치했다. 다른 PC가 여는 주소(LAN IP)로 세 제품 로그인·주요 화면을 확인했고, 꾸러미 안 자동 점검은 21단계 통과 20·주의 1(작은 로컬 모델의 창구 답변)·실패 0이었다. 현장 연결 점검은 문제 0이었다. 개발자 PC 연결(`connect-client.ps1`)은 별도 프로필로 돌려 보았다. 내 권한으로 쓸 수 있는 허브 도구 50개, `axnavi doctor`의 Insight·게이트웨이 경로, 게이트웨이 대화까지 확인했다. 사용자 일괄 등록은 틀린 명단(아무것도 안 만들고 고칠 곳 5군데 표시)·확인만(-Dry)·실제·엑셀 기본 저장(CP949)·다시 돌리기(있음)로 시험했고, 만든 계정이 세 제품에서 역할·PMS-X 프로젝트·레이크 소속 행 제한대로 동작하고 각자 비밀번호를 바꿀 수 있는 것을 확인했다. **Windows 서비스 등록과 방화벽 규칙(접속 대역 포함)은 관리자 권한이 없어 아직 실제로 돌려 보지 못했다** — 첫 설치 때 `server.ps1 status`로 확인한다.
+
+2026-11-06 PostgreSQL 로 바꾼 판을 새 폴더에 `-NoService` 로 다시 설치했다. 세 제품이 DB 4개(`hnix_ax` 72표 · `pmsx` 98표 · `axdl` 23표 · `axdl_lake` 39표)를 쓰고 내장 DB 파일은 생기지 않았다. 자동 점검 21단계는 통과 21·주의 0·실패 0이었다. `server.ps1 backup` → 받은 덤프를 새 DB 에 `pg_restore` 로 되살리기, `stop`·`start`(PostgreSQL 먼저), `uninstall -RemoveData` 를 확인했다. 서비스 모드(PostgreSQL 서비스·매일 백업 예약)는 관리자 권한이 필요해 아직 실제로 돌려 보지 못했다.
 
 ## 꾸러미 만들기(개발 PC)
 
