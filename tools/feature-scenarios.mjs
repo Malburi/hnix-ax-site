@@ -12,6 +12,33 @@ import { fileURLToPath } from "node:url";
 import { APPS, DEMO_REPO, devDeviceIds, freeDemoDevices, ideLoginCode, rememberNewDevices, runAgent } from "./demo-scenarios.mjs";
 
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** PMS-X WBS — 작업명으로 행 ID */
+async function wbsRow(r, name) {
+  return r.eval(`(() => { const i = [...document.querySelectorAll('input[data-col="name"]')].find((e) => e.value === ${JSON.stringify(name)}); return i?.closest('tr')?.dataset.rowId ?? null; })()`);
+}
+/** PMS-X WBS — 행의 번호 칸을 누른다(mods 2 = Ctrl 클릭) */
+async function rowClick(r, name, mods = 0) {
+  const id = await wbsRow(r, name);
+  const p = await r.eval(`(() => { const el = document.querySelector('tr[data-row-id="${id}"] td.c-no'); if (!el) return null; el.scrollIntoView({ block: 'center' }); const b = el.getBoundingClientRect(); return { x: Math.round(b.left + b.width / 2), y: Math.round(b.top + b.height / 2) }; })()`);
+  if (!p) return;
+  await r.pointAt(p);
+  await r.eval(`window.__demo && window.__demo.ripple(${p.x}, ${p.y})`).catch(() => undefined);
+  for (const type of ["mousePressed", "mouseReleased"]) await r.send("Input.dispatchMouseEvent", { type, x: p.x, y: p.y, button: "left", clickCount: 1, modifiers: mods });
+  await pause(700);
+}
+/** Alt+Shift+화살표 (WBS 계층 편집) — 지금 초점이 있는 칸에서 */
+async function arrowKey(r, key, vk) {
+  await r.send("Input.dispatchKeyEvent", { type: "rawKeyDown", key, code: key, modifiers: 9, windowsVirtualKeyCode: vk });
+  await r.send("Input.dispatchKeyEvent", { type: "keyUp", key, code: key, modifiers: 9, windowsVirtualKeyCode: vk });
+  await pause(700);
+}
+/** 표에서 글자가 든 행의 버튼을 누른다 */
+async function rowButton(r, rowSel, text, btnSel) {
+  const p = await r.eval(`(() => { const tr = [...document.querySelectorAll(${JSON.stringify(rowSel)})].find((t) => t.innerText.includes(${JSON.stringify(text)})); const b = tr && tr.querySelector(${JSON.stringify(btnSel)}); if (!b) return null; b.scrollIntoView({ block: 'center' }); const x = b.getBoundingClientRect(); return { x: Math.round(x.left + x.width / 2), y: Math.round(x.top + x.height / 2) }; })()`);
+  if (p) await r.clickAt(p);
+  await pause(900);
+}
 const L = APPS.platform.url;
 const prep = () => (existsSync(new URL("./.feature-prep.json", import.meta.url)) ? JSON.parse(readFileSync(new URL("./.feature-prep.json", import.meta.url), "utf8")) : {});
 
@@ -1138,7 +1165,7 @@ export const SCENARIOS = {
   },
 
   "pmsx-4": {
-    title: "PMS-X ④ 일정 · 자원 — WBS · 칸반 · 베이스라인 · 주간보고 · 인력 풀 · 투입 계획 · 업무 배정 · 작업일지 · MM 실적",
+    title: "PMS-X ④ 일정 · 자원 — WBS · 칸반 · 베이스라인 · 주간보고 · 인력 풀 · 인력 편성 · 작업 배분 · 작업일지 · MM 실적",
     maxGap: 3,
     async run(r) {
       await r.login("pmsx", "admin");
@@ -1172,13 +1199,13 @@ export const SCENARIOS = {
       await r.caption("스킬 매트릭스 — 누가 어떤 기술을 얼마나");
       await pause(4000);
       await r.go(`${P}/resource/plan`);
-      await r.caption("투입 계획 — 사람 × 월 MM", "엑셀로 가져오기·내보내기");
+      await r.caption("인력 편성 — 사람 × 월 MM, 투입 기간과 함께", "엑셀로 가져오기·내보내기 · 자세한 편성은 ⑨장");
       await pause(3500);
       await r.click("가용량 히트맵", { selector: "button", after: 1500 });
       await r.caption("가용량 히트맵 — 과투입·여유 인력을 색으로");
       await pause(4000);
       await r.go(`${P}/resource/assign`);
-      await r.caption("업무 배정 — 주 단위로 사람에게 일감 배정", "한 사람에게 몰리면 바로 보입니다");
+      await r.caption("작업 배분 — 주 단위로 사람에게 일감 배정", "다른 프로젝트 배정까지 합친 주간 배정률 · 한 사람에게 몰리면 바로 보입니다");
       await pause(4000);
       await r.go(`${P}/resource/timesheet`);
       await r.caption("작업일지 — 요일별 시간 입력 → 제출 → 승인", "작업 대상은 WBS 작업·서비스 요청");
@@ -1375,6 +1402,92 @@ export const SCENARIOS = {
       await r.go(`${P}/admin/system`);
       await r.caption("시스템 — 연동 시스템과 설정", "AI 기능은 여기서 켜야만 동작합니다(기본 꺼짐 · 외부 호출 0건)");
       await pause(4500);
+    },
+  },
+
+  "pmsx-9": {
+    title: "PMS-X ⑨ 인력 편성 · WBS 작성 — 인원·투입 기간·월 MM 한 표 · 기간·선행 바로 입력 · 엑셀 붙여넣기 · 여러 행 편집 · 작업 배분",
+    maxGap: 3,
+    async run(r) {
+      await r.login("pmsx", "admin");
+      await pmsxProject(r, "SI");
+      // 인력 편성
+      await r.go(`${P}/resource/plan`);
+      await r.caption("인력 편성 — 인원 · 역할 · 투입 기간 · 월 MM 을 한 표에서", "관리 메뉴로 가지 않고 여기서 인원을 추가 · 수정 · 제외합니다");
+      await pause(4500);
+      await r.click("인원 추가", { selector: "button", after: 1800 });
+      await r.caption("인원 추가 — 투입일 · 철수일은 프로젝트 기간으로 미리 채워집니다", "저장하면 그 기간의 영업일로 월 MM 이 자동으로 채워집니다");
+      await pause(4500);
+      await r.click("취소", { selector: ".v-dialog button", exact: true, after: 1000 });
+      await rowButton(r, "[data-test=mm-grid] tbody tr", "윤데이터", "[data-test^=plan-fill-]");
+      await r.caption("투입 기간으로 MM 채우기 — 그 달 영업일 중 투입한 날의 비율", "주말 · 공휴일을 빼고 0.1 MM 단위 · 9월은 7일 투입이라 0.8");
+      await pause(5000);
+      await r.click("초기화", { selector: "button", exact: true, after: 1200 });
+      // WBS — 엑셀처럼
+      await r.go(`${P}/schedule/wbs`, "document.querySelectorAll('tr[data-row-id]').length > 3");
+      await r.caption("WBS — 기간(영업일) · 선행 칸이 표에 바로", "칸을 고치고 Enter 로 아래 칸으로 · 엑셀처럼");
+      await pause(4000);
+      const db = await wbsRow(r, "데이터베이스 설계");
+      await r.type(`css:tr[data-row-id="${db}"] [data-col="duration"]`, "3", { clear: true, delay: 120 });
+      await r.press("Enter");
+      await r.caption("기간 10 → 3 — 종료일이 영업일로 다시 계산되고 간트 막대도 줄어듭니다", "시작일을 옮기면 기간을 지킨 채 종료일이 따라갑니다");
+      await pause(4500);
+      const ext = await wbsRow(r, "외부 인터페이스 정의");
+      await r.type(`css:tr[data-row-id="${ext}"] [data-col="deps"]`, "2.3.1, 2.3.2SS+1", { clear: true, delay: 90 });
+      await r.press("Enter");
+      await r.caption("선행 — WBS 번호로 바로 입력", "2.3.1 은 끝나면 시작 · 2.3.2SS+1 은 시작 1일 뒤 시작 · 순환이 생기면 막습니다");
+      await pause(5000);
+      // 여러 행 선택 → 내어쓰기 → 들여쓰기(Alt+Shift+화살표)
+      await rowClick(r, "인사 화면 설계");
+      await rowClick(r, "급여 화면 설계", 2);
+      await r.caption("여러 행 — Ctrl · Shift 클릭으로 고르고", "내어쓰기 · 들여쓰기 · 위아래 이동 · 삭제 · 담당자 지정을 한 번에");
+      await pause(3000);
+      await arrowKey(r, "ArrowLeft", 37);
+      await r.caption("Alt+Shift+← 내어쓰기", "번호가 바로 다시 매겨집니다");
+      await pause(3000);
+      await arrowKey(r, "ArrowRight", 39);
+      await r.caption("Alt+Shift+→ 들여쓰기 — 다시 '화면·인터페이스 설계' 아래로");
+      await pause(3000);
+      // 담당자 칸
+      await r.clickSel(`tr[data-row-id="${db}"] .who-btn`, 1500);
+      await r.caption("담당자 칸을 누르면 프로젝트 인원 중에서 고릅니다", "여러 행을 고른 채 누르면 한꺼번에 지정");
+      await pause(4000);
+      await r.click("취소", { selector: ".v-dialog button", exact: true, after: 1000 });
+      // 엑셀·메모장 붙여넣기
+      await r.clickSel(`tr[data-row-id="${ext}"] [data-col="name"]`, 800);
+      await r.eval(`(() => { const el = document.activeElement; const dt = new DataTransfer(); dt.setData('text/plain', ${JSON.stringify("설계 검토\n\t설계 검토 회의\t2026-12-11\t\t2\n\t검토 결과 반영\t\t\t3")});
+        el.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true })) })()`);
+      await pause(800);
+      await r.caption("엑셀 · 메모장 목록 붙여넣기 — 여러 줄이 작업 행으로", "앞의 탭 · 공백은 하위 작업, 날짜 칸은 시작 · 종료, 숫자 칸은 기간");
+      await pause(5500);
+      // 표·간트 경계
+      const sp = await r.eval(`(() => { const b = document.querySelector('[data-test=wbs-splitter]').getBoundingClientRect(); return { x: Math.round(b.left + 3), y: Math.round(b.top + 160) }; })()`);
+      await r.pointAt(sp);
+      await r.send("Input.dispatchMouseEvent", { type: "mousePressed", x: sp.x, y: sp.y, button: "left", clickCount: 1 });
+      for (let i = 1; i <= 12; i++) {
+        await r.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: sp.x + i * 14, y: sp.y, button: "left", buttons: 1 });
+        await r.eval(`window.__demo && window.__demo.move(${sp.x + i * 14}, ${sp.y})`).catch(() => undefined);
+        await pause(60);
+      }
+      await r.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: sp.x + 168, y: sp.y, button: "left", clickCount: 1 });
+      await r.caption("표 · 간트 경계를 끌어 폭 조절 — 브라우저가 기억합니다", "가로로 넘겨도 번호 · 작업명은 고정");
+      await pause(4000);
+      await r.click("초기화", { selector: "button", exact: true, after: 1200 });
+      await r.caption("저장 전까지는 화면 안의 사본 — 초기화로 되돌리거나 저장");
+      await pause(3000);
+      // 작업 배분
+      await r.go(`${P}/resource/assign`);
+      await r.caption("작업 배분 — WBS 작업과 화면 분석을 탭으로", "WBS 작업은 모두 배정됨(마일스톤은 배정 대상이 아님) · 주간 배정률은 다른 프로젝트 배정까지 합쳐서");
+      await pause(5000);
+      await r.click("화면 분석", { selector: ".v-tab", after: 1500 });
+      await r.caption("화면 분석 — 아직 담당이 없는 As-Is 화면", "끌어서 사람 행에 놓거나 배정 버튼(Enter)");
+      await pause(3000);
+      await r.clickSel("[data-test=work-list] .work button", 1500);
+      await r.click("담당자", { selector: ".v-dialog .v-field", after: 1200 });
+      await r.click("박개발", { selector: ".v-overlay--active .v-list-item", after: 1500 });
+      await r.caption("배정하기 전에 — 작업 기간 중 배정률이 100% 를 넘으면 경고", "배정률 슬라이더로 반만 맡길 수도 있습니다");
+      await pause(5000);
+      await r.click("취소", { selector: ".v-dialog button", exact: true, after: 1000 });
     },
   },
 
