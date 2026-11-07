@@ -82,11 +82,12 @@ axnavi:
 
 ## 플랫폼 주소 정하기
 
-IDE는 다음 순서로 플랫폼 주소를 찾는다. 보통은 배포할 때 PC 공용 정책에 넣어 둔다.
+IDE는 다음 순서로 플랫폼 주소를 찾는다. 앞에서 찾으면 뒤는 보지 않는다. 보통은 배포할 때 PC 공용 정책에 넣어 둔다.
 
-1. 설정 `axnavi.platform.url`
-2. 환경 변수 `HNIX_AX_SERVER`
-3. PC 공용 정책 `%ProgramData%\axnavi\policy.json`의 `platform`
+1. PC 공용 정책 `%ProgramData%\axnavi\policy.json`의 `platform` — 관리자가 정한 주소라 사용자가 바꿀 수 없다
+2. 설정 `axnavi.platform.url` — **AX-NAVI 연결**로 주소를 넣으면 IDE 가 여기에 저장한다
+3. 환경 변수 `HNIX_AX_SERVER`
+4. 설치할 때 넣은 주소 — 설치 화면에서 넣었거나 `/SERVER=` 로 준 주소(설치 폴더의 `axnavi.json`)
 
 ```json
 { "platform": "http://ax.hd.local:8700", "allowedRoutes": ["subscription", "gateway"] }

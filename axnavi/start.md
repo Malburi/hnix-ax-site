@@ -136,7 +136,7 @@ IDE와 기능이 같다. 회사 표준 VS Code 설정과 확장을 그대로 두
 
 | 설정 | 기본값 | 뜻 |
 |---|---|---|
-| `axnavi.platform.url` | (비움) | HNIX AX 플랫폼 주소 — 로그인·스킬 배포·서버 엔진. 비우면 환경 변수 `HNIX_AX_SERVER`, 그다음 PC 공용 정책의 `platform` |
+| `axnavi.platform.url` | (비움) | HNIX AX 플랫폼 주소 — 로그인·스킬 배포·서버 엔진. PC 공용 정책에 `platform` 이 있으면 그것이 우선이고 이 설정은 쓰지 않는다. 비우면 환경 변수 `HNIX_AX_SERVER`, 그다음 설치할 때 넣은 주소 |
 | `axnavi.cliPath` | (비움) | 쓰던 VS Code에 확장만 깔고 로그인 없이 쓸 때의 CLI 실행 파일. IDE 설치본은 쓰지 않는다 |
 | `axnavi.cliRoot` | (비움) | 위와 같은 경우의 CLI 패키지 폴더 |
 | `axnavi.offline` | `true` | 폐쇄망 모드 — 시작할 때 공개 모델 목록을 받아 오지 않는다 |

@@ -94,8 +94,13 @@ GitLab 머지 요청 템플릿이 저장소에 있다(`docs/ci/gitlab-axnavi-rev
 
 ```yaml
 # 줄인 것 — 전체는 docs/ci/gitlab-axnavi-review.yml
+variables:
+  # 실행 검증 근거 — 기본은 비워 둔다. 근거 없이 돌면 '실행 검증 증거 없음'으로 HOLD
+  AXNAVI_VERIFY: ""
+
 axnavi-review:
   stage: review
+  needs: [] # 테스트 job 이 있으면 needs: ["test"] 와 AXNAVI_VERIFY: "--tests-passed"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   before_script:
@@ -104,8 +109,10 @@ axnavi-review:
     - axnavi index refresh || axnavi index build || true
   script:
     - BASE="origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
-    - axnavi review --diff "$BASE...HEAD" --tests-passed --format md --out axnavi-review.md || CODE=$?
+    - eval axnavi review --diff "\"$BASE...HEAD\"" $AXNAVI_VERIFY --format md --out axnavi-review.md || CODE=$?
     - exit ${CODE:-0}
+  allow_failure:
+    exit_codes: [3] # HOLD 는 경고로만
 ```
 
-테스트 job을 앞에 두지 않았다면 `--tests-passed` 대신 `--verify "mvn -q -B test"`처럼 검증 명령을 넘긴다. 프로젝트 액세스 토큰을 주면 리포트를 머지 요청 댓글로 단다.
+`AXNAVI_VERIFY` 는 기본으로 비어 있어, 테스트·빌드 근거 없이 코드가 바뀐 머지 요청은 '실행 검증 증거 없음(UNVERIFIED)'으로 HOLD 가 된다. 테스트 job 을 `needs: ["test"]` 로 앞에 둔 경우에만 `AXNAVI_VERIFY: "--tests-passed"` 를 주고, 아니면 `AXNAVI_VERIFY: '--verify "mvn -q -B test"'` 처럼 검증 명령을 넘긴다. 프로젝트 액세스 토큰(`AXNAVI_MR_TOKEN`)을 주면 리포트를 머지 요청 댓글로 단다.

@@ -101,8 +101,13 @@ axnavi modernize <java17|java21|jakarta|boot3|oracle-pg> [경로...]
 GitLab 머지 요청 템플릿이 CLI 저장소에 둘 있다. 변경 리뷰(`docs/ci/gitlab-axnavi-review.yml`)와 테스트·커버리지·현대화(`docs/ci/gitlab-axnavi-quality.yml` — 빌드·테스트 → `test status` → 바뀐 줄 커버리지 게이트 `AXNAVI_COVERAGE_MIN`, 현대화 점검은 수동 실행). HOLD는 경고로 통과시키고 STOP은 머지를 막는다. 모델·API 키·외부 네트워크를 쓰지 않으므로 폐쇄망 러너에서 그대로 돈다. 자세한 옵션은 [변경 리뷰와 보안 점검](/axnavi/review.md)에 있다.
 
 ```yaml
+variables:
+  # 실행 검증 근거 — 기본은 비워 둔다. 근거 없이 돌면 '실행 검증 증거 없음'으로 HOLD
+  AXNAVI_VERIFY: ""
+
 axnavi-review:
   stage: review
+  needs: [] # 테스트 job 이 있으면 needs: ["test"] 와 AXNAVI_VERIFY: "--tests-passed"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   before_script:
@@ -111,6 +116,10 @@ axnavi-review:
     - axnavi index refresh || axnavi index build || true
   script:
     - BASE="origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
-    - axnavi review --diff "$BASE...HEAD" --tests-passed --format md --out axnavi-review.md || CODE=$?
+    - eval axnavi review --diff "\"$BASE...HEAD\"" $AXNAVI_VERIFY --format md --out axnavi-review.md || CODE=$?
     - exit ${CODE:-0}
+  allow_failure:
+    exit_codes: [3] # HOLD 는 경고로만
 ```
+
+`AXNAVI_VERIFY` 는 기본으로 비어 있어, 테스트·빌드 근거 없이 코드가 바뀐 머지 요청은 '실행 검증 증거 없음(UNVERIFIED)'으로 HOLD 가 된다. 테스트 job 을 `needs: ["test"]` 로 앞에 둔 경우에만 `AXNAVI_VERIFY: "--tests-passed"` 를 주고, 아니면 `AXNAVI_VERIFY: '--verify "mvn -q -B test"'` 처럼 검증 명령을 넘긴다.
