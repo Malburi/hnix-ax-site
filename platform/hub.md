@@ -57,7 +57,9 @@ flowchart LR
 
 ## 승인함
 
-정책 효과가 `approve`인 호출은 승인 요청을 만들고 멈춘다.
+정책 효과가 `approve`인 호출은 승인 요청을 만들고 멈춘다. 승인함은 왼쪽 메뉴 맨 위에 있고(`/approvals`), 내가 결정할 대기 건수가 배지로 붙는다. 에이전트·채팅의 도구 호출, 런북 실행, 자동화 흐름의 '사람 확인'이 모두 여기로 모인다. 예전 주소(`/hub?tab=approvals`)와 알림 링크는 이 화면으로 열린다.
+
+<figure><img src="img/platform-approvals.png" alt="왼쪽 메뉴의 승인함 — 대기 건수 배지와 승인 대기 목록"><figcaption>승인함 — 메뉴의 배지가 내가 결정할 대기 건수다. 여러 건을 골라 한꺼번에 승인·반려할 수도 있다.</figcaption></figure>
 
 <figure><img src="img/platform-hub-approval-review.png" alt="도구 호출 승인 검토 창"><figcaption>요청자, 도구, 정책 사유, 인자를 보고 승인하거나 반려한다.</figcaption></figure>
 

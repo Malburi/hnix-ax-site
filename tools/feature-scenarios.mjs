@@ -144,6 +144,31 @@ export async function vtype(r, label, text, delay = 40) {
   return true;
 }
 
+/** 플랫폼 왼쪽 메뉴 */
+export async function sideMenu(r, label, wait = 2500) {
+  // 배지(승인함 대기 건수)가 붙으면 글자가 "승인함\n1" — 링크의 첫 글자 마디로 찾고, 메뉴가 스크롤돼 있으면 보이게 한 뒤 누른다
+  const p = await r.eval(`(() => {
+    const a = [...document.querySelectorAll('.side-menu .menu-link')].find((x) => (x.firstChild?.textContent ?? '').trim() === ${JSON.stringify(label)});
+    if (!a) return null;
+    a.scrollIntoView({ block: 'center' });
+    const q = a.getBoundingClientRect();
+    return { x: Math.round(q.left + Math.min(q.width / 2, 60)), y: Math.round(q.top + q.height / 2) };
+  })()`);
+  if (!p) {
+    console.warn(`  ! 메뉴 못 찾음: ${label}`);
+    await r.miss?.(`menu_${label}`);
+    return false;
+  }
+  await pause(300);
+  await r.clickAt(p);
+  await pause(wait);
+  return true;
+}
+/** 플랫폼 화면 위 묶음 탭(같은 묶음의 화면) */
+export async function sectionTab(r, label, wait = 2500) {
+  await r.click(label, { selector: "[data-test=section-tabs] a", exact: true, after: wait });
+}
+
 /** 모달 안의 버튼 */
 export const modalBtn = (r, label, after = 900) => r.click(label, { selector: ".n-modal button, .n-dialog button, .n-drawer button, .n-popconfirm button, .n-popover button", exact: true, after });
 
@@ -298,7 +323,7 @@ export const SCENARIOS = {
   },
 
   "platform-3": {
-    title: "AX Platform ③ MCP 허브 — 개요 · 연결·내 도구 · 서버 · 도구 승인 · 정책 · 승인함 · 호출 기록",
+    title: "AX Platform ③ MCP 허브 — 개요 · 연결·내 도구 · 서버 · 도구 승인 · 정책 · 호출 기록 · 승인함",
     maxGap: 3,
     async run(r) {
       await r.login("platform", "admin");
@@ -348,17 +373,19 @@ export const SCENARIOS = {
       await pause(4000);
       await closeModal(r);
 
-      await tab(r, "승인함", "승인함 — '사람 승인' 정책에 걸린 호출", "같은 인자로 한 번만 · 요청한 본인은 승인 못 합니다");
+      await tab(r, "호출 기록", "호출 기록 — 누가 · 어떤 클라이언트로 · 어떤 도구를 · 결과 · 걸린 시간", "인자는 이름만 남기고 값은 저장하지 않습니다", 6000);
+
+      await sideMenu(r, "승인함");
+      await r.caption("승인함 — 왼쪽 메뉴 맨 위, 내가 결정할 대기 건수 배지", "'사람 승인' 정책에 걸린 호출 · 런북 실행 · 자동화 흐름의 사람 확인이 한곳에 · 요청한 본인은 승인 못 합니다");
+      await pause(4000);
       if (await r.click("검토", { selector: "button", exact: true, after: 1200 })) {
         await r.caption("검토 — 누가 어떤 도구를 어떤 인자로 부르려 했는지, 걸린 정책", "결정 사유는 요청자에게 보입니다");
         await r.type("결정 사유", "운영 시간 외에 실행해 주세요", { delay: 45 });
         await pause(1500);
         await modalBtn(r, "승인", 1500);
-        await r.caption("승인 — 요청한 사람이 같은 인자로 다시 부르면 한 번 실행됩니다", "승인은 하루 동안 유효 · 반려하면 사유와 함께 요청자에게");
-        await pause(4000);
+        await r.caption("승인 — 요청한 사람이 같은 인자로 다시 부르면 한 번 실행됩니다", "승인은 하루 동안 유효 · 반려하면 사유와 함께 요청자에게 · 배지 숫자도 바로 줄어듭니다");
+        await pause(4500);
       }
-
-      await tab(r, "호출 기록", "호출 기록 — 누가 · 어떤 클라이언트로 · 어떤 도구를 · 결과 · 걸린 시간", "인자는 이름만 남기고 값은 저장하지 않습니다", 6000);
     },
   },
 
@@ -476,7 +503,7 @@ export const SCENARIOS = {
       await r.caption("실행 — 사유를 적고 '점검'(승인 없이 미리 보기) 또는 '실행 요청'");
       await pause(2500);
       await modalBtn(r, "실행 요청", 2000);
-      await r.caption("실행 요청 — 승인 번호가 생깁니다", "다른 관리자가 MCP 허브 승인함에서 승인하면, 같은 값으로 다시 요청할 때 실행 · 결과·출력·소요 시간 기록");
+      await r.caption("실행 요청 — 승인 번호가 생깁니다", "다른 관리자가 승인함에서 승인하면, 같은 값으로 다시 요청할 때 실행 · 결과·출력·소요 시간 기록");
       await pause(5000);
       await closeModal(r);
       await pause(2500);
@@ -576,12 +603,13 @@ export const SCENARIOS = {
   },
 
   "platform-8": {
-    title: "AX Platform ⑧ Insight · 관측 · 생산성 보고서 · 전사 AI 관측 · 모델 평가",
+    title: "AX Platform ⑧ AI 사용 현황(사용량·비용 · 품질·지연 · 외부 AI·자산) · 생산성 보고서 · 모델 평가",
     maxGap: 3,
     async run(r) {
       await r.login("platform", "admin");
-      await r.go(`${L}/insight`);
-      await r.caption("Insight — 모든 AI 사용을 한 곳에", "게이트웨이 · MCP 허브 · 에이전트 · 현업 창구 · Claude Code · AX-NAVI — 사용량과 비용");
+      await r.go(`${L}/`);
+      await sideMenu(r, "AI 사용 현황");
+      await r.caption("AI 사용 현황 — 사용량·비용 · 품질·지연 · 외부 AI·자산을 화면 위 탭으로", "사용량·비용(Insight) — 게이트웨이 · MCP 허브 · 에이전트 · 현업 창구 · Claude Code · AX-NAVI");
       await pause(4500);
       for (const [g, cap] of [["모델", "모델별"], ["팀", "팀별 — 기본은 팀 단위, 개인은 권한자만"], ["작업번호(요청·CR)", "작업번호별 — 서비스 요청·변경 요청 하나에 AI 를 얼마나 썼나"], ["소스", "소스별 — 어디서 쓴 AI 인가"], ["도구", "도구별 — 에이전트가 많이 부른 도구"]]) {
         await r.click(g, { selector: "button", exact: true, after: 1500 });
@@ -592,8 +620,9 @@ export const SCENARIOS = {
       await tab(r, "단가표", "단가표 — 모델마다 입력·출력·캐시 단가", "사내 모델은 0원 · 단가를 바꾸면 비용을 다시 계산합니다");
       await tab(r, "수집 소스", "수집 소스 — Claude Code 기록 파일 · AX-NAVI 사용 · OTLP · 다른 서버에서 보내기", "같은 사건은 한 번만 셉니다");
 
-      await r.go(`${L}/observe`);
-      await r.caption("관측 — 운영 지표", "모델 별칭별 지연(p50·p95)·오류율 · 도구 성공률 · 정책 위반 · 에이전트 실행 · 만족도(👍·👎)");
+      await top(r);
+      await sectionTab(r, "품질 · 지연");
+      await r.caption("품질 · 지연 — 운영 지표", "모델 별칭별 지연(p50·p95)·오류율 · 도구 성공률 · 정책 위반 · 에이전트 실행 · 만족도(👍·👎)");
       await pause(5000);
       await down(r, 600);
       await pause(3500);
@@ -601,7 +630,14 @@ export const SCENARIOS = {
       await r.caption("만족도 — 채팅·에이전트·업무 흐름 개선 결과에 남긴 의견");
       await pause(4000);
 
-      await r.go(`${L}/delivery`);
+      await top(r);
+      await sectionTab(r, "외부 AI · 자산");
+      await r.caption("외부 AI · 자산 — 우리 제품 밖의 AI 사용까지", "사내에서 쓰는 외부 AI 서비스의 사용 현황(사용자·사용일·주요 지표)을 CSV·API 로 받아 함께 봅니다");
+      await pause(4500);
+      await tab(r, "AI 자산 대장", "AI 자산 대장 — 어떤 AI 를 누가 어디에 쓰는지", "모델·에이전트·외부 서비스 · 담당 · 데이터 등급 · 검토 상태");
+      await tab(r, "수집 원천", "수집 원천 — 외부 AI 사용량을 받는 곳", "CSV 올리기 · 마지막 올린 때");
+
+      await sideMenu(r, "생산성 보고서");
       await r.caption("생산성 보고서 — AI 를 쓴 요청과 안 쓴 요청의 공수·리드타임 비교", "PMS-X 서비스 요청 · Git 커밋 · 계약 기준값을 이어서 계산");
       await pause(4000);
       await r.click("계산", { selector: "button", exact: true, after: 3000 });
@@ -610,14 +646,9 @@ export const SCENARIOS = {
       await tab(r, "저장소·커밋", "저장소·커밋 — 커밋 메시지의 업무 번호(SR-·CR-…)와 AI 공동 작성 표시로 잇습니다", "Git 서버 웹훅으로 받음");
       await tab(r, "기준선·요청", "기준선 — 계약 기준값(유형별 요청 1건 평균 공수·리드타임)", "PMS-X 에서 서비스 요청 가져오기");
 
-      await r.go(`${L}/enterprise-ai`);
-      await r.caption("전사 AI 관측 — 우리 제품 밖의 AI 사용까지", "사내에서 쓰는 외부 AI 서비스의 사용 현황(사용자·사용일·주요 지표)을 CSV·API 로 받아 함께 봅니다");
-      await pause(4500);
-      await tab(r, "AI 자산 대장", "AI 자산 대장 — 어떤 AI 를 누가 어디에 쓰는지", "모델·에이전트·외부 서비스 · 담당 · 데이터 등급 · 검토 상태");
-      await tab(r, "수집 원천", "수집 원천 — 외부 AI 사용량을 받는 곳", "CSV 올리기 · 마지막 올린 때");
-
-      await r.go(`${L}/eval`);
-      await r.caption("모델 평가 — 통합ITO 정답 세트로 모델을 비교", "새 모델을 들이기 전에 · 근거 답변 · 지식 문서 초안 · 서비스 요청 분류 · 도구 호출");
+      await sideMenu(r, "평가");
+      await sectionTab(r, "모델 평가");
+      await r.caption("평가 › 모델 평가 — 통합ITO 정답 세트로 모델을 비교", "새 모델을 들이기 전에 · 근거 답변 · 지식 문서 초안 · 서비스 요청 분류 · 도구 호출");
       await pause(4000);
       await r.click("사례 보기", { selector: "button", exact: true });
       await r.caption("정답 세트 — 사례와 기대 답", "사내 세트를 올려 우리 업무로 평가할 수도 있습니다");
@@ -758,9 +789,9 @@ export const SCENARIOS = {
 
       // ── 관리자가 승인함에서 승인
       await r.login("platform", "admin");
-      await r.go(`${L}/hub?tab=approvals`);
+      await r.go(`${L}/approvals`);
       await pause(1500);
-      await r.caption("관리자 — MCP 허브 승인함에 흐름의 사람 확인이 올라와 있습니다", "흐름 이름 · 단계 · 확인할 내용(분류 결과와 처리안)");
+      await r.caption("관리자 — 승인함에 흐름의 사람 확인이 올라와 있습니다(왼쪽 메뉴 배지)", "흐름 이름 · 단계 · 확인할 내용(분류 결과와 처리안)");
       await pause(3500);
       if (await clickNear(r, "flows__confirm", "검토", { after: 1500 })) {
         await r.caption("검토 — 처리안을 읽고 결정합니다");
@@ -967,6 +998,78 @@ export const SCENARIOS = {
       await pause(1500);
       await r.caption("매뉴얼 근거로 답합니다 — '읽어 주기'로 답을 소리로 들을 수 있습니다", "읽어 주기는 브라우저 음성 또는 게이트웨이 음성 합성 별칭");
       await pause(6000);
+    },
+  },
+
+  "platform-13": {
+    title: "AX Platform ⑬ 화면 정리 — 메뉴 묶음 · 승인함 · 문서 새 판으로 바꾸기 · 창구의 프로젝트 이름",
+    maxGap: 3,
+    async run(r) {
+      await r.login("platform", "admin");
+      await r.go(`${L}/`);
+      await r.caption("왼쪽 메뉴 — 하는 일로 다시 묶었습니다", "관리자 27칸 → 22칸 · 일반 사용자는 13칸 · 비슷한 화면은 메뉴 한 칸 + 화면 위 묶음 탭");
+      await pause(5500);
+      await sideMenu(r, "AI 사용 현황");
+      await r.caption("AI 사용 현황 — 예전의 Insight · 관측 · 전사 AI 관측", "화면 위 묶음 탭으로 오갑니다 · 주소는 그대로라 알림·옛 링크도 그대로");
+      await pause(4000);
+      await sectionTab(r, "품질 · 지연");
+      await pause(2000);
+      await sectionTab(r, "외부 AI · 자산");
+      await pause(2000);
+      await sideMenu(r, "평가");
+      await r.caption("평가 — 에이전트 평가와 모델 평가를 한 칸에");
+      await pause(2500);
+      await sectionTab(r, "모델 평가");
+      await pause(2000);
+      await sideMenu(r, "AX-NAVI 관리");
+      await r.caption("AX-NAVI 관리 — 사용 허가 · 조직 설정", "사용자 · 워크스페이스도 한 칸으로");
+      await pause(3500);
+
+      // 승인함
+      await sideMenu(r, "승인함");
+      await r.caption("승인함 — 메뉴 맨 위, 내가 결정할 대기 건수가 배지로", "예전에는 MCP 허브의 탭 안 · 도구 호출 · 런북 실행 · 자동화 흐름의 사람 확인이 모두 여기로");
+      await pause(5000);
+      if (await r.click("검토", { selector: "button", exact: true, after: 1500 })) {
+        await r.caption("검토 — 누가 · 어떤 도구를 · 어떤 인자로", "승인·반려는 ③ MCP 허브 장에서");
+        await pause(3500);
+        await closeModal(r);
+      }
+
+      // 문서 새 판
+      await sideMenu(r, "문서 RAG");
+      await r.click("운영 매뉴얼", { selector: ".col div", exact: true, after: 1500 });
+      await r.caption("문서 RAG — 고친 매뉴얼을 다시 올리면?", "예전에는 옛 판이 그대로 남아 답변 근거에 옛 내용이 섞였습니다");
+      await pause(4000);
+      await r.upload(fileURLToPath(new URL("./demo-files/v2/급여-마감-점검표.md", import.meta.url)));
+      await r.waitFor("!!document.querySelector('.n-dialog')", 10000);
+      await r.caption("같은 이름의 문서가 있습니다 — 새 판으로 바꿀까요?", "바꾸면 새 문서를 다 넣은 뒤 옛 판을 지웁니다 · 따로 추가하면 목록에 '옛 판' 표시");
+      await pause(4500);
+      await modalBtn(r, "새 판으로 바꾸기", 1500);
+      await r.waitFor("[...document.querySelectorAll('.n-message')].some((m) => m.innerText.includes('새 판으로 바꿈'))", 60000);
+      await r.caption("새 판으로 바꿈 — 옛 판 1개 정리", "같은 '급여 계산 배치' 질문에 이제 새 판(20시)만 근거로 나옵니다");
+      await pause(3500);
+      await top(r);
+      await r.type("질문이나 낱말로 찾기", "급여 계산 배치는 몇 시에 돌아?", { delay: 40 });
+      await r.click("검색", { selector: "button", exact: true, after: 2500 });
+      await pause(4500);
+
+      // 현업 창구 — 프로젝트 이름
+      await sideMenu(r, "현업 창구");
+      await r.caption("현업 창구 — 접수할 PMS-X 프로젝트를 ID 대신 이름으로", "편집 창에서도 목록에서 고릅니다");
+      await pause(4500);
+      await clickNear(r, "인사시스템 도움 창구", "수정", { after: 1500 });
+      await down(r, 900, ".n-modal-body-wrapper .n-scrollbar-container");
+      await pause(3500);
+      await closeModal(r);
+
+      // 일반 사용자
+      await r.login("platform", "dev");
+      await r.go(`${L}/`);
+      await r.caption("일반 사용자 — 쓸 수 있는 메뉴만 13칸", "볼 권한이 없는 바로 가기(현업 창구)는 대시보드에서도 뺐습니다");
+      await pause(5000);
+      await sideMenu(r, "AI 사용 현황");
+      await r.caption("묶음 탭도 권한대로 — 일반 사용자는 사용량·비용 · 품질·지연만");
+      await pause(4000);
     },
   },
 
