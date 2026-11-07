@@ -105,6 +105,8 @@ flowchart LR
 3. [장애 한 건 따라가기](/getting-started/scenario.md)에서 경보 접수부터 지식 문서 등록까지 제품이 이어지는 흐름을 본다.
 4. 고객사에 설치한다면 [고객사 설치와 연결 점검](/getting-started/onsite.md)의 순서대로 연동을 확인한다.
 
+> **화면 사용법은 매뉴얼에** — 이 사이트는 제품 소개·구조·시연입니다. "이 일을 하려면 어디를 누르나"는 [HNIX AX 매뉴얼](https://malburi.github.io/hnix-ax-manual/)(사용자용·관리자용)에 그림과 함께 있습니다.
+
 ## 저장소
 
 | 제품 | 저장소 | 기술 |

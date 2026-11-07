@@ -25,9 +25,10 @@ for (const line of readFileSync(join(ROOT, "_sidebar.md"), "utf8").split(/\r?\n/
   const group = line.match(/^- \*\*(.+)\*\*\s*$/);
   if (group) { sections.push({ title: group[1], pages: [] }); continue; }
   const item = line.match(/^\s+- \[(.+?)\]\((.+?)\)\s*$/);
-  if (item && sections.length) sections.at(-1).pages.push({ title: item[1], src: srcOf(item[2]) });
+  if (item && sections.length) sections.at(-1).pages.push(/^https?:/.test(item[2]) ? { title: item[1], href: item[2] } : { title: item[1], src: srcOf(item[2]) });
 }
-const pages = sections.flatMap((s) => s.pages);
+// 바깥 링크(매뉴얼 등)는 사이드바에만 — 페이지로 만들지 않는다
+const pages = sections.flatMap((s) => s.pages.filter((p) => !p.href));
 
 /** docsify 경로("/", "/a/b.md", "#/a/b") → 저장소 안 마크다운 파일 */
 function srcOf(route) {
@@ -111,6 +112,7 @@ function plain(md) {
 function sidebar(current, toc, prefix) {
   const items = sections.map((s) => {
     const li = s.pages.map((p) => {
+      if (p.href) return `<li><a href="${p.href}" target="_blank" rel="noopener">${esc(p.title)}</a></li>`;
       const active = p.src === current;
       const sub = active && toc.length ? `<ul>${toc.map((t) => `<li><a href="#${t.id}">${esc(t.text)}</a></li>`).join("")}</ul>` : "";
       return `<li${active ? ' class="active"' : ""}><a href="${prefix}${outOf(p.src)}">${esc(p.title)}</a>${sub}</li>`;
