@@ -1916,6 +1916,90 @@ export const SCENARIOS = {
       await pause(5500);
     },
   },
+
+  "datalake-5": {
+    title: "AX-DataLake ⑤ 분석 — 차트 · 대시보드 · AI 분석 · 지표·차원 · 객체 분석",
+    maxGap: 3,
+    // 준비: node tools/feature-prep-analysis.mjs (지표·차원·검증된 질의, '장애 현황' 대시보드 게시·분석가 공유)
+    async run(r) {
+      await r.login("datalake", "eng");
+      const sql = "SELECT opened_at AS 발생, priority AS 등급, system AS 시스템, minutes_to_resolve AS 해결분 FROM ops.incident";
+      await r.go(`${D}/sql?view=chart&sql=${encodeURIComponent(sql)}`, DL_READY);
+      await r.waitFor("!!document.querySelector('.vega svg')", 30000);
+      await r.caption("SQL 결과 → 차트 탭 — 결과 모양을 보고 차트를 고릅니다", "900행이라 처음부터 '묶어서 보기' — 서버가 원래 SQL 을 감싸 월·등급별로 다시 묶습니다(권한·가림·행 제한 그대로)");
+      await pause(6000);
+      await pick(r, "월 단위", "주 단위", { exact: true });
+      await pause(2500);
+      await pick(r, "합계", "평균", { exact: true });
+      await r.waitFor("document.body.innerText.includes('해결분 평균')", 15000);
+      await r.caption("시간 단위·집계 바꾸기 — 등급별 주 평균 해결 시간", "막대·선·면적·원·산점도·히트맵·숫자·표·피벗 · PNG·엑셀");
+      await pause(5000);
+      await r.click("분석으로 저장", { selector: "button", exact: true, after: 1200 });
+      await r.type("예: 지역별 수주 금액", "등급별 월 평균 해결 시간", { delay: 50 });
+      await r.caption("분석으로 저장 — 결과가 아니라 SQL·차트를 저장", "열 때마다 여는 사람 권한으로 다시 조회 · 사람·역할·소속에 공유");
+      await pause(3000);
+      await r.click("저장", { selector: ".n-modal button", exact: true, after: 2000 });
+
+      await r.go(`${D}/dashboards`, DL_READY);
+      await r.caption("대시보드 — 차트·숫자·표·피벗·글·객체 목록을 한 화면에", "초안 → 게시 · 게시한 판만 공유한 사람에게 보입니다");
+      await pause(3500);
+      await r.click("장애 현황", { selector: ".card", after: 1500 });
+      await r.waitFor("document.querySelectorAll('.tile .vega svg').length >= 2", 30000);
+      await r.caption("장애 현황 — 건수 · 평균 해결 시간 · 일별 등급별 · 시스템별 · 시스템 × 등급 피벗", "같은 사람·같은 조회는 5분 동안 결과를 다시 써 엔진 줄을 줄입니다");
+      await pause(6000);
+      await pick(r, "전체", "HR", { exact: true });
+      await pause(2500);
+      await r.caption("필터 — 업무 시스템 HR 만", "타일 SQL 의 {{system}} 자리에 값이 들어갑니다(검사해서 리터럴로)");
+      await pause(4500);
+      await down(r, 700);
+      await r.caption("객체 목록 타일 — 최근 P1 장애, 여기서 바로 '진단 메모 남기기' 액션", "승인이 필요한 액션은 승인 흐름 그대로");
+      await pause(5000);
+      await top(r);
+      await r.type("이 대시보드에 물어보기", "시스템별 장애 건수", { delay: 60 });
+      await r.click("묻기", { selector: "button", exact: true });
+      await r.waitFor("document.body.innerText.includes('검증된 질의') || document.body.innerText.includes('AI 초안')", 90000);
+      await pause(1500);
+      await r.caption("대시보드에 바로 묻기 — 사람이 확인한 질의와 같은 질문이라 모델 없이 그 SQL 로", "'타일로 추가'로 대시보드에 붙입니다");
+      await pause(5500);
+
+      await r.go(`${D}/analyze`, DL_READY);
+      await r.caption("AI 분석 — 말로 묻고 표·차트·설명으로 받기", "정의된 지표·차원과 테이블 구조를 근거로(값은 모델에 보내지 않음)");
+      await pause(3000);
+      await r.type("예: 지난달", "등급별 평균 해결 시간", { delay: 60 });
+      await r.click("묻기", { selector: "button", exact: true });
+      await r.waitFor("document.querySelectorAll('.exp').length >= 1 || document.querySelectorAll('.turn .n-alert').length >= 1", 120000);
+      await pause(1500);
+      await r.caption("사내 모델(게이트웨이)이 지표 '평균 해결 시간'을 그대로 써서 SQL + 차트", "차트가 결과 열과 안 맞으면 결과 모양으로 고칩니다 · 분석으로 저장 · 대시보드에 추가");
+      await pause(6000);
+      await r.type("예: 지난달", "시스템별로 나눠서", { delay: 60 });
+      await r.click("묻기", { selector: "button", exact: true });
+      await r.waitFor("document.querySelectorAll('.exp').length >= 2 || document.querySelectorAll('.turn .n-alert').length >= 1", 120000);
+      await pause(1500);
+      await r.caption("이어 묻기 — 앞 SQL 을 맥락으로", "MCP 도구 datalake__ask 로 에이전트도 같은 길로");
+      await pause(5500);
+
+      await r.go(`${D}/semantic`, DL_READY);
+      await r.caption("지표·차원 — AI 분석이 먼저 쓰는 정의(엔지니어)", "표를 고르면 규칙 + AI 초안 · 저장할 때 실제로 한 번 돌려 확인");
+      await pause(4500);
+      await r.click("검증된 질의", { selector: ".n-tabs-tab", after: 1500 });
+      await r.caption("검증된 질의 — 사람이 확인한 질문과 SQL", "같은 질문에는 모델 대신 이것을 그대로 · 비슷한 질문에는 예시로");
+      await pause(4500);
+
+      await r.go(`${D}/object-analysis?type=incident`, DL_READY);
+      await pause(1500);
+      await pick(r, "(없음)", "등급 (severity)");
+      await r.click("보기", { selector: "button", exact: true, after: 3000 });
+      await r.caption("객체 분석 — 온톨로지 장애를 등급별로 세고, 목록에서 바로 액션", "조건으로 묶음을 고르고 기간별로도 · 목록을 대시보드에 붙이면 작은 업무 화면");
+      await pause(6000);
+
+      await r.login("datalake", "ana");
+      await r.go(`${D}/dashboards`, DL_READY);
+      await r.click("장애 현황", { selector: ".card", after: 1500 });
+      await r.waitFor("document.querySelectorAll('.tile .vega svg').length >= 2", 30000);
+      await r.caption("분석가(HD01)가 연 같은 대시보드 — 자기 계열사 행만", "고치기·공유 단추 없이 게시본만 · 대외비 이상 표는 넓은 공유를 관리자만");
+      await pause(6000);
+    },
+  },
 };
 
 /* ================= AX-NAVI IDE ================= */

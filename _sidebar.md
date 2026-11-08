@@ -57,6 +57,7 @@
   - [개요](/datalake/README.md)
   - [수집 — 파일·원본 연결·실시간](/datalake/ingest.md)
   - [문서(비정형) — 수집·찾기·AI 표 추출](/datalake/documents.md)
+  - [분석 — 차트·대시보드·AI 분석](/datalake/analysis.md)
   - [온톨로지 — 업무 객체·관계·액션](/datalake/ontology.md)
   - [계보와 영향 범위](/datalake/lineage.md)
   - [거버넌스 — 권한·가림·행 제한](/datalake/governance.md)
