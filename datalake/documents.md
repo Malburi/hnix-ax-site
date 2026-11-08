@@ -2,6 +2,10 @@
 
 운영 매뉴얼·절차서·장애 보고·견적서·계약서처럼 **표가 아닌 문서**도 레이크에 넣는다. 넣은 문서는 표와 같은 [거버넌스](/datalake/governance.md)(조회 권한·열 가림·행 제한·감사) 아래에서 사람과 에이전트가 찾아 읽는다. 문서 안의 값(거래처·금액·기한…)은 **AI 로 뽑아 표**로 만들어 SQL 로 분석한다.
 
+<video controls preload="metadata" poster="video/features/datalake-4.jpg" src="video/features/datalake-4.mp4" style="width:100%;border-radius:10px"></video>
+
+> 보고서형 엑셀 → 시트마다 테이블 → SQL, 여섯 형식 문서의 파일 목록과 찾기, '견적서 요약' 정의 → 사내 모델 추출 → 승인, 모델이 틀린 계약 요약을 고쳐서 승인 → 추출 테이블·계보를 실제로(3분 16초). [기능 전체 영상](/demo/features.md#ax-datalake)
+
 ```mermaid
 flowchart LR
     F["공유 폴더 · 올린 파일<br/>Word · PDF · 한글 · 엑셀 · PPT · 스캔 · 텍스트"]

@@ -19,7 +19,7 @@ const PRODUCTS = [
   { key: "platform", name: "AX Platform", lead: "공통 AI 기반 — 모든 AI 호출·도구 호출·현업 문의가 지나는 곳." },
   { key: "pmsx", name: "PMS-X", lead: "SI 구축 관리와 SM 운영 — As-Is 분석, 일정·자원, 산출물·품질, 서비스 요청·장애·처리 기한." },
   { key: "axnavi", name: "AX-NAVI IDE", lead: "레거시 개발용 AI IDE — 로그인(기기 승인), 스킬, 변경 리뷰·보안 점검·단계 게이트." },
-  { key: "datalake", name: "AX-DataLake", lead: "사내 레이크하우스 — 수집(파일·원본·문서·Kafka), 카탈로그·SQL·AI 질문, 온톨로지·거버넌스." },
+  { key: "datalake", name: "AX-DataLake", lead: "사내 레이크하우스 — 수집(파일·원본·문서·Kafka), 카탈로그·SQL·AI 질문, 온톨로지·거버넌스, 보고서형 엑셀·비정형 문서·문서 → 표(AI)." },
 ];
 
 /** 장마다 무엇을 보여 주는지 — 화면에서 실제로 누르는 순서대로 */
@@ -52,6 +52,7 @@ const DESC = {
   "axnavi-4": ["**변경 리뷰** STOP → **Findings**(묶기·필터) → 상세 → **AX-NAVI 로 수정**(읽기·저장 승인) → 다시 리뷰", "**보안 점검(OWASP)** · **단계 게이트 점검**"],
   "datalake-1": ["**한눈에 보기**(지금 정리) · **카탈로그** — 미리 보기·열·시점 이력·바뀐 행, AI 설명 초안, 설명 고치기", "**SQL 작업창** — 틀(시점 조회·JSON·시간대별), 실행 기록, **AI 질문** · **계보**"],
   "datalake-2": ["**파일 수집** — CSV 를 끌어다 sales.monthly_orders 로", "**원본 연결** — 연결 추가, 동기화 실행(병합·워터마크), 동기화 만들기", "**문서(비정형)** — 의미 검색, 문서 묶음 · **실시간 수집** — Kafka 스트림을 화면에서 만들고 시작 → SQL 로 건수 → 멈추기"],
+  "datalake-4": ["**보고서형 엑셀** — 제목 줄·두 줄 머리글·병합·합계 행을 알아서 펴고, 시트마다 테이블로 → SQL 로 본부별 집계", "**문서(비정형)** — 견적서 PDF·계약서 Word·장애 보고 PPT·실적 엑셀·점검표 스캔·회의록을 개인정보를 가려 넣은 파일 목록, 형식 섞어 찾기", "**문서 → 표(AI)** — 견적서 요약 정의 → 사내 모델 추출 → 검토 → 승인, 모델이 틀린 계약 요약은 **고쳐서 승인** → 추출 테이블 SQL · 계보"],
   "datalake-3": ["**온톨로지** — 장애 → 직전 72시간 변경 → 관계 그래프 → 진단 에이전트 요청 → 엔지니어 승인 → 정의(유형·관계·액션)", "분석가 화면의 가림·행 제한 · **거버넌스**(조회 권한·열 가림·행 제한·개인정보 열 찾기)", "**내 API 키** · **사용자** · **감사 기록**"],
 };
 
@@ -77,5 +78,5 @@ for (const p of PRODUCTS) {
 const page = join(ROOT, "demo", "features.md");
 const head = readFileSync(page, "utf8").split("<!-- CHAPTERS -->")[0];
 const toc = PRODUCTS.filter((p) => parts.some((x) => x.startsWith(`## ${p.name}`))).map((p) => `[${p.name}](#${p.name.toLowerCase().replace(/[^a-z0-9가-힣]+/g, "-")})`).join(" · ");
-writeFileSync(page, `${head}<!-- CHAPTERS -->\n모두 ${mmss(total)}. ${toc}\n\n${parts.join("\n")}\n## 다시 찍기\n\n제품 화면을 고친 뒤 이 영상을 새로 찍는 방법 — E2E 환경과(AX-DataLake 실시간 장면은) Kafka 브로커를 띄운 상태에서:\n\n\`\`\`powershell\nnode tools/demo-prep.mjs        # 현업 창구·업무 흐름 개선·퀴즈·Kafka 토픽\nnode tools/feature-prep.mjs     # 승인함 대기 건·라우트·예산·사내 개인정보 규칙·원본 연결(ERP 계약)\nnode tools/demo-servers.mjs     # (⑩~⑫) 시험용 SAP·사내 REST·구매 담당 에이전트 — 따로 띄워 둔다\n# (⑫ 음성) OpenAI 호환 음성 인식 서버를 http://127.0.0.1:8796/v1 에 띄운다(예: faster-whisper small)\nnode tools/feature-prep-ai.mjs  # 음성 인식 별칭·창구 음성·예시 흐름·평가 문항과 기준 평가, 녹화에서 새로 만들 것 정리\nnode tools/record-demo.mjs --scenarios feature-scenarios.mjs --scenario "platform-*" --out video/features\nnode tools/make-features.mjs    # 길이·포스터·이 쪽의 장 목록\n\`\`\`\n\n시나리오는 \`tools/feature-scenarios.mjs\`(장마다 누를 곳과 자막). 화면 문구가 바뀌면 시나리오의 글자도 고친다. \`--dry\` 로 녹화 없이 돌려 보고, \`--shots <폴더>\` 를 주면 못 찾은 곳의 화면을 남긴다.\n`);
+writeFileSync(page, `${head}<!-- CHAPTERS -->\n모두 ${mmss(total)}. ${toc}\n\n${parts.join("\n")}\n## 다시 찍기\n\n제품 화면을 고친 뒤 이 영상을 새로 찍는 방법 — E2E 환경과(AX-DataLake 실시간 장면은) Kafka 브로커를 띄운 상태에서:\n\n\`\`\`powershell\nnode tools/demo-prep.mjs        # 현업 창구·업무 흐름 개선·퀴즈·Kafka 토픽\nnode tools/feature-prep.mjs     # 승인함 대기 건·라우트·예산·사내 개인정보 규칙·원본 연결(ERP 계약)\nnode tools/demo-servers.mjs     # (⑩~⑫) 시험용 SAP·사내 REST·구매 담당 에이전트 — 따로 띄워 둔다\n# (⑫ 음성) OpenAI 호환 음성 인식 서버를 http://127.0.0.1:8796/v1 에 띄운다(예: faster-whisper small)\nnode tools/feature-prep-ai.mjs  # 음성 인식 별칭·창구 음성·예시 흐름·평가 문항과 기준 평가, 녹화에서 새로 만들 것 정리\nnode tools/feature-prep-office.mjs  # (레이크 ④) 문서 묶음 office-docs · '계약 요약' 추출을 돌려 둠\nnode tools/record-demo.mjs --scenarios feature-scenarios.mjs --scenario "platform-*" --out video/features\nnode tools/make-features.mjs    # 길이·포스터·이 쪽의 장 목록\n\`\`\`\n\n시나리오는 \`tools/feature-scenarios.mjs\`(장마다 누를 곳과 자막). 화면 문구가 바뀌면 시나리오의 글자도 고친다. \`--dry\` 로 녹화 없이 돌려 보고, \`--shots <폴더>\` 를 주면 못 찾은 곳의 화면을 남긴다.\n`);
 console.log(`-> ${page} (${mmss(total)})`);

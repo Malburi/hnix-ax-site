@@ -3,7 +3,7 @@
 네 제품의 **메뉴·탭·버튼을 하나씩 실제로 써 보는** 장별 영상이다. [시연 영상](/demo/README.md)이 이야기 흐름으로 핵심만 보여 준다면, 이 쪽은 기능을 빠짐없이 훑는다. 모두 실제로 띄운 제품(E2E 환경)을 조작하며 녹화했고, 화면 아래 자막은 녹화할 때 덧그린 설명, 주황 물결은 누른 곳이다. 모델이 답하는 장면은 사내 로컬 모델(`hnix-local`)이 그 자리에서 낸 답이다.
 
 <!-- CHAPTERS -->
-모두 75분 11초. [AX Platform](#ax-platform) · [PMS-X](#pms-x) · [AX-NAVI IDE](#ax-navi-ide) · [AX-DataLake](#ax-datalake)
+모두 78분 27초. [AX Platform](#ax-platform) · [PMS-X](#pms-x) · [AX-NAVI IDE](#ax-navi-ide) · [AX-DataLake](#ax-datalake)
 
 ## AX Platform — 13장 · 29분 21초
 
@@ -219,9 +219,9 @@ SI 구축 관리와 SM 운영 — As-Is 분석, 일정·자원, 산출물·품�
 - **변경 리뷰** STOP → **Findings**(묶기·필터) → 상세 → **AX-NAVI 로 수정**(읽기·저장 승인) → 다시 리뷰
 - **보안 점검(OWASP)** · **단계 게이트 점검**
 
-## AX-DataLake — 3장 · 7분 43초
+## AX-DataLake — 4장 · 10분 59초
 
-사내 레이크하우스 — 수집(파일·원본·문서·Kafka), 카탈로그·SQL·AI 질문, 온톨로지·거버넌스.
+사내 레이크하우스 — 수집(파일·원본·문서·Kafka), 카탈로그·SQL·AI 질문, 온톨로지·거버넌스, 보고서형 엑셀·비정형 문서·문서 → 표(AI).
 
 ### 1. 한눈에 보기 · 카탈로그 · SQL 작업창 · AI 질문 · 계보 (2분 32초)
 
@@ -246,6 +246,14 @@ SI 구축 관리와 SM 운영 — As-Is 분석, 일정·자원, 산출물·품�
 - 분석가 화면의 가림·행 제한 · **거버넌스**(조회 권한·열 가림·행 제한·개인정보 열 찾기)
 - **내 API 키** · **사용자** · **감사 기록**
 
+### 4. 보고서형 엑셀 · 비정형 문서 · 문서 → 표(AI 추출) (3분 16초)
+
+<video controls preload="none" poster="video/features/datalake-4.jpg" src="video/features/datalake-4.mp4" style="width:100%;border-radius:10px"></video>
+
+- **보고서형 엑셀** — 제목 줄·두 줄 머리글·병합·합계 행을 알아서 펴고, 시트마다 테이블로 → SQL 로 본부별 집계
+- **문서(비정형)** — 견적서 PDF·계약서 Word·장애 보고 PPT·실적 엑셀·점검표 스캔·회의록을 개인정보를 가려 넣은 파일 목록, 형식 섞어 찾기
+- **문서 → 표(AI)** — 견적서 요약 정의 → 사내 모델 추출 → 검토 → 승인, 모델이 틀린 계약 요약은 **고쳐서 승인** → 추출 테이블 SQL · 계보
+
 ## 다시 찍기
 
 제품 화면을 고친 뒤 이 영상을 새로 찍는 방법 — E2E 환경과(AX-DataLake 실시간 장면은) Kafka 브로커를 띄운 상태에서:
@@ -256,6 +264,7 @@ node tools/feature-prep.mjs     # 승인함 대기 건·라우트·예산·사�
 node tools/demo-servers.mjs     # (⑩~⑫) 시험용 SAP·사내 REST·구매 담당 에이전트 — 따로 띄워 둔다
 # (⑫ 음성) OpenAI 호환 음성 인식 서버를 http://127.0.0.1:8796/v1 에 띄운다(예: faster-whisper small)
 node tools/feature-prep-ai.mjs  # 음성 인식 별칭·창구 음성·예시 흐름·평가 문항과 기준 평가, 녹화에서 새로 만들 것 정리
+node tools/feature-prep-office.mjs  # (레이크 ④) 문서 묶음 office-docs · '계약 요약' 추출을 돌려 둠
 node tools/record-demo.mjs --scenarios feature-scenarios.mjs --scenario "platform-*" --out video/features
 node tools/make-features.mjs    # 길이·포스터·이 쪽의 장 목록
 ```

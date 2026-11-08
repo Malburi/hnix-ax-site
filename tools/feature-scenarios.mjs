@@ -1825,6 +1825,97 @@ export const SCENARIOS = {
       await pause(4000);
     },
   },
+
+  "datalake-4": {
+    title: "AX-DataLake ④ 보고서형 엑셀 · 비정형 문서 · 문서 → 표(AI 추출)",
+    maxGap: 3,
+    // 준비: node tools/feature-prep-office.mjs (문서 묶음 office-docs · '계약 요약' 정의를 돌려 둠)
+    async run(r) {
+      await r.login("datalake", "eng");
+      await r.go(`${D}/ingest`, DL_READY);
+      await r.caption("보고서형 엑셀 — 사람이 보기 좋게 꾸민 그대로 올립니다", "제목 줄 · 두 줄 머리글(가로 병합) · 세로 병합 · 합계 행이 있는 시트 — XLSX·XLS");
+      await pause(3500);
+      await r.upload(fileURLToPath(new URL("./demo-files/office/2026-3분기_운영실적.xlsx", import.meta.url)));
+      await r.waitFor("document.body.innerText.includes('레이크에 넣기')", 20000);
+      await r.caption("머리글 4~5행을 자동으로 찾아 '요청 처리 건수_9월' 처럼 잇고, 합계 행은 뺍니다", "세로로 합친 '경영지원' 은 행마다 채움 · 백분율은 숫자 · 머리글 줄은 번호로 정할 수도");
+      await pause(6000);
+      await r.click("시트마다 테이블", { selector: "label, .n-radio-button", exact: true, after: 2000 });
+      await r.caption("시트 고르기 — 한 시트 · 모든 시트를 한 테이블로 · 시트마다 테이블", "두 시트가 ops.q3_서비스별_실적 · ops.q3_주요_장애 로");
+      await pause(3500);
+      await r.typeLabel("스키마", "ops", { clear: true, delay: 60 });
+      await r.typeLabel("테이블 앞이름", "q3", { clear: true, delay: 60 });
+      await r.click("통째로 바꾸기", { selector: "label, .n-radio-button", exact: true, after: 600 });
+      await r.click("레이크에 넣기", { selector: "button", after: 3000 });
+      await r.caption("넣었습니다 — 시트 두 장이 테이블 두 개로", "수집 기록·계보도 테이블마다");
+      await pause(3500);
+      await r.go(`${D}/sql`, DL_READY);
+      await r.type("css:.editor textarea", `SELECT "본부", sum("요청 처리 건수_9월") AS "9월 건수", round(avg("처리 기한 준수율_9월") * 100, 1) AS "9월 준수율" FROM ops."q3_서비스별_실적" GROUP BY 1 ORDER BY 1`, { clear: true, delay: 8 });
+      await r.click("실행 (Ctrl+Enter)", { selector: "button" });
+      await r.waitFor("!!document.querySelector('.n-data-table, table')", 20000);
+      await r.caption("바로 SQL 로 — 본부별 9월 요청 건수와 처리 기한 준수율", "합계 행이 빠져 두 번 더해지지 않습니다");
+      await pause(5000);
+
+      await r.go(`${D}/documents`, DL_READY);
+      await r.caption("문서(비정형) — 견적서 PDF · 계약서 Word · 장애 보고 PPT · 실적 엑셀 · 점검표 스캔 · 회의록", "묶음 '운영·영업 문서'(대외비) — 레이크에 쓰기 전에 개인정보를 가립니다");
+      await pause(4000);
+      await clickNear(r, "운영·영업 문서", "파일 목록", { after: 2000 });
+      await r.caption("파일 목록 — 문서마다 조각 · 표 · 글자 인식(확신도) · 찾아서 가린 개인정보", "스캔 점검표는 이 서버 안에서 글자 인식 · PPT 는 발표자 메모까지 · 엑셀은 시트마다 표");
+      await pause(6000);
+      await closeModal(r);
+      await pick(r, "운영 매뉴얼", "운영·영업 문서");
+      await r.type("예: 사원 조회에", "급여 배치가 늦어진 원인", { delay: 70 });
+      await r.click("찾기", { selector: "button", exact: true, after: 3000 });
+      await r.caption("찾기 — 형식이 달라도 한 번에", "장애 보고 PPT 의 '슬라이드 3. 원인 분석' 이 근거로 · 전화번호는 가린 채(010-****-2323)");
+      await pause(5500);
+
+      await r.go(`${D}/extracts`, DL_READY);
+      await r.caption("문서 → 표(AI) — 문서 안의 값을 뽑아 레이크 테이블의 행으로", "모델에는 개인정보를 가린 본문만 · 기본은 사람이 확인한 뒤 반영");
+      await pause(4000);
+      await r.click("새 추출", { selector: "button", exact: true, after: 1200 });
+      await r.typeLabel("이름(영문)", "quote-demo", { delay: 50 });
+      await r.typeLabel("표시 이름", "견적서 요약", { delay: 60 });
+      await pick(r, "운영 매뉴얼", "운영·영업 문서");
+      await r.typeLabel("대상 스키마", "extract", { clear: true, delay: 50 });
+      await r.typeLabel("대상 테이블", "quote_head", { delay: 50 });
+      await r.click("견적서 요약", { selector: ".n-modal button", exact: true, after: 1000 });
+      await r.typeLabel("경로 걸러내기", "*견적서*", { delay: 60 });
+      await r.caption("뽑을 항목 — 거래처 · 견적일 · 합계금액 · 유효기한(이름 · 타입 · 모델에게 주는 설명)", "예시로 채우기 · 문서 하나에 한 행 / 여러 행(품목 표)");
+      await pause(5000);
+      await r.click("저장", { selector: ".n-modal button", exact: true, after: 2000 });
+      await clickNear(r, "quote-demo", "실행", { after: 1500 });
+      await r.caption("실행 — 사내 모델(hnix-local)이 견적서 PDF 를 읽고 값을 뽑습니다", "대외비 묶음이라 게이트웨이가 등급에 맞는 모델만 씁니다");
+      await r.waitFor("(() => { const row = [...document.querySelectorAll('tr')].find((t) => t.innerText.includes('quote-demo')); return !!row && !row.innerText.includes('뽑는 중') && row.innerText.includes('검토 대기'); })()", 120000);
+      await pause(1500);
+      await clickNear(r, "quote-demo", "검토 대기 1건 보기", { after: 2000 });
+      await r.caption("검토 대기 — 거래처 (주)한빛상사 · 견적일 2026-11-07 · 합계 103,950,000 · 유효기한 2026-12-06", "원문과 맞으면 승인 — 승인한 문서만 extract.quote_head 에 들어갑니다");
+      await pause(5500);
+      await r.click("승인", { selector: "button", exact: true, after: 2500 });
+      await r.caption("승인 → 테이블에 한 행", "_path(원본 문서) · _approved_by(승인한 사람) · _model 이 함께 남습니다");
+      await pause(3500);
+
+      await clickNear(r, "contract-demo", "검토 대기 1건 보기", { after: 2000 });
+      await r.caption("계약 요약 — 작은 사내 모델이 '갑' 으로만 적힌 상대방을 놓치고, 대응 시작(1시간)과 복구 기한(4시간)을 헷갈렸습니다", "그래서 기본값이 '확인 후 반영' 입니다");
+      await pause(6000);
+      // 정의 줄에도 '고치기' 가 있어 검토 목록의 계약서 줄 것을 누른다
+      await clickNear(r, "유지보수계약서", "고치기", { after: 1500 });
+      await r.type("css:.edit-row .edit-cell:nth-child(2) input", "(주)바다물산", { clear: true, delay: 70 });
+      await r.type("css:.edit-row .edit-cell:nth-child(6) input", "true", { clear: true, delay: 70 });
+      await r.type("css:.edit-row .edit-cell:nth-child(7) input", "4시간", { clear: true, delay: 70 });
+      await r.caption("고쳐서 승인 — 계약서 원문(제3조 '4시간 안에 복구')대로 바로잡습니다");
+      await pause(3500);
+      await r.click("고쳐서 승인", { selector: ".n-modal button", exact: true, after: 2500 });
+      await r.go(`${D}/sql`, DL_READY);
+      await r.type("css:.editor textarea", `SELECT "계약상대", "시작일", "종료일", "월금액", "자동연장", "복구시간", _path, _approved_by FROM extract.contracts`, { clear: true, delay: 8 });
+      await r.click("실행 (Ctrl+Enter)", { selector: "button" });
+      await r.waitFor("!!document.querySelector('.n-data-table, table')", 20000);
+      await r.caption("추출 테이블도 보통 레이크 테이블 — SQL · BI · 권한 · 가림 · 행 제한이 그대로", "누가 승인했는지와 원본 문서가 행마다");
+      await pause(5000);
+
+      await r.go(`${D}/lineage?node=lake:extract.contracts`, DL_READY);
+      await r.caption("계보 — 올린 문서 → 조각 테이블(개인정보 가림) → AI 추출 테이블", "엑셀 시트마다 테이블도 각각 원본 파일에서");
+      await pause(5500);
+    },
+  },
 };
 
 /* ================= AX-NAVI IDE ================= */
