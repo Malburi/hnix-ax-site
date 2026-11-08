@@ -25,7 +25,7 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
   <a class="home-card" href="#/datalake/README">
     <span class="eyebrow">데이터</span>
     <strong>AX-DataLake</strong>
-    <span class="desc">폐쇄망 레이크하우스. 업무 DB·Snowflake·REST·실시간 이벤트를 모으고, 장애·변경·담당자를 업무 객체(온톨로지)로 잇는다. 사람과 에이전트가 같은 권한·개인정보 가림·행 제한으로 읽고, 계보로 영향 범위를 본다.</span>
+    <span class="desc">폐쇄망 레이크하우스. 업무 DB·Snowflake·REST·실시간 이벤트·엑셀과, Word·PDF·한글·PPT·스캔 같은 비정형 문서(개인정보를 가려)를 모으고 문서의 값은 AI 로 표로 뽑으며, 장애·변경·담당자를 업무 객체(온톨로지)로 잇는다. 사람과 에이전트가 같은 권한·개인정보 가림·행 제한으로 읽고, 계보로 영향 범위를 본다.</span>
   </a>
 </div>
 
@@ -57,7 +57,7 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
 | 처리 | 업무 템플릿 절차대로, 코드는 AX-NAVI 로 고치고, 정해진 조치는 승인 후 런북으로(실패하면 원복) | [업무 템플릿](/pmsx/sm-ai.md#업무-템플릿) · [AX-NAVI](/axnavi/README.md) · [런북](/platform/runbooks.md) |
 | 검증 | 변경 리뷰 GO/HOLD/STOP, 보안 Findings, 테스트 계획·바뀐 줄 커버리지를 CI 게이트로 | [변경 리뷰](/axnavi/review.md) · [CLI와 CI](/axnavi/cli.md) |
 | 보고 | 처리 기한·월간 운영보고, 커밋 ↔ 요청으로 공수 절감률, AI 사용량·비용, 고객 전사 AI 관측 | [생산성 보고서](/platform/productivity.md) · [Insight](/platform/insight.md) · [전사 AI 관측](/platform/enterprise-ai.md) |
-| 데이터 | 업무 DB·장애·로그를 한곳에 모아 기간·계열사별 분석, 에이전트의 근거 데이터로(개인정보는 가린 채) | [AX-DataLake](/datalake/README.md) |
+| 데이터 | 업무 DB·장애·로그·엑셀 보고서·견적서·계약서 같은 문서를 한곳에 모아 기간·계열사별 분석, 에이전트의 근거 데이터로(개인정보는 가린 채) | [AX-DataLake](/datalake/README.md) |
 | 이관·현대화 | SI → SM 인수인계 갭·이해도 퀴즈, Java·Spring Boot·Oracle → PostgreSQL 레시피 | [인수인계](/pmsx/handover.md) · [현대화 레시피](/axnavi/cli.md#현대화-레시피) |
 
 ## 네 제품이 이어지는 방식

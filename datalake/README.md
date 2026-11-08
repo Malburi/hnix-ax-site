@@ -24,10 +24,12 @@ AX-DataLake는 고객사 폐쇄망에서 도는 **레이크하우스**다. 흩�
 ```mermaid
 flowchart LR
     SRC["원본 연결<br/>Oracle · SQL Server · PG · MySQL<br/>Snowflake · REST · 폴더/S3"]
-    FILE["파일<br/>CSV · Excel · Parquet · JSON"]
+    FILE["파일<br/>CSV · 엑셀(보고서형도) · Parquet · JSON"]
+    DOC["문서(비정형)<br/>Word · PDF · 한글 · 엑셀 · PPT · 스캔"]
     EVT["이벤트<br/>Kafka · HTTP · 변경 이력(CDC)"]
     subgraph LAKE["AX-DataLake"]
         ING["수집<br/>동기화 · 업로드 · 스트림"]
+        DOCS["문서 수집 · 문서 → 표(AI)<br/>쓰기 전 개인정보 가림 · 검토 후 반영"]
         GOV["SQL 검사<br/>권한 · 열 가림 · 행 제한"]
         ONT["온톨로지 · 계보<br/>객체 · 관계 · 액션"]
         ENG["SQL 엔진<br/>조회(읽기 전용) · 작업 · 수집"]
@@ -39,7 +41,9 @@ flowchart LR
     SRC --> ING
     FILE --> ING
     EVT --> ING
+    DOC --> DOCS
     ING --> ENG
+    DOCS --> ENG
     USR --> GOV
     AGT --> ONT
     ONT --> GOV
@@ -56,12 +60,13 @@ flowchart LR
 
 | 영역 | 내용 | 문서 |
 |---|---|---|
-| 수집 | 파일 올리기(EUC-KR CSV 자동 변환), 원본 연결 동기화(Oracle·SQL Server·PostgreSQL·MySQL·Snowflake·REST API·폴더/S3, 주기 실행), Kafka·HTTP 실시간(붙이기·키로 바꾸기·변경 반영) | [수집](/datalake/ingest.md) |
+| 수집 | 파일 올리기(EUC-KR CSV 자동 변환, 보고서형 엑셀 펴기 — XLSX·XLS, 시트 고르기), 원본 연결 동기화(Oracle·SQL Server·PostgreSQL·MySQL·Snowflake·REST API·폴더/S3(엑셀 포함), 주기 실행), Kafka·HTTP 실시간(붙이기·키로 바꾸기·변경 반영) | [수집](/datalake/ingest.md) |
+| 문서(비정형) | Word·PDF·한글·엑셀·PPT·스캔(글자 인식)을 **쓰기 전에 개인정보를 가려** 조각 테이블로, 표 살리기, 낱말+의미 찾기, **문서 → 표(AI 추출)** — 견적서·계약서의 값을 사내 모델로 뽑아 검토 후 테이블에 | [문서(비정형)](/datalake/documents.md) |
 | 온톨로지 | 업무 객체·관계(열=열·조건식)·액션(메모·웹훅, 승인), ITO 표준 템플릿(유형 7·관계 11), 관계 그래프 | [온톨로지](/datalake/ontology.md) |
 | 계보 | 원본 → 테이블 → 파생·뷰 → 객체 유형 → 소비 경로, 영향 범위 | [계보](/datalake/lineage.md) |
 | 거버넌스 | 역할(관리자·데이터 엔지니어·분석가), 테이블 조회 권한, 열 가림, 행 제한, 감사·조회 이력 | [거버넌스](/datalake/governance.md) |
 | 카탈로그 | 테이블 설명·담당·등급·태그·열 설명, 시점 이력, 바뀐 행, 미리 보기 | [거버넌스](/datalake/governance.md#카탈로그) |
-| AI | 자연어 → SQL(플랫폼 게이트웨이, 기밀은 사내 모델만), MCP 도구 11개(조회·시점·계보·객체 탐색·액션 제안 — 같은 규칙) | [AI 질문과 에이전트](/datalake/ai.md) |
+| AI | 자연어 → SQL(플랫폼 게이트웨이, 기밀은 사내 모델만), 메타데이터 초안(개인정보 열 찾기·등급 권고·AI 설명), MCP 도구 13개(조회·시점·계보·객체 탐색·문서 찾기·액션 제안 — 같은 규칙) | [AI 질문과 에이전트](/datalake/ai.md) |
 | 운영 | 폐쇄망 설치본(Windows·Linux 서비스), 매일 파일 정리, API 키(조회·수집·에이전트 범위) | [설치와 운영](/datalake/operations.md) |
 
 ## 다른 제품과의 관계
@@ -72,4 +77,4 @@ flowchart LR
 | [PMS-X](/pmsx/README.md) · 고객 ITSM | 장애·서비스 요청(SR)·운영 이력을 레이크에 쌓아 기간·계열사별 분석, 경보 진단 에이전트의 근거 데이터로 |
 | [AX-NAVI](/axnavi/README.md) | 개발자가 IDE 에서 허브를 거쳐 운영 데이터(가린 값)를 조회해 원인 분석에 쓴다 |
 
-통합 점검: [E2E 꾸러미](/getting-started/e2e-kit.md)의 ⑱(허브 경유 레이크 조회 — 분석가 권한의 가림·행 제한 그대로), ⑲(AI 질문 — 사내 모델이 SQL 작성, 행 제한 적용), ⑳(허브로 장애 → 직전 72시간 변경, 진단 요청은 승인 뒤 플랫폼 에이전트로)이 실제로 돈다.
+통합 점검: [E2E 꾸러미](/getting-started/e2e-kit.md)의 ⑱(허브 경유 레이크 조회 — 분석가 권한의 가림·행 제한 그대로), ⑲(AI 질문 — 사내 모델이 SQL 작성, 행 제한 적용), ⑳(허브로 장애 → 직전 72시간 변경, 진단 요청은 승인 뒤 플랫폼 에이전트로), ㉑(보고서형 엑셀 → 테이블 → SQL 집계), ㉒(여섯 형식 문서를 개인정보를 가려 넣고 찾기), ㉓(견적서 → 사내 모델 추출 → 검토 → 승인 → 테이블·계보)이 실제로 돈다.

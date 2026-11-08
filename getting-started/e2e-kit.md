@@ -8,7 +8,7 @@
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **E2E 꾸러미 2026-11-06 (7판 — AX-NAVI IDE 1.2.5·PMS-X 1.3.5)**(`e2e-kit-20261106`) (비공개 저장소 — 접근 권한으로 로그인). 모델 zip 은 바뀌지 않아 서버판 꾸러미 릴리스(`server-kit-20261105`)에 둔다 — 같은 파일이다.
+GitHub `Malburi/hnix-ax-platform` › Releases › **E2E 꾸러미 2026-11-08 (9판 — AX-DataLake 0.4.0·PMS-X 1.3.7·AX-NAVI IDE 1.2.5)**(`e2e-kit-20261108`) (비공개 저장소 — 접근 권한으로 로그인). 모델 zip 은 바뀌지 않아 서버판 꾸러미 릴리스(`server-kit-20261105`)에 둔다 — 같은 파일이다.
 
 | 파일 | 크기 | 필요 |
 |---|---|---|
@@ -22,8 +22,8 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **E2E 꾸러미 2026-11-06 (7
 | 구성 | 내용 |
 |---|---|
 | AX Platform 오프라인 패키지 | 서버 번들·웹·**Node 24 런타임** 포함 |
-| AX-DataLake 0.2.0 설치본 | **Node·SQL 엔진·확장** 포함, 시연 테이블(장애·운영 인력)·ITO 온톨로지·가림·행 제한, 허브에 외부 MCP 서버로 등록 |
-| PMS-X 1.3.5 오프라인 패키지 | **JRE 21** 포함, 시연 데이터(○○공사 인사시스템 SI·SM), 업무 템플릿·인수인계 퀴즈 |
+| AX-DataLake 0.4.0 설치본 | **Node·SQL 엔진·확장·글자 인식 데이터** 포함, 시연 테이블(장애·운영 인력)·ITO 온톨로지·가림·행 제한, 허브에 외부 MCP 서버로 등록. 엑셀·비정형 문서 시연 샘플 6개(`docs\datalake\`) |
+| PMS-X 1.3.7 오프라인 패키지 | **JRE 21** 포함, 시연 데이터(○○공사 인사시스템 SI·SM), 업무 템플릿·인수인계 퀴즈 |
 | AX-NAVI IDE 1.2.5 | 설치 프로그램(서명)을 화면 없이 사용자 폴더에 설치, 이 PC 의 플랫폼으로 연결 |
 | AX-NAVI CLI | 판정 엔진 — 실행에 필요한 의존성만 |
 | Ollama CPU 판 | 약 120MB(GPU 라이브러리 뺌). 이미 설치된 Ollama가 있으면 그것을 쓴다 |
@@ -47,7 +47,7 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **E2E 꾸러미 2026-11-06 (7
 powershell -ExecutionPolicy Bypass -File setup.ps1
 # 3) 새 PowerShell 창에서(사용자 PATH 적용) — 처음 3~5분
 powershell -ExecutionPolicy Bypass -File start.ps1
-# 4) 자동 점검 ①~⑳
+# 4) 자동 점검 ①~㉓
 node scripts\smoke.mjs
 ```
 
@@ -55,7 +55,7 @@ node scripts\smoke.mjs
 |---|---|
 | `setup.ps1` | 플랫폼 패키지·Node·AX-NAVI CLI·Ollama를 `tools\`에, 연습 저장소를 `work\`에 풀고, 모델 zip을 `%USERPROFILE%\.ollama\models`에 넣고, AX-NAVI IDE를 설치하고, 사용자 PATH에 `tools\bin`·`tools\node`·`tools\ollama`를 넣는다 |
 | `start.ps1` | Ollama → 플랫폼(:8710) → 게이트웨이·가상 키 → AX-DataLake(:8790 — 시연 테이블·거버넌스·허브 등록) → PMS-X 시연(:8080, AI 켬) → 허브(PMS-X·AX-NAVI 커넥터)·승인 정책·에이전트·문서 RAG → AX-NAVI IDE(허브 등록, Insight 전송, 사내 게이트웨이 연결) |
-| `smoke.mjs` | 경보 묶음 → 서비스 요청(SR) 분류 추천 → 에이전트 도구 호출 → 승인 1회·본인 승인 차단 → AI 설명 근거 등급 → 구현 명세 → 허브로 코드·요청 조회와 리뷰 STOP → 지식 문서 초안 → Insight(①~⑨), 이어서 트리거 → 현업 창구 → 런북 승인 → 커밋 ↔ 요청 → AX-NAVI 조직 설정(IDE 모드 포함) → 전사 AI 관측 → 업무 템플릿·인수인계 퀴즈 → 현장 연결 점검(⑩~⑰) → 허브 경유 레이크 조회(분석가 권한의 가림·행 제한 그대로) → AI 질문(사내 모델이 SQL 작성, 행 제한 적용) → 온톨로지(허브로 장애 → 직전 72시간 변경, 진단 요청은 승인 뒤 플랫폼 경보 진단 에이전트로)(⑱⑲⑳). 2026-10-31 개발 PC 실측 21단계 통과 20·주의 1(작은 로컬 모델의 창구 답변)·실패 0 |
+| `smoke.mjs` | 경보 묶음 → 서비스 요청(SR) 분류 추천 → 에이전트 도구 호출 → 승인 1회·본인 승인 차단 → AI 설명 근거 등급 → 구현 명세 → 허브로 코드·요청 조회와 리뷰 STOP → 지식 문서 초안 → Insight(①~⑨), 이어서 트리거 → 현업 창구 → 런북 승인 → 커밋 ↔ 요청 → AX-NAVI 조직 설정(IDE 모드 포함) → 전사 AI 관측 → 업무 템플릿·인수인계 퀴즈 → 현장 연결 점검(⑩~⑰) → 허브 경유 레이크 조회(분석가 권한의 가림·행 제한 그대로) → AI 질문(사내 모델이 SQL 작성, 행 제한 적용) → 온톨로지(허브로 장애 → 직전 72시간 변경, 진단 요청은 승인 뒤 플랫폼 경보 진단 에이전트로)(⑱⑲⑳) → 보고서형 엑셀 → 테이블 → SQL 집계 → 여섯 형식 문서(PDF·Word·PPT·엑셀·스캔·텍스트)를 개인정보를 가려 넣고 찾기 → 견적서 → 사내 모델 AI 추출 → 검토 → 승인(㉑㉒㉓). 2026-11-08 개발 PC 실측 24단계 통과 24·실패 0(약 70초, 3B 모델이라 ⑪·㉓ 은 가끔 주의) |
 
 계정: 플랫폼 `admin` / `Admin!2026`, `dev1` / `Dev1!2026` · PMS-X `admin`·`op.seo`(운영자)·`customer` / `pmsx1234!` · AX-DataLake `admin` / `Lake!2026`, `eng`(엔지니어)·`ana01`(분석가, 소속 HD01) — 같은 비밀번호
 
