@@ -145,7 +145,7 @@ export const SCENARIOS = {
         // ── 1. 잠긴 설치본 → 로그인(기기 승인)
         await pause(3000);
         await r.clickAt({ x: 1290, y: 400 });
-        await r.caption("AX-NAVI IDE — 허가된 사람·기기에서만 동작합니다", "설치 파일이 밖으로 새도 로그인 전에는 AI·스킬·엔진이 모두 잠겨 있습니다");
+        await r.caption("AX-NAVI IDE — 허가된 사람·기기에서만 동작합니다", "로그인 전에는 AI·스킬·엔진이 모두 잠김 — 채팅 위 로그인 안내, 상태 표시줄 'AX-NAVI 로그인'");
         await pause(4000);
         const lock = await r.find("AX-NAVI 로그인", { selector: ".statusbar-item", timeout: 3000 });
         if (lock) await r.pointAt(lock);
@@ -171,9 +171,22 @@ export const SCENARIOS = {
           await pause(3000);
         });
         await rememberNewDevices(before);
-        for (let t = 0; t < 40 && !/AX-NAVI · /.test(await statusText()); t++) await pause(1000);
-        await r.caption("잠금이 풀렸습니다 — 스킬 26개와 판정 엔진을 플랫폼에서 받아 옵니다", "CLI 를 따로 깔지 않아도 IDE 하나로 · 스킬은 기기 표식을 넣은 암호화 캐시로만 남습니다");
-        await pause(7000);
+        // 1.2.6 — 로그인하면 상태 표시줄의 'AX-NAVI 로그인'이 계정 이름 항목으로 바뀐다
+        for (let t = 0; t < 40; t++) {
+          const s = await statusText();
+          if (s && !/AX-NAVI 로그인/.test(s)) break;
+          await pause(1000);
+        }
+        await r.caption("잠금이 풀렸습니다 — 스킬 26개와 판정 엔진을 플랫폼에서 받아 옵니다", "상태 표시줄에 계정과 '리뷰' · 스킬은 기기 표식을 넣은 암호화 캐시로만 남습니다");
+        await pause(6000);
+
+        // ── 승인 모드(1.2.6) — 묻지 않고 할 수 있는 범위를 네 단계로
+        for (let t = 0; t < 30 && !(await r.webFind("", { selector: "textarea", timeout: 1000 })); t++) await pause(1000);
+        if (await r.webClick("", { selector: "[data-testid=auto-approve-dropdown-trigger]", after: 600 })) {
+          await r.caption("승인 모드 — 매번 확인 · 읽기까지 자동 · 수정까지 자동 · 모두 자동", "기본은 '매번 확인' — 파일 수정·명령은 개발자가 보고 승인 · '모두 자동'은 경고와 함께");
+          await pause(5000);
+          await r.webClick("", { selector: "[data-testid=auto-approve-dropdown-trigger]", after: 600 });
+        }
 
         // ── 2. 스킬 — /find
         // 로그인 직후에는 채팅 웹뷰가 다시 그려지는 중일 수 있다 — 입력 칸이 뜰 때까지
@@ -186,7 +199,10 @@ export const SCENARIOS = {
         await pause(6000);
 
         // ── 3. 변경 리뷰 → AI 로 수정 → 다시 리뷰
-        await r.clickSel('[aria-label*="변경 리뷰"]');
+        // 1.2.6 — 상태 표시줄 항목 글자가 '리뷰'(계정 항목과 구별)
+        const reviewItem = await r.find("리뷰", { selector: ".statusbar-item", timeout: 3000 });
+        if (reviewItem) await r.clickAt(reviewItem);
+        else await r.clickSel('[aria-label*="리뷰"]');
         await r.caption("변경 리뷰 — 상태 표시줄 한 번으로 GO / HOLD / STOP", "CI 와 같은 판정 엔진 — 모델 없이 규칙과 색인으로");
         await pause(9000);
         await r.caption("STOP — SQL 문자열 결합(인젝션 가능) 치명 1건, 머지 차단");
@@ -203,7 +219,9 @@ export const SCENARIOS = {
         });
         await r.caption("수정이 끝났습니다 — 다시 리뷰합니다");
         await pause(2500);
-        await r.clickSel('[aria-label*="리뷰"]');
+        const reviewAgain = await r.find("리뷰", { selector: ".statusbar-item", timeout: 3000 });
+        if (reviewAgain) await r.clickAt(reviewAgain);
+        else await r.clickSel('[aria-label*="리뷰"]');
         await pause(9000);
         await r.caption("다시 리뷰 — 치명 지적이 사라졌습니다", "같은 판정이 머지 요청의 CI 게이트에서도 돌아갑니다");
         await pause(6000);
@@ -233,27 +251,42 @@ export const SCENARIOS = {
       const P = A.pmsx.url;
       // ── SM 운영(운영자)
       await r.login("pmsx", "op");
-      await r.go(`${P}/sm/srs`);
-      await r.caption("PMS-X — 운영자(서운영)로 SM 프로젝트를 엽니다", "서비스 요청 접수·배정·처리, 처리 기한까지 남은 시간은 1분마다 갱신");
-      await pause(1500);
-      await r.click("차세대 SI");
-      await r.click("인사시스템 운영");
-      await r.waitFor("[...document.querySelectorAll('td')].some((t) => t.innerText.includes('SR-00'))", 15000);
-      await pause(2000);
-      await r.click("SR-0034", { selector: "td" });
-      await r.caption("경보가 장애·서비스 요청으로 자동 생성됐습니다", "모니터링 웹훅 → 같은 경보는 하나로 묶고, 처리 절차 체크가 붙습니다");
+      // 첫 SM 프로젝트는 고객 파일럿(LMS)일 수 있다 — 이름으로 '인사시스템 운영'을 고른다
+      await r.eval(`(async () => {
+        const t = await fetch('/api/v1/auth/login', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(${JSON.stringify(A.pmsx.users.op)}) }).then((x) => x.json()).then((j) => j.accessToken);
+        const sm = (await fetch('/api/v1/projects', { headers: { authorization: 'Bearer ' + t } }).then((x) => x.json())).find((p) => p.type === 'SM' && p.name.includes('인사시스템 운영'));
+        localStorage.setItem('project', JSON.stringify({ currentProjectId: sm.projectId }));
+        return true;
+      })()`);
+      // ── SM 프로젝트 홈(1.3.11) — 처리 기한 준수율·처리 중 요청·장애 카드
+      await r.go(`${P}/home`);
+      await r.caption("PMS-X — 운영자(서운영)의 SM 프로젝트 홈", "이번 달 처리 기한 준수율 · 진행 중 요청 · 기한 임박·초과 · 진행 중 장애");
       await pause(4000);
-      // 요청이 많아져 목록 첫 쪽에 없을 수 있다 — 검색 칸(Vuetify '조회')에 쳐서 찾는다
-      const q = await r.eval(`(() => { const f = [...document.querySelectorAll('.v-field')].find((x) => [...x.querySelectorAll('.v-label')].some((l) => l.innerText.trim() === '조회')); const el = f && f.querySelector('input'); if (!el) return null; el.scrollIntoView({ block: 'center' }); const b = el.getBoundingClientRect(); return { x: Math.round(b.left + 60), y: Math.round(b.top + b.height / 2) }; })()`);
-      if (q) {
+      await r.scroll(450, null);
+      await r.caption("처리 기한 준수율 추이와 처리 중인 서비스 요청", "최근 6개월 월별 준수율 · 눌러서 바로 요청으로");
+      await pause(3500);
+      await r.go(`${P}/sm/srs`);
+      await r.caption("서비스 요청 — 접수·배정·처리, 처리 기한까지 남은 시간은 1분마다 갱신", "기한을 넘긴 요청은 아이콘과 '기한 초과'로 · '진행 중만'·'내 담당만' 걸러 보기");
+      await r.waitFor("[...document.querySelectorAll('td')].some((t) => t.innerText.includes('SR-00'))", 15000);
+      await pause(3500);
+      // 요청이 많아 목록 첫 쪽에 없을 수 있다 — 검색 칸(Vuetify '조회')에 번호·글자를 쳐서 찾는다(서버 검색)
+      const search = async (text) => {
+        const q = await r.eval(`(() => { const f = [...document.querySelectorAll('.v-field')].find((x) => [...x.querySelectorAll('.v-label')].some((l) => l.innerText.trim() === '조회')); const el = f && f.querySelector('input'); if (!el) return null; el.scrollIntoView({ block: 'center' }); const b = el.getBoundingClientRect(); return { x: Math.round(b.left + 60), y: Math.round(b.top + b.height / 2) }; })()`);
+        if (!q) return;
         await r.clickAt(q);
-        for (const ch of "퇴사자가 함께") {
+        for (const [type, key, code, vk, modifiers] of [["keyDown", "a", "KeyA", 65, 2], ["keyUp", "a", "KeyA", 65, 2], ["keyDown", "Backspace", "Backspace", 8, 0], ["keyUp", "Backspace", "Backspace", 8, 0]]) await r.send("Input.dispatchKeyEvent", { type, key, code, windowsVirtualKeyCode: vk, modifiers });
+        for (const ch of text) {
           await r.send("Input.insertText", { text: ch });
           await pause(70);
         }
         await r.press("Enter");
         await pause(1500);
-      }
+      };
+      await search("SR-0034");
+      await r.click("SR-0034", { selector: "td" });
+      await r.caption("경보가 장애·서비스 요청으로 자동 생성됐습니다", "모니터링 웹훅 → 같은 경보는 하나로 묶고, 처리 절차 체크가 붙습니다");
+      await pause(4000);
+      await search("퇴사자가 함께");
       await r.click("SR-0004", { selector: "td" });
       await r.caption("현업 서비스 요청 — \"사원 조회 시 퇴사자가 함께 보여요\"");
       await pause(2500);
@@ -324,15 +357,26 @@ export const SCENARIOS = {
       await r.go(`${P}/schedule/wbs`);
       await r.caption("WBS · 간트 — 계획·실적·SPI·공정준수율, 베이스라인과 크리티컬 패스", "표에서 바로 고치고, 간트 막대를 끌어 일정을 바꿉니다");
       await pause(4000);
-      await r.click("월", { selector: "button", exact: true });
+      // 보기 배치·간트 확대(1.3.9~1.3.10)
+      await r.click("간트 크게", { selector: "button" });
+      await r.caption("보기 — 나란히 · 표 크게 · 간트 크게, '크게 보기'는 화면 전체로", "간트 크게는 번호·작업명만 남기고 나머지 폭을 간트에");
       await pause(3000);
+      await r.click("월", { selector: "button", exact: true });
+      await r.caption("간트 확대·축소 — 단위 일·주·월·분기, Ctrl+휠, 전체 보기, 기준일로");
+      await pause(2500);
+      await r.click("전체 보기", { selector: "button" });
+      await pause(2500);
+      await r.click("기준일로", { selector: "button" });
+      await pause(2000);
+      await r.click("나란히", { selector: "button" });
+      await pause(1500);
       await r.go(`${P}/schedule/kanban`);
       await r.caption("칸반 — 같은 WBS 작업을 상태별로");
       await pause(3000);
       // 퀴즈는 운영(SM) 프로젝트에 있다 — demo-prep 이 '인사시스템 인수인계 퀴즈'를 만들어 둔다
       await r.eval(`(async () => {
         const t = await fetch('/api/v1/auth/login', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(${JSON.stringify(A.pmsx.users.admin)}) }).then((x) => x.json()).then((j) => j.accessToken);
-        const sm = (await fetch('/api/v1/projects', { headers: { authorization: 'Bearer ' + t } }).then((x) => x.json())).find((p) => p.type === 'SM');
+        const sm = (await fetch('/api/v1/projects', { headers: { authorization: 'Bearer ' + t } }).then((x) => x.json())).find((p) => p.type === 'SM' && p.name.includes('인사시스템 운영'));
         localStorage.setItem('project', JSON.stringify({ currentProjectId: sm.projectId }));
         return true;
       })()`);
@@ -348,39 +392,42 @@ export const SCENARIOS = {
   },
 
   platform: {
-    title: "AX Platform — 채팅 · 문서 RAG · 업무 흐름 개선 · 에이전트 · 현업 창구",
+    title: "AX Platform — 채팅 · 문서 검색 · 업무 흐름 개선 · 에이전트 · 승인함 · 현업 창구",
     maxGap: 3,
     async run(r, A) {
       const L = A.platform.url;
       await r.login("platform", "admin");
       await r.go(`${L}/`);
-      await r.caption("AX Platform — 모든 AI 호출과 도구 호출이 지나는 공통 기반", "대시보드 — 오늘 AI 사용·비용, 승인 대기·정책 차단·개인정보 처리, 현업 창구, 지금 확인할 일");
+      await r.caption("AX Platform — 모든 AI 호출과 도구 호출이 지나는 공통 기반", "대시보드 — 오늘 AI 요청(어제 이 시각보다), 승인 대기, 매뉴얼 보강 대기, 지금 확인할 일");
       await pause(4500);
       await r.go(`${L}/gateway`);
-      await r.caption("LLM 게이트웨이 — 앱 → 개인정보 보호 → 라우트·예산 → 모델 → 기록", "제품·사람마다 가상 키, 허용 모델·데이터 등급·분당 한도 · 오늘 현황과 모델 연결 상태");
+      await r.caption("LLM 게이트웨이 — 앱 → 개인정보 보호 → 경로 규칙·예산 → 모델 → 기록", "제품·사람마다 키, 허용 모델·데이터 등급·분당 한도 · 오늘 현황 · 모델 연결 상태 · 설정 점검");
       await pause(3500);
       await r.click("모델 별칭", { selector: ".n-tabs-tab" });
-      await r.caption("모델 별칭 — 제품은 hnix-local 같은 별칭만 압니다", "조직 키 · 사내 GPU · 사내 CPU 모델로 라우팅·폴백, 기밀 등급은 사내 모델만");
+      await r.caption("모델 별칭 — 제품은 hnix-local 같은 별칭만 압니다", "모델 연결(사내 GPU·CPU 모델, 조직 키)로 경로 규칙·대체 모델 · 기밀 등급은 사내 모델만");
       await pause(3000);
 
       // ── 워크스페이스 채팅: 근거 문서 + 사내 모델
       await r.go(`${L}/chat`);
       await r.caption("워크스페이스 채팅 — 사내 모델에 근거 문서와 내 권한의 도구를 붙여 묻습니다");
-      await pause(2000);
+      await pause(1500);
+      // 지난 대화가 먼저 열린다 — 새 대화로
+      await r.click("새 대화", { selector: "button", exact: true });
+      await pause(800);
       // 이미 켜져 있으면 그대로(누르면 꺼진다)
       if (!(await r.eval("[...document.querySelectorAll('.n-checkbox')].some((c) => c.innerText.includes('운영 매뉴얼') && c.classList.contains('n-checkbox--checked'))"))) await r.click("운영 매뉴얼", { selector: ".n-checkbox" });
       await pause(800);
       await r.type("질문을 입력하세요", "사원 조회 화면에 퇴사자가 같이 나온다는 문의가 왔어요. 원인과 현업 안내 방법을 알려 주세요.", { delay: 40 });
       await r.click("보내기", { selector: "button" });
-      await r.caption("근거 문서 컬렉션 '운영 매뉴얼'을 찾아 답합니다", "질문·답 본문은 저장하지 않고, 누가 어느 모델을 썼는지만 기록");
+      await r.caption("근거 문서함 '운영 매뉴얼'을 찾아 답합니다", "질문·답 본문은 저장하지 않고, 누가 어느 모델을 썼는지만 기록");
       await r.waitFor("[...document.querySelectorAll('summary')].length > 0", 90000);
       await pause(1500);
       await r.caption("답 아래에 근거 — 어느 문서의 어느 절인지", "운영 매뉴얼 › 1. 사원 조회에 퇴사자가 함께 나올 때");
       await pause(5000);
 
-      // ── 문서 RAG
+      // ── 문서 검색
       await r.go(`${L}/docs`);
-      await r.caption("문서 RAG — 매뉴얼·절차서를 올리면 절 단위로 나눠 색인", "키워드 + 의미 검색(사내 임베딩 모델), 채팅·현업 창구·에이전트가 같이 씁니다");
+      await r.caption("문서 검색 — 매뉴얼·절차서를 문서함에 올리면 절 단위 조각으로 나눠 색인", "키워드 + 의미 색인(사내 모델) · 채팅·현업 창구·에이전트가 같이 씁니다");
       await pause(2500);
       await r.type("질문이나 낱말로 찾기", "급여 배치가 실패하면 뭘 먼저 봐야 해?", { delay: 45 });
       await r.click("검색", { selector: "button", exact: true });
@@ -414,12 +461,18 @@ export const SCENARIOS = {
       await pause(1500);
       await r.clickSel(".n-base-selection");
       await r.click("sm-helper", { selector: ".n-base-select-option" });
-      await r.type("무엇을 할까요", "pmsx__srs 도구에 q=퇴사자 로 검색해서 나온 서비스 요청 번호와 제목, 처리 방향을 한국어 세 줄로 정리해줘", { delay: 35 });
+      // 요청 상세(pmsx__sr)는 '요청 상세 조회는 승인 후' 정책에 걸린다 — 실행이 승인 대기로 멈추고 승인함으로 간다(아래 승인함 장면의 첫 줄).
+      // 3B 모델은 도구 결과(JSON)를 요약하게 하면 엉뚱한 설명을 쓰기 쉬워 답 대신 통제 흐름을 보인다(2026-11-10)
+      await r.type("무엇을 할까요", "pmsx__sr 도구로 서비스 요청 SR-0004 의 상세를 조회해서, 증상과 처리 방향을 한국어 두 줄로 알려줘", { delay: 35 });
       await r.click("실행", { selector: "button", exact: true });
-      await r.caption("에이전트가 PMS-X 도구를 불러 요청을 찾고 답합니다", "모델 → 도구(pmsx__srs) → 모델, 단계마다 시간·결과 기록");
-      await r.waitFor("/완료|succeeded|실패/.test(document.querySelector('.n-card:nth-of-type(2)')?.innerText || document.body.innerText.slice(0, 3000))", 90000);
-      await pause(5000);
-      await r.scroll(700, ".n-layout-scroll-container");
+      await r.caption("에이전트가 PMS-X 도구(pmsx__sr)를 부릅니다", "모델 → 도구 · 단계마다 시간·결과를 기록");
+      // 실행 기록 표에도 '완료'·'승인 대기'가 있어 글자로 기다리면 바로 넘어간다 — 결과 카드의 표식으로
+      await r.waitFor("!!document.querySelector('[data-test=run-resume], [data-test=run-output]')", 120000);
+      await pause(1000);
+      await r.caption("요청 상세 조회는 정책상 사람 승인 — 실행이 '승인 대기'로 멈춥니다", "요청이 승인함으로 가고, 승인되면 '이어서 실행' · 에이전트는 실행한 사람의 권한 그대로");
+      await pause(6000);
+      const trig = await r.find("트리거 — 사람 대신 깨우기", { selector: "div, span" });
+      if (trig) await r.pointAt(trig);
       await r.caption("트리거 — 경보 웹훅 · 예약 · 감시가 사람 대신 에이전트를 깨웁니다");
       await pause(3500);
 
@@ -441,7 +494,7 @@ export const SCENARIOS = {
       await pause(4500);
       await r.go(`${L}/biz`);
       await pause(1500);
-      await r.caption("업무 시스템 연결 — SAP · Salesforce · Microsoft 365 · 사내 REST 를 MCP 허브 도구로", "조회는 허용, 쓰기는 기본 '승인 필요' · 외부 에이전트(A2A·LangGraph)도 플랫폼 에이전트로 가져옵니다");
+      await r.caption("업무 시스템 연결 — SAP · Salesforce · Microsoft 365 · 네이버웍스 · 사내 REST 를 MCP 허브 도구로", "종류 고르기 → 주소·인증 → 연결 시험 → 도구 고르기 · 조회는 허용, 쓰기는 기본 '승인 필요'");
       await pause(5000);
 
       // ── MCP 허브
@@ -451,9 +504,22 @@ export const SCENARIOS = {
       await r.click("서버", { selector: ".n-tabs-tab", exact: true });
       await r.caption("MCP 허브 — PMS-X · AX-NAVI · AX-DataLake 도구를 한곳에", "새 도구는 관리자가 승인해야 쓰이고, 도구마다 허용 · 거부 · 승인 후 실행");
       await pause(3500);
-      await r.click("승인함", { selector: ".n-tabs-tab", exact: true });
-      await r.caption("승인함 — 같은 인자로 한 번만, 요청한 본인은 승인 못 함");
+      // ── 승인함(0.9.1 — 도구 이름·입력값 요약을 읽기 쉽게)
+      await r.go(`${L}/approvals`);
+      await r.caption("승인함 — 사람 승인이 필요한 도구 호출·런북·자동화 흐름이 한곳에", "누가 · 어느 도구를 · 어떤 입력값으로 — 도구 이름과 입력값 요약을 읽기 쉽게");
       await pause(3000);
+      // 맨 위 줄은 방금 에이전트가 멈춘 관리자 본인의 요청 — 본인 요청에는 검토 버튼이 없다
+      const mine = await r.find("관리자", { selector: "td", exact: true, timeout: 2000 });
+      if (mine) await r.pointAt(mine);
+      await r.caption("맨 위가 방금 에이전트가 멈춘 요청 — 요청한 본인에게는 검토 버튼이 없습니다", "본인 요청은 다른 책임자가 승인합니다");
+      await pause(4000);
+      await r.click("검토", { selector: "button", exact: true });
+      // 목록이 다시 그려지는 순간에 누르면 창이 안 열린다 — 한 번 더
+      if (!(await r.waitFor("!!document.querySelector('.n-modal')", 3000))) await r.click("검토", { selector: "button", exact: true });
+      await r.caption("검토 — 어떤 정책 때문에 승인이 필요한지와 입력값을 보고 승인·반려", "승인은 같은 입력값으로 한 번만 쓰입니다");
+      await pause(4500);
+      await r.press("Escape");
+      await pause(800);
 
       // ── 현업 창구
       await r.go(`${L}/desk/hr-help`);
@@ -467,24 +533,28 @@ export const SCENARIOS = {
       await pause(5000);
       await r.type("예: 사원 조회에", "회의실 예약은 어떻게 하나요?", { delay: 60 });
       await r.click("보내기", { selector: "button" });
-      await r.waitFor("document.body.innerText.includes('찾지 못했습니다')", 90000);
+      // 3B 모델은 '찾지 못했습니다' 대신 '근거를 확인하지 못한 답'을 붙이기도 한다 — 답이 끝날 때까지
+      await r.waitFor("!!document.querySelector('.bubble.wait')", 10000);
+      // 답을 쓰는 동안(busy)에는 아래 '이 답으로 해결됐나요?' 줄이 숨는다 — 다시 보이면 끝
+      await r.waitFor("!document.querySelector('.bubble.wait') && !!document.querySelector('.actions')", 90000);
       await pause(1200);
-      await r.caption("근거가 없으면 지어내지 않고 — 담당자에게 넘깁니다");
+      await r.caption("매뉴얼에 없는 질문 — 지어내지 않고, 담당자에게 넘길 수 있습니다");
       await pause(2500);
       await r.click("담당자에게 넘기기", { selector: "button" });
       await r.type("담당자에게 덧붙일 내용", "회의실 예약 시스템 사용법 안내 부탁드립니다", { delay: 40 });
       await r.click("대화 기록과 함께 접수", { selector: "button" });
-      await r.waitFor("/SR-\\d{4}/.test(document.body.innerText)", 30000);
+      // 오른쪽 '내 최근 문의'에도 SR 번호가 있어 접수 안내(desk-ticket)가 뜰 때까지
+      await r.waitFor("!!document.querySelector('[data-test=desk-ticket]')", 30000);
       await r.caption("PMS-X 서비스 요청으로 접수 — 대화 기록과 함께, 요청 번호가 돌아옵니다");
       await pause(4500);
 
-      // ── 런북·Insight
+      // ── 런북·AI 사용 현황
       await r.go(`${L}/runbooks`);
       await r.caption("런북 — 정해진 조치를 요청 → 다른 사람이 승인 → 실행·기록");
       await pause(3000);
       await r.go(`${L}/insight`);
       await r.click("소스", { selector: "button", exact: true });
-      await r.caption("Insight — 호출 주체별(게이트웨이·허브·에이전트·현업 창구·AX-NAVI) 사용량·비용");
+      await r.caption("AI 사용 현황 — 사용량·비용을 호출 주체별로(게이트웨이·허브·에이전트·현업 창구·AX-NAVI)", "품질·지연, 외부 AI·자산 탭까지 — 기간·프로젝트·모델별");
       await pause(3500);
     },
   },
@@ -543,11 +613,19 @@ export const SCENARIOS = {
 
         // ── 거버넌스·온톨로지(분석가)
         await r.login("datalake", "ana");
+        // 분석가 첫 화면(0.5.x) — 질문하기 · 내 대시보드 · 최근 분석
+        await r.go(`${D}/`, DL_READY);
+        await r.caption("분석가 첫 화면 — 데이터에 무엇이든 물어보기 · 내 대시보드 · 최근 분석", "말로 물으면 분석가 권한으로 조회해 표·차트로 답합니다");
+        await pause(4000);
+        await r.click("장애 현황", { selector: "a", exact: true });
+        await r.waitFor("document.querySelectorAll('canvas, svg').length > 2", 15000);
+        await r.caption("공유받은 대시보드 '장애 현황' — 엔지니어가 만들어 분석가에게 공유", "엔지니어가 게시한 판을 분석가가 바로 봅니다 · 필터 · 예약 보내기");
+        await pause(4500);
         await r.go(`${D}/catalog/hr/staff?tab=preview`, DL_READY);
         await r.caption("분석가(소속 HD01)로 들어왔습니다", "인사 테이블 — 이름·주민번호·전화는 가려지고, HD01 행만 보입니다");
         await pause(4500);
         await r.go(`${D}/ontology?type=incident`, DL_READY);
-        await r.caption("온톨로지 — 테이블이 아니라 업무 객체로 찾습니다", "장애 · 서비스 · 구성 요소 · 변경 · 문제 · 서비스 요청 · 담당자");
+        await r.caption("객체 탐색(온톨로지) — 테이블이 아니라 업무 객체로 찾습니다", "장애 · 서비스 · 구성 요소 · 변경 · 문제 · 서비스 요청 · 담당자");
         await pause(2500);
         await r.type("이름·키로 찾기", "디스크");
         await r.press("Enter");
@@ -584,9 +662,10 @@ export const SCENARIOS = {
 
         await r.login("datalake", "ana");
         await r.go(`${D}/sql`, DL_READY);
-        await r.caption("AI 질문 — 말로 물으면 사내 모델이 SQL 을 씁니다", "모델에는 테이블 구조만 보내고 값은 보내지 않습니다");
-        await r.type("말로 물어보세요", "시스템별 P1 장애 건수", { delay: 70 });
-        await r.click("AI 에게 묻기", { selector: "button" });
+        await r.caption("SQL 작업창 — 말로 쓰면 사내 모델이 SQL 초안을 만듭니다", "모델에는 테이블 구조만 보내고 값은 보내지 않습니다");
+        // 3B 모델은 "시스템별 P1 장애 건수" 에 SQL 문법 오류를 낸다(2026-11-11) — 이 말투는 매번 맞다
+        await r.type("말로 쓰면 SQL 초안", "P1 장애를 시스템별로 세어 줘", { delay: 70 });
+        await r.click("SQL 초안 만들기", { selector: "button" });
         await r.waitFor("!!document.querySelector('.n-data-table, table')", 40000);
         await pause(2500);
         await r.caption("만든 SQL 도 같은 거버넌스 — 분석가 소속 행만 집계됩니다");

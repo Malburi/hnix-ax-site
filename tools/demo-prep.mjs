@@ -42,7 +42,8 @@ const out = {};
 log("플랫폼 — 현업 창구 · 업무 흐름 개선");
 const pl = await client("platform", "admin");
 const px = await client("pmsx", "admin");
-const sm = (await px("GET", "/projects")).find((p) => p.type === "SM");
+// 첫 SM 프로젝트가 고객 파일럿(LMS)일 수 있다 — 시연 SM 프로젝트는 이름으로
+const sm = (await px("GET", "/projects")).find((p) => p.type === "SM" && p.name.includes("인사시스템 운영"));
 const devId = (await (await client("platform", "dev"))("GET", "/auth/me")).user.id;
 const col = items(await pl("GET", "/docs/collections")).find((c) => c.name === "운영 매뉴얼");
 if (!col) throw new Error("문서 컬렉션 '운영 매뉴얼'이 없습니다 — start.ps1(seed hub)을 먼저");
