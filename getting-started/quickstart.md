@@ -15,8 +15,8 @@ npm run web:build && npm run serve        # http://127.0.0.1:8700
 
 브라우저로 접속해 관리자로 로그인한 뒤, **LLM 게이트웨이**에서 두 가지를 등록한다.
 
-1. **프로바이더**: 사내 로컬 모델(형식 "OpenAI 호환", 주소 예: `http://127.0.0.1:11434/v1`, 사내 로컬 켬)과 필요하면 Claude(형식 "Anthropic", 조직 API 키).
-2. **모델 별칭**: 도구들이 부를 이름. 예: `hnix-local` → 로컬 대화 모델, `hnix-embed-local` → 로컬 임베딩 모델, `hnix-claude` → Claude.
+1. **모델 연결**: 사내 로컬 모델(형식 "OpenAI 호환", 주소 예: `http://127.0.0.1:11434/v1`, 사내 로컬 켬)과 필요하면 Claude(형식 "Anthropic", 조직 API 키).
+2. **모델 별칭**: 도구들이 부를 이름. 예: `hnix-local` → 로컬 대화 모델, `hnix-embed-local` → 로컬 의미 검색(임베딩) 모델, `hnix-claude` → Claude.
 
 > 로컬 모델이 없으면 Ollama로 시작할 수 있다: `ollama pull qwen2.5:3b`, `ollama pull nomic-embed-text`. 작은 모델은 도구를 여러 개 쓰는 에이전트에서 불안정하므로 시연용으로만 쓴다.
 
@@ -43,10 +43,10 @@ AI를 켜지 않으면 PMS-X는 외부로 아무것도 호출하지 않는다.
 1. 플랫폼 관리자가 **AX-NAVI 사용 허가**에서 개발자에게 허가를 준다.
 2. 플랫폼 **내 연결 설정** › **AX-NAVI IDE 받기**로 설치한다(서명한 설치 파일, 관리자 권한 불필요). 판정 엔진(CLI)이나 Node·Python은 따로 깔지 않는다.
 3. 같은 화면의 **AX-NAVI IDE 에서 열기** → **연결** → 브라우저에서 **승인**. IDE 가 사내 모델 연결·MCP 허브·사용량 기록 키와 스킬·판정 엔진을 플랫폼에서 받아 스스로 설정한다.
-4. 프로젝트 폴더를 열고 명령 팔레트 › **AX-NAVI: 인덱스 만들기**.
+4. 프로젝트 폴더를 열고 명령 팔레트 › **AX-NAVI: 색인 만들기**.
 5. 오른쪽 AX-NAVI 채팅에서 `/find 사원 저장` 처럼 물어본다.
 
-자세한 순서는 [설치와 첫 사용](/axnavi/start.md)과 [사용 허가](/axnavi/license.md)에 있다. 명령 팔레트 › **AX-NAVI: 환경 점검**으로 엔진 위치와 과금을 확인한다.
+자세한 순서는 [설치와 첫 사용](/axnavi/start.md)과 [사용 허가](/axnavi/license.md)에 있다. 명령 팔레트 › **AX-NAVI: 환경 진단**으로 엔진 위치와 과금을 확인한다.
 
 Claude 연결은 개발자마다 다르다. 구독·좌석·API 키·게이트웨이 중 무엇으로 쓸지는 [Claude 연결](/getting-started/connect.md)을 본다. IDE 는 로그인만으로 사내 게이트웨이까지 설정되므로, 구독이 있는 사람만 `claude` 로 한 번 로그인하면 된다.
 
@@ -57,7 +57,7 @@ Claude 연결은 개발자마다 다르다. 구독·좌석·API 키·게이트�
 | 허브 → PMS-X | 플랫폼 › MCP 허브 › 서버 | 종류 "PMS-X", 주소와 서비스 계정. PMS-X에는 운영 역할을 가진 일반 계정을 만든다 |
 | 허브 → AX-NAVI | 같은 곳 | 종류 "AX-NAVI", 설치 폴더와 색인된 저장소 경로 |
 | AX-NAVI → 허브 | 개발자 PC `.axnavi/mcp.json` | [플랫폼 연동](/axnavi/integration.md) |
-| Claude Code → Insight | 개발자 PC 설정 | [Insight](/platform/insight.md)의 텔레메트리 설정 |
+| Claude Code → 사용량·비용 | 개발자 PC 설정 | [사용량·비용](/platform/insight.md)의 텔레메트리 설정 |
 | 모니터링 → PMS-X | 모니터링 도구의 웹훅 | [SM 운영과 AI 보조](/pmsx/sm-ai.md)의 경보 접수 |
 
 ## 한 번에 띄우기 — E2E 키트
@@ -77,4 +77,4 @@ node scripts\smoke.mjs                                    # 장애 한 건 ①~�
 - 플랫폼 › MCP 허브 › 도구 승인에 `pmsx__*`, `axnavi__*` 도구가 보인다.
 - PMS-X 서비스 요청(SR) 상세에서 **분류·배정 추천**을 누르면 몇 초 안에 추천이 나온다.
 - `axnavi doctor`의 **과금** 줄이 의도한 경로를 가리킨다.
-- 플랫폼 › Insight에 `pmsx`, `axnavi` 호출이 쌓인다.
+- 플랫폼 › AI 사용 현황 › 사용량·비용에 `pmsx`, `axnavi` 호출이 쌓인다.

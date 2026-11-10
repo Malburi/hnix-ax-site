@@ -1,6 +1,6 @@
 # 전사 AI 관측
 
-Insight는 우리가 운영하는 도구(게이트웨이, Claude Code, AX-NAVI)의 AI 사용을 본다. 고객 회사는 그 밖에도 Copilot, 자체 Claude 조직, 부서가 만든 에이전트를 쓴다. 전사 AI 관측은 이것까지 한 화면에 모으고, 고객 회사가 쓰는 AI를 대장에 올려 검토하고 통제한다.
+사용량·비용 화면은 우리가 운영하는 도구(게이트웨이, Claude Code, AX-NAVI)의 AI 사용을 본다. 고객 회사는 그 밖에도 Copilot, 자체 Claude 조직, 부서가 만든 에이전트를 쓴다. 전사 AI 관측은 이것까지 한 화면에 모으고, 고객 회사가 쓰는 AI를 대장에 올려 검토하고 통제한다.
 
 메뉴 "전사 AI 관측"(관리자, 감사자는 보기).
 
@@ -14,7 +14,7 @@ Insight는 우리가 운영하는 도구(게이트웨이, Claude Code, AX-NAVI)�
 | GitHub Copilot | 조직 Copilot 지표·좌석 API(GitHub Enterprise Server는 `https://호스트/api/v3`) | 일별 활성·참여 사용자, 코드 제안·수락·수락한 줄, 채팅. 좌석 수와 좌석별 마지막 사용일 |
 | CSV 올리기 | `date,tool,user,metric,value` | 그 밖의 도구 — 예: Microsoft 365 Copilot 관리 센터 보고서를 내려받아 바꿔 올린다 |
 
-> Claude Enterprise(claude.ai) 조직의 사용량은 Admin API가 아니라 별도의 Analytics API로만 나온다. 이 경우와 개인 구독 사용량은 각 PC의 Claude Code 텔레메트리(OTLP)로 Insight에 모은다.
+> Claude Enterprise(claude.ai) 조직의 사용량은 Admin API가 아니라 별도의 Analytics API로만 나온다. 이 경우와 개인 구독 사용량은 각 PC의 Claude Code 텔레메트리(OTLP)로 사용량·비용 화면에 모은다.
 
 화면에는 도구별 합계 카드(활성 사용자는 기간 중 최대)와 사용자별 표가 나온다. 사용자 이메일이 플랫폼 계정과 같으면 이름과 팀을 붙인다. Copilot 좌석만 있고 사용 기록이 없는 사람은 "사용 기록 없음(좌석만)"으로 보여 좌석 정리에 쓴다.
 
@@ -37,6 +37,6 @@ Insight는 우리가 운영하는 도구(게이트웨이, Claude Code, AX-NAVI)�
 
 - MCP 허브에 등록된 외부 A2A 에이전트·MCP 서버
 - 외부 AI 사용량에 나타난 도구
-- 최근 30일 Insight에 기록된 클라이언트
+- 최근 30일 사용량·비용에 기록된 클라이언트
 
 "대장에 올리기"를 누르면 찾은 내용이 채워진 등록 창이 열린다.

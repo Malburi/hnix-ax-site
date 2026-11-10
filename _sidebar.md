@@ -20,7 +20,7 @@
 - **AX Platform**
   - [개요](/platform/README.md)
   - [LLM 게이트웨이](/platform/gateway.md)
-  - [Insight — AI 사용 현황](/platform/insight.md)
+  - [AI 사용 현황 — 사용량·비용](/platform/insight.md)
   - [생산성 보고서](/platform/productivity.md)
   - [전사 AI 관측](/platform/enterprise-ai.md)
   - [MCP 허브와 승인함](/platform/hub.md)
@@ -33,7 +33,7 @@
   - [음성 — 말로 묻기](/platform/voice.md)
   - [모델 평가와 GPU 모델 서버](/platform/eval.md)
   - [런북 — 승인 후 실행](/platform/runbooks.md)
-  - [문서 RAG](/platform/docs-rag.md)
+  - [문서 검색](/platform/docs-rag.md)
   - [설치와 운영](/platform/operations.md)
 
 - **AX-NAVI IDE**

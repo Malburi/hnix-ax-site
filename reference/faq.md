@@ -2,7 +2,7 @@
 
 ### VS Code에서 상용 AI 코딩 에이전트처럼 쓸 수 있나요?
 
-그렇게 쓰는 것이 AX-NAVI IDE다. VS Code 계열 IDE를 설치하면 채팅 에이전트(Architect · Code · Ask · Debug · Orchestrator), 슬래시 명령, 변경 리뷰와 Findings, 보안 점검, 단계 게이트가 들어 있다. 쓰던 VS Code에 `.vsix`만 깔아도 된다. 흔한 기능과의 대응은 [AX-NAVI IDE 개요](/axnavi/README.md)에 있다.
+그렇게 쓰는 것이 AX-NAVI IDE다. VS Code 계열 IDE를 설치하면 채팅 에이전트(Architect · Code · Ask · Debug · Orchestrator), 슬래시 명령, 변경 리뷰와 점검 결과, 보안 점검, 단계 게이트가 들어 있다. 쓰던 VS Code에 `.vsix`만 깔아도 된다. 흔한 기능과의 대응은 [AX-NAVI IDE 개요](/axnavi/README.md)에 있다.
 
 ### Claude 구독(Pro·Max)만 있어도 쓸 수 있나요?
 
@@ -10,13 +10,13 @@ AX-NAVI는 된다. 본인 PC에서 `claude`에 로그인해 두면 AX-NAVI가 �
 
 ### 구독과 API 키를 둘 다 갖고 있으면 어느 쪽으로 과금되나요?
 
-AX-NAVI IDE는 **구독 로그인**을 먼저 고르고, 구독 연결에서는 API 키 환경 변수를 빼서 구독으로 과금되게 한다. 채팅 입력창 아래 연결 이름으로 확인하고, 바꾸려면 명령 팔레트 › **AX-NAVI: AI 연결 설정**.
+AX-NAVI IDE는 **구독 로그인**을 먼저 고르고, 구독 연결에서는 API 키 환경 변수를 빼서 구독으로 과금되게 한다. 채팅 입력창 아래 연결 이름으로 확인하고, 바꾸려면 명령 팔레트 › **AX-NAVI: AI 모델 연결 설정**.
 
 AX-NAVI CLI는 기본이 API 키다. `AXNAVI_AUTH=subscription`을 넣으면 구독을 먼저 쓰고, 이때 위임 프로세스에서 API 키를 뺀다. `axnavi doctor`의 **과금** 줄로 확인한다.
 
 ### Claude 없이 사내 모델만으로 쓸 수 있나요?
 
-된다. 게이트웨이에 사내 로컬 프로바이더(vLLM, Ollama 등 OpenAI 호환)를 등록하고 별칭을 만든다. PMS-X AI와 AX-NAVI의 게이트웨이 경로가 그 별칭을 쓴다. 단일 호출 기능(서비스 요청 분류, 지식 문서 초안, 설명 초안)은 작은 모델로도 동작하지만, 도구를 여러 개 쓰는 에이전트는 7B 이상을 권장한다.
+된다. 게이트웨이에 사내 로컬 모델 연결(vLLM, Ollama 등 OpenAI 호환)을 등록하고 별칭을 만든다. PMS-X AI와 AX-NAVI의 게이트웨이 경로가 그 별칭을 쓴다. 단일 호출 기능(서비스 요청 분류, 지식 문서 초안, 설명 초안)은 작은 모델로도 동작하지만, 도구를 여러 개 쓰는 에이전트는 7B 이상을 권장한다.
 
 ### AX-NAVI IDE 설치 파일이 밖으로 새면 어떻게 되나요?
 

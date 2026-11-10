@@ -44,7 +44,7 @@ hnix-ax restore --from <폴더> --force  # 서버를 멈춘 뒤 복원
 ```
 
 - SQLite는 `VACUUM INTO`로 서버가 도는 중에도 일관된 사본을 뜬다.
-- 암호화 키(`master.key`)와 설정을 함께 담는다. 이 키가 없으면 저장된 프로바이더 키를 풀 수 없다.
+- 암호화 키(`master.key`)와 설정을 함께 담는다. 이 키가 없으면 저장된 모델 연결 키를 풀 수 없다.
 - 백업마다 SHA-256 목록(manifest)을 남기고, 복원 전에 검증한다.
 - `backup.time: "02:30"`이면 매일 그 시각에 자동 백업하고, `backup.keep`개만 남긴다.
 
@@ -74,7 +74,7 @@ auth:
 | 팀·사업부 단위 | SQLite (기본, 파일 하나, sqlite-vec로 벡터 검색) |
 | 전사 | PostgreSQL (`db.driver: postgres`, `db.url`) |
 
-PostgreSQL 경로는 실제 PostgreSQL 에서 마이그레이션부터 주요 기능까지 자동 시험으로 확인한다. PostgreSQL 에서는 키워드 검색이 LIKE(조사 뗀 줄기 포함), 의미 검색은 직접 계산이라 컬렉션당 수만 청크까지가 실용 범위다.
+PostgreSQL 경로는 실제 PostgreSQL 에서 마이그레이션부터 주요 기능까지 자동 시험으로 확인한다. PostgreSQL 에서는 키워드 검색이 LIKE(조사 뗀 줄기 포함), 의미 검색은 직접 계산이라 문서함당 수만 조각까지가 실용 범위다.
 
 ## 여러 대로 띄우기 (이중화)
 

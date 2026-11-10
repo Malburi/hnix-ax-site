@@ -11,7 +11,7 @@ flowchart LR
     E --> F["구현 명세<br/>PMS-X"]
     F --> G["변경 리뷰·게이트<br/>AX-NAVI"]
     G --> H["지식 문서 초안<br/>PMS-X"]
-    H --> I["사용 현황<br/>Insight"]
+    H --> I["AI 사용 현황<br/>사용량·비용"]
 ```
 
 <figure><img src="img/hnix-ax-e2e-flow.png" alt="E2E 워크플로우 — 모니터링·고객, PMS-X, AX Platform, 개발자, 모델 레인에 걸친 ①~⑨ 단계"><figcaption>같은 흐름을 제품 레인별로 나눈 그림(draw.io 원본 2쪽). 번호가 아래 절과 같다.</figcaption></figure>
@@ -26,7 +26,7 @@ flowchart LR
 
 ## 2. 요청 분류·배정을 AI가 추천한다
 
-고객 포털로 들어온 "사원 조회 시 퇴사자가 함께 나옵니다"를 열고 **분류·배정 추천**을 누른다. 유형·우선순위·대상 화면·담당자가 채워진다. AI는 PMS-X가 먼저 좁혀 둔 후보 안에서만 고르고, 운영자가 **반영**을 눌러야 확정된다.
+고객 요청 창구로 들어온 "사원 조회 시 퇴사자가 함께 나옵니다"를 열고 **분류·배정 추천**을 누른다. 유형·우선순위·대상 화면·담당자가 채워진다. AI는 PMS-X가 먼저 좁혀 둔 후보 안에서만 고르고, 운영자가 **반영**을 눌러야 확정된다.
 
 <figure><img src="img/pmsx-sr-triage.png" alt="요청 상세의 분류·배정 추천 패널"><figcaption>모델 별칭(hnix-local)이 패널에 표시된다.</figcaption></figure>
 
@@ -38,7 +38,7 @@ flowchart LR
 
 ## 4. 개인정보가 담긴 조회는 승인 후에
 
-요청 상세에는 요청자 개인정보가 있다. 정책 "요청 상세 조회는 승인 후"에 걸린 호출은 승인함에서 책임자가 결정한다. 승인은 같은 인자로 한 번, 하루 안에만 쓸 수 있고 본인이 올린 호출은 본인이 승인하지 못한다.
+요청 상세에는 요청자 개인정보가 있다. 정책 "요청 상세 조회는 승인 후"에 걸린 호출은 승인함에서 책임자가 결정한다. 승인은 같은 입력값으로 한 번, 하루 안에만 쓸 수 있고 본인이 올린 호출은 본인이 승인하지 못한다.
 
 <figure><img src="img/platform-hub-approval-review.png" alt="도구 호출 승인 검토 창"><figcaption>플랫폼 › MCP 허브 › 승인함</figcaption></figure>
 
@@ -79,9 +79,9 @@ AI를 부르지 않고 전수 색인과 규칙으로 판정한다. 종료 코드
 
 ## 9. 문서와 사용량
 
-운영 매뉴얼은 문서 RAG에서 사내 임베딩으로 검색한다. 이 과정에서 쓴 모든 모델 호출은 Insight에 호출 주체(PMS-X, AX-NAVI, 에이전트, Claude Code)별로 쌓인다.
+운영 매뉴얼은 문서 검색에서 사내 의미 검색 모델로 찾는다. 이 과정에서 쓴 모든 모델 호출은 사용량·비용 화면에 호출 주체(PMS-X, AX-NAVI, 에이전트, Claude Code)별로 쌓인다.
 
-<figure><img src="img/platform-docs-search.png" alt="문서 RAG 검색 결과와 키워드·의미 순위"><figcaption>플랫폼 › 문서 RAG. 결과마다 키워드 순위와 의미 순위가 함께 보인다.</figcaption></figure>
+<figure><img src="img/platform-docs-search.png" alt="문서 검색 결과와 키워드·의미 순위"><figcaption>플랫폼 › 문서 검색. 결과마다 키워드 순위와 의미 순위가 함께 보인다.</figcaption></figure>
 
 ## 덧붙여: SI에서 SM으로
 

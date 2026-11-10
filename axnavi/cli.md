@@ -39,11 +39,11 @@ IDE의 명령과 이렇게 대응한다.
 
 | IDE 명령 | CLI |
 |---|---|
-| AX-NAVI: 인덱스 만들기 / 갱신 | `axnavi index build` / `refresh` |
+| AX-NAVI: 색인 만들기 / 갱신 | `axnavi index build` / `refresh` |
 | AX-NAVI: 변경 리뷰 (작업 트리 / 스테이지 / 범위 지정) | `axnavi review` / `--staged` / `--diff origin/main..HEAD` |
 | AX-NAVI: 보안 점검 (OWASP) | `axnavi scan security [경로]` |
 | AX-NAVI: 단계 게이트 점검 | `axnavi gate <단계>` |
-| AX-NAVI: 환경 점검 (doctor) | `axnavi doctor` |
+| AX-NAVI: 환경 진단 | `axnavi doctor` |
 
 ## 테스트 계획과 커버리지
 

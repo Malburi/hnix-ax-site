@@ -56,7 +56,7 @@ HNIX AX는 SI 구축과 SM 운영 현장을 위한 AI 제품군이다. 레거시
 | 분석 | 경보 진단 에이전트가 원인을 좁히고, 요청 분류·배정 추천, 영향도와 화면 흐름으로 고칠 곳을 찾는다 | [에이전트 실행기](/platform/agents.md) · PMS-X · AX-NAVI |
 | 처리 | 업무 템플릿 절차대로, 코드는 AX-NAVI 로 고치고, 정해진 조치는 승인 후 런북으로(실패하면 원복) | [업무 템플릿](/pmsx/sm-ai.md#업무-템플릿) · [AX-NAVI](/axnavi/README.md) · [런북](/platform/runbooks.md) |
 | 검증 | 변경 리뷰 GO/HOLD/STOP, 보안 Findings, 테스트 계획·바뀐 줄 커버리지를 CI 게이트로 | [변경 리뷰](/axnavi/review.md) · [CLI와 CI](/axnavi/cli.md) |
-| 보고 | 처리 기한·월간 운영보고, 커밋 ↔ 요청으로 공수 절감률, AI 사용량·비용, 고객 전사 AI 관측 | [생산성 보고서](/platform/productivity.md) · [Insight](/platform/insight.md) · [전사 AI 관측](/platform/enterprise-ai.md) |
+| 보고 | 처리 기한·월간 운영보고, 커밋 ↔ 요청으로 공수 절감률, AI 사용량·비용, 고객 전사 AI 관측 | [생산성 보고서](/platform/productivity.md) · [사용량·비용](/platform/insight.md) · [전사 AI 관측](/platform/enterprise-ai.md) |
 | 데이터 | 업무 DB·장애·로그·엑셀 보고서·견적서·계약서 같은 문서를 한곳에 모아 기간·계열사별 분석, 에이전트의 근거 데이터로(개인정보는 가린 채) | [AX-DataLake](/datalake/README.md) |
 | 이관·현대화 | SI → SM 인수인계 갭·이해도 퀴즈, Java·Spring Boot·Oracle → PostgreSQL 레시피 | [인수인계](/pmsx/handover.md) · [현대화 레시피](/axnavi/cli.md#현대화-레시피) |
 
@@ -71,8 +71,8 @@ flowchart LR
     subgraph PLAT["AX Platform"]
         GW["LLM 게이트웨이"]
         HUB["MCP 허브·승인함"]
-        INS["Insight"]
-        RAG["문서 RAG"]
+        INS["사용량·비용"]
+        RAG["문서 검색"]
         RUN["에이전트 실행기"]
     end
     PMSX["PMS-X<br/>As-Is·SM 운영"]

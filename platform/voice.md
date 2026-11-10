@@ -1,6 +1,6 @@
 # 음성 — 말로 묻고 소리로 듣기
 
-현업 창구와 워크스페이스 채팅에 **마이크 단추**가 있다. 말로 물으면 사내 음성 인식 모델이 글로 바꾸고, 답은 소리로 읽어 준다. 음성도 모델 호출이라 **게이트웨이를 지난다**(키·예산·감사·Insight).
+현업 창구와 워크스페이스 채팅에 **마이크 단추**가 있다. 말로 물으면 사내 음성 인식 모델이 글로 바꾸고, 답은 소리로 읽어 준다. 음성도 모델 호출이라 **게이트웨이를 지난다**(키·예산·감사·사용량).
 
 <video controls preload="metadata" poster="video/features/platform-12.jpg" src="video/features/platform-12.mp4#t=236" style="width:100%;border-radius:10px"></video>
 
@@ -15,7 +15,7 @@
 | `POST /v1/audio/transcriptions` | 음성 인식(multipart — file·model·language·prompt·response_format) |
 | `POST /v1/audio/speech` | 음성 합성(글 → 소리) |
 
-모델 별칭의 종류에 **음성 인식**(`transcription`)·**음성 합성**(`speech`)이 있다. 사내에 띄운 whisper 계열 음성 인식 서버(OpenAI 호환)를 프로바이더로 등록하고 별칭(예: `voice-stt`)을 만들면 된다. Insight 에는 `gen_ai.audio` 로 음성 길이(초)가 남는다.
+모델 별칭의 종류에 **음성 인식**(`transcription`)·**음성 합성**(`speech`)이 있다. 사내에 띄운 whisper 계열 음성 인식 서버(OpenAI 호환)를 모델 연결로 등록하고 별칭(예: `voice-stt`)을 만들면 된다. 사용량·비용 기록에는 `gen_ai.audio` 로 음성 길이(초)가 남는다.
 
 ```yaml
 voice:
@@ -42,5 +42,5 @@ voice:
 
 ## 알아 둘 것
 
-- 음성 길이(초)는 Insight 에 기록하지만 예산 금액 계산에는 아직 넣지 않는다.
+- 음성 길이(초)는 사용량·비용 기록에 남지만 예산 금액 계산에는 아직 넣지 않는다.
 - 작은 음성 인식 모델은 업무 용어(사원·퇴사자 등)를 틀리기 쉽다. 음성 인식 서버에 용어 힌트(prompt)를 주면 낫다.

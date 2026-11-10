@@ -26,7 +26,7 @@ HNIX AX는 네 제품으로 이루어진다. 각 제품은 혼자서도 동작�
 | ① | AX-NAVI IDE → 게이트웨이 | OpenAI 호환 `/v1`, llm 키 |
 | ② ③ | AX-NAVI IDE → Claude Code → Anthropic | 개발자 본인 구독 로그인(`claude -p`), 서버 중계 없음 |
 | ④ | AX-NAVI IDE·Claude Code → MCP 허브 | `/mcp`, mcp 키 — `pmsx__*`·`axnavi__*`·`docs__search` |
-| ⑤ | AX-NAVI·Claude Code → Insight | 작업 요약·OTLP 텔레메트리, ingest 키 |
+| ⑤ | AX-NAVI·Claude Code → 사용량·비용 | 작업 요약·OTLP 텔레메트리, ingest 키 |
 | ⑥ | 허브 → AX-NAVI 색인 | `axnavi__*`, query-index 읽기 |
 | ⑦ | 허브 → PMS-X | `pmsx__*`, 서비스 계정 JWT, GET 만 |
 | ⑧ | PMS-X AI 보조 → 게이트웨이 | llm 키, 켤 때만 |
@@ -55,9 +55,9 @@ flowchart TB
         direction LR
         GW["LLM 게이트웨이<br/>/v1/chat/completions · /v1/messages · /v1/embeddings"]
         HUB["MCP 허브<br/>/mcp · 정책 · 승인함"]
-        INS["Insight<br/>사용량 · 비용 · OTLP 수신"]
+        INS["사용량·비용<br/>OTLP 수신"]
         AG["에이전트 실행기 · A2A"]
-        RAG["문서 RAG<br/>키워드 + 벡터"]
+        RAG["문서 검색<br/>키워드 + 의미"]
     end
     subgraph PMSX["PMS-X (Spring Boot 단일 jar)"]
         ASIS["As-Is 분석"]
@@ -83,11 +83,11 @@ flowchart TB
 
 | 흐름 | 경로 | 남는 기록 |
 |---|---|---|
-| PMS-X의 요청 분류 추천 | PMS-X → 게이트웨이 → 모델 | 게이트웨이 요청 로그(본문 없음), Insight 사용량 |
+| PMS-X의 요청 분류 추천 | PMS-X → 게이트웨이 → 모델 | 게이트웨이 요청 로그(본문 없음), 사용량·비용 |
 | AX-NAVI 질문(게이트웨이 경로) | AX-NAVI → 게이트웨이 → 모델 | 같음. 호출 주체가 `axnavi`로 구분된다 |
-| AX-NAVI 질문(구독 경로) | AX-NAVI → 본인 Claude Code → Anthropic | 본인 PC의 세션 로그, 텔레메트리를 켜면 Insight 사용량 |
-| 에이전트가 요청 조회 | 실행기 → 허브 → PMS-X | 실행·단계 기록(본문 없음), 허브 호출 기록(인자 이름·크기만) |
-| 문서 검색 | 플랫폼 → 게이트웨이(임베딩) → 모델 | 사용량 |
+| AX-NAVI 질문(구독 경로) | AX-NAVI → 본인 Claude Code → Anthropic | 본인 PC의 세션 로그, 텔레메트리를 켜면 사용량·비용 |
+| 에이전트가 요청 조회 | 실행기 → 허브 → PMS-X | 실행·단계 기록(본문 없음), 허브 호출 기록(입력값 이름·크기만) |
+| 문서 검색 | 플랫폼 → 게이트웨이(의미 색인) → 모델 | 사용량 |
 
 요청·응답 본문은 어디에도 저장하지 않는다. 자세한 원칙은 [데이터·보안 원칙](/reference/security.md)에 있다.
 
