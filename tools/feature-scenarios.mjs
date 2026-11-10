@@ -1148,7 +1148,7 @@ export const SCENARIOS = {
     maxGap: 3,
     async run(r) {
       await r.login("pmsx", "admin");
-      await pmsxProject(r, "SI");
+      const HR = await pmsxProject(r, "SI");
       await r.go(`${P}/asis/systems`);
       await r.caption("As-Is 분석 — 레거시 소스를 수집기로 전수 분석", "화면 → 버튼 → 함수 → SQL → 테이블 그래프를 AI 없이 결정론으로");
       await pause(4000);
@@ -1175,9 +1175,29 @@ export const SCENARIOS = {
       await pause(3000);
       await r.press("Escape");
 
-      await r.go(`${P}/asis/viewer`);
-      await r.caption("화면 분석 뷰어 — 캡처한 화면 위에 버튼·입력 요소 번호", "왼쪽 메뉴 트리 · 가운데 화면 · 오른쪽 분석 패널");
+      // 화면 분석 뷰어 — 인사시스템 사원관리(캡처 위 버튼마다 실제 호출 흐름이 있는 화면)
+      const scr = HR ? await pmsxScreenId(r, HR, "HR0101") : null;
+      await r.go(scr ? `${P}/asis/viewer/${HR}/${scr}` : `${P}/asis/viewer`);
+      await pause(1500);
+      await r.caption("화면 분석 뷰어 — 수집한 화면 캡처 위에 버튼·입력 요소마다 번호", "왼쪽 메뉴 트리 · 가운데 화면 · 오른쪽 분석 패널");
       await pause(4500);
+      if (await r.clickSel('[data-test="hotspot-btnSave"]', 2500)) {
+        await r.caption("버튼을 누르면 — 함수 → API → 컨트롤러 → 서비스 → SQL", "레거시 소스에서 찾은 실제 호출 흐름 · 추측이 아니라 소스 근거");
+        await pause(5500);
+        await r.wheel(520, { x: 1210, y: 640 });
+        await r.caption("끝까지 따라가면 이 버튼이 쓰는 테이블까지", "요청이 들어오면 영향 범위를 바로 판단 · 구현 명세의 근거");
+        await pause(5000);
+        await r.wheel(-520, { x: 1210, y: 640 });
+      }
+      if (await r.clickSel('[data-test="hotspot-btnDelete"]', 2500)) {
+        await r.caption("다른 버튼도 마찬가지 — '삭제'가 거치는 함수와 테이블");
+        await pause(4500);
+      }
+      // 고른 버튼을 풀고 화면 단위 탭으로(화면 메모·분석 이력은 버튼을 고르지 않았을 때 보인다)
+      if (scr) {
+        await r.go(`${P}/asis/viewer/${HR}/${scr}`);
+        await pause(1200);
+      }
       for (const [b, cap, sub] of [
         ["컴포넌트 목록", "컴포넌트 목록 — 화면의 입력·버튼·그리드와 컨트롤 ID", ""],
         ["이벤트 목록", "이벤트 목록 — 버튼마다 연결된 이벤트 함수", ""],
@@ -2224,5 +2244,15 @@ export async function pmsxProject(r, type, who = "admin") {
     if (${JSON.stringify(type)} !== 'SI') return p.projectId;
     const ss = await fetch('/api/v1/projects/' + p.projectId + '/systems', { headers: h }).then((x) => x.json());
     return ((ss.content ?? ss).find((s) => s.code === 'HR') ?? {}).systemId ?? null;
+  })()`);
+}
+
+/* ---------- PMS-X As-Is 화면 ID — 시스템 메뉴 트리에서 화면 코드(HR0101 등)로 찾는다(시연 데이터를 새로 만들면 ID 가 바뀐다) ---------- */
+export async function pmsxScreenId(r, systemId, screenCode, who = "admin") {
+  return r.eval(`(async () => {
+    const t = await fetch('/api/v1/auth/login', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(${JSON.stringify(APPS.pmsx.users[who] ?? APPS.pmsx.users.admin)}) }).then((x) => x.json()).then((j) => j.accessToken);
+    const tree = await fetch('/api/v1/systems/${systemId}/menu-tree', { headers: { authorization: 'Bearer ' + t } }).then((x) => x.json());
+    const walk = (ns) => { for (const n of ns ?? []) { if (n.screen?.screenCode === ${JSON.stringify(screenCode)}) return n.screen.screenId; const f = walk(n.children); if (f) return f; } return null; };
+    return walk(tree);
   })()`);
 }
