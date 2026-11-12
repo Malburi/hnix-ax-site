@@ -2,7 +2,7 @@
 
 AX-DataLake의 거버넌스는 **SQL 을 실행하기 전에** 건다. 화면의 SQL 작업창, API 키로 붙은 BI·스크립트, MCP 로 붙은 AI 에이전트, AI 질문이 만든 SQL — 어느 길로 들어와도 같은 검사를 지난다.
 
-<figure><img src="img/datalake-governance.png" alt="거버넌스 화면 — 조회 권한·열 가림·행 제한 탭"><figcaption>거버넌스. 관리자가 조회 권한을 주고, 개인정보 열의 가림 방식과 소속별 행 제한을 정한다.</figcaption></figure>
+<figure><img src="img/datalake-governance.png" alt="거버넌스 화면 열 가림 탭 — 탭(조회 권한 3·열 가림 5·행 제한 3·개인정보 열 찾기), 가림 입력 줄, hr.staff·ito.person 열 5개의 부분 가림(형식별)"><figcaption>거버넌스. 관리자가 조회 권한을 주고, 개인정보 열의 가림 방식과 소속별 행 제한을 정한다.</figcaption></figure>
 
 ## 역할
 

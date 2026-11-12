@@ -25,10 +25,13 @@ for (const line of readFileSync(join(ROOT, "_sidebar.md"), "utf8").split(/\r?\n/
   const group = line.match(/^- \*\*(.+)\*\*\s*$/);
   if (group) { sections.push({ title: group[1], pages: [] }); continue; }
   const item = line.match(/^\s+- \[(.+?)\]\((.+?)\)\s*$/);
-  if (item && sections.length) sections.at(-1).pages.push(/^https?:/.test(item[2]) ? { title: item[1], href: item[2] } : { title: item[1], src: srcOf(item[2]) });
+  if (item && sections.length) { sections.at(-1).pages.push(/^https?:/.test(item[2]) ? { title: item[1], href: item[2] } : { title: item[1], src: srcOf(item[2]) }); continue; }
+  // "  - 기반" 처럼 링크 없는 줄은 묶음 안의 소제목
+  const label = line.match(/^\s+- ([^\[\s].*?)\s*$/);
+  if (label && sections.length) sections.at(-1).pages.push({ label: label[1] });
 }
 // 바깥 링크(매뉴얼 등)는 사이드바에만 — 페이지로 만들지 않는다
-const pages = sections.flatMap((s) => s.pages.filter((p) => !p.href));
+const pages = sections.flatMap((s) => s.pages.filter((p) => !p.href && !p.label));
 
 /** docsify 경로("/", "/a/b.md", "#/a/b") → 저장소 안 마크다운 파일 */
 function srcOf(route) {
@@ -96,7 +99,7 @@ function render(src) {
 function linkOf(href, prefix) {
   if (/^(https?:|mailto:|#[^/])/.test(href)) return href;
   if (href.startsWith("/") || href.startsWith("#/")) {
-    const [path, hash] = href.replace(/^#/, "").split("#");
+    const [path, hash] = href.replace(/^#/, "").replace("?id=", "#").split("#"); // docsify 의 ?id=제목 도 같은 쪽 안 위치로
     return prefix + outOf(srcOf(path)) + (hash ? `#${hash}` : "");
   }
   return href;
@@ -117,6 +120,7 @@ function plain(md) {
 function sidebar(current, toc, prefix) {
   const items = sections.map((s) => {
     const li = s.pages.map((p) => {
+      if (p.label) return `<li class="sub-label">${esc(p.label)}</li>`;
       if (p.href) return `<li><a href="${p.href}" target="_blank" rel="noopener">${esc(p.title)}</a></li>`;
       const active = p.src === current;
       const sub = active && toc.length ? `<ul>${toc.map((t) => `<li><a href="#${t.id}">${esc(t.text)}</a></li>`).join("")}</ul>` : "";
@@ -184,6 +188,7 @@ function stylesheet() {
   const offline = `
     /* ---- 오프라인판 보탬 ---- */
     .sidebar > h1 { margin-top: 0; }
+    .sidebar-nav li.sub-label { margin-top: 8px; font-size: .72rem; font-weight: 700; letter-spacing: .06em; color: var(--muted); }
     .tour-note { padding: 14px 16px; border: 1px solid #c9d6e3; border-left: 4px solid #2f6db3; border-radius: 8px; background: #f3f7fb; line-height: 1.7; }
     .sidebar .search { position: relative; }
     .sidebar .results-panel { max-height: 50vh; overflow-y: auto; }

@@ -82,7 +82,7 @@ HNIX-AX-Server-Setup-<날짜>.exe /VERYSILENT /ADDRESS=ax-test.corp.local /SUBNE
 ```powershell
 cd C:\HNIX-AX
 powershell -ExecutionPolicy RemoteSigned -File server.ps1 status
-tools\node\node.exe scripts\smoke.mjs     # 자동 점검 21단계(시험 기록이 서버에 남는다)
+tools\node\node.exe scripts\smoke.mjs     # 자동 점검 26단계(시험 기록이 서버에 남는다)
 ```
 
 ## 4. 처음 할 설정
@@ -99,7 +99,7 @@ tools\node\node.exe scripts\smoke.mjs     # 자동 점검 21단계(시험 기록
 
 | 모델 | CPU 답 속도(짧은 답) | 메모리 | 쓰임 |
 |---|---|---|---|
-| `qwen2.5:3b`(기본) | 약 8초 | 약 2.5GB | 흐름 확인용. 자동 점검 21단계를 이 모델로 확인했다 |
+| `qwen2.5:3b`(기본) | 약 8초 | 약 2.5GB | 흐름 확인용. 자동 점검 26단계를 이 모델로 확인했다 |
 | `qwen3.5:2b` | 약 13초 | 약 3GB | 가벼운 대안 |
 | `qwen3.5:4b` | 약 18초 | 약 4GB | 한국어 답이 가장 자연스럽다. 메모리 32GB 서버 권장 |
 

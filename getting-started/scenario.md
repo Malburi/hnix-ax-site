@@ -18,15 +18,15 @@ flowchart LR
 
 > **직접 돌려 보기** — 플랫폼 저장소의 `e2e/`가 네 제품을 한 PC에 띄워 이 시나리오 그대로 연결하고(`start.ps1`), ①~⑨를 실제 API로 끝까지 점검한다(`node scripts/smoke.mjs`). 화면에서 따라 하는 순서는 `e2e/README.md`에 있다. 저장소 없이 회사 PC에서 하려면 [회사 PC에서 따라 하기](/getting-started/e2e-kit.md)의 꾸러미를 쓴다.
 
-## 1. 경보가 장애와 서비스 요청(SR)으로 바뀐다
+## 1. 경보가 장애와 서비스 요청으로 바뀐다
 
 모니터링 도구가 보낸 경보 4건이 들어왔다. critical은 장애로, warning은 요청으로 만들어졌고 info는 기록만 남았다. 같은 배치 실패가 두 번 와도 장애는 하나로 묶였다(×2).
 
-<figure><img src="img/pmsx-alerts.png" alt="PMS-X 장애 화면의 경보 목록"><figcaption>PMS-X › 운영(SM) › 장애 › 경보</figcaption></figure>
+<figure><img src="img/pmsx-alerts.png" alt="PMS-X 장애 화면의 경보 목록"><figcaption>PMS-X › 운영 › 장애 › 경보</figcaption></figure>
 
 ## 2. 요청 분류·배정을 AI가 추천한다
 
-고객 요청 창구로 들어온 "사원 조회 시 퇴사자가 함께 나옵니다"를 열고 **분류·배정 추천**을 누른다. 유형·우선순위·대상 화면·담당자가 채워진다. AI는 PMS-X가 먼저 좁혀 둔 후보 안에서만 고르고, 운영자가 **반영**을 눌러야 확정된다.
+고객 요청 창구로 들어온 "사원 조회 시 퇴사자가 함께 나옵니다"를 열고 **AI 분류 추천**을 누른다. 유형·우선순위·대상 화면·담당자가 채워진다. AI는 PMS-X가 먼저 좁혀 둔 후보 안에서만 고르고, 운영자가 **반영**을 눌러야 확정된다.
 
 <figure><img src="img/pmsx-sr-triage.png" alt="요청 상세의 분류·배정 추천 패널"><figcaption>모델 별칭(hnix-local)이 패널에 표시된다.</figcaption></figure>
 
@@ -46,7 +46,7 @@ flowchart LR
 
 요청의 **화면 뷰어에서 보기**로 사원관리 화면을 열고 조회 버튼을 누른다. 버튼에서 함수·SQL·테이블까지의 연결은 수집기가 이미 만들어 두었다. **AI 초안 만들기**는 그 연결을 근거로 설명을 쓰고, 근거 등급(녹색 "근거 충분")을 함께 붙인다.
 
-<figure><img src="img/pmsx-ai-desc.png" alt="사원관리 화면과 조회 버튼 설명 탭의 AI 초안"><figcaption>PMS-X › As-Is 분석 › 화면 뷰어</figcaption></figure>
+<figure><img src="img/pmsx-ai-desc.png" alt="사원관리 화면과 조회 버튼 설명 탭 — 근거 충분 등급과 AI 초안 만들기 버튼"><figcaption>PMS-X › As-Is 분석 › 화면 뷰어</figcaption></figure>
 
 용어 사전은 "사원"을 화면·테이블·컬럼과 잇는다. 고객이 "직원"이라고 써도 같은 화면으로 찾아간다.
 

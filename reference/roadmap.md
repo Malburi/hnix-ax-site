@@ -2,11 +2,13 @@
 
 통합ITO 운영에 필요한 기능을 영역별로 정리한 표다. **제품에 있음**은 각 저장소의 자동 시험과 네 제품 통합 점검([E2E 꾸러미](/getting-started/e2e-kit.md))을 통과한 것, **현장 확인**은 기능은 있지만 고객 시스템(ITSM·GitLab·AI 조직 계정·GPU 서버)에 붙여 봐야 끝나는 것, **계획**은 아직 만들지 않은 것이다.
 
-> 2026-11-05 기준 · 자동 시험: AX Platform 423건 · AX-NAVI 529건 · PMS-X 서버 260건·웹 237건 · AX-DataLake 80건 · 통합 점검 21단계
+> 2026-11-13 기준 · 자동 시험: AX Platform 485건 · PMS-X 서버 315건·웹 393건 · AX-DataLake 216건 · AX-NAVI IDE 확장 5,369건·화면 1,222건 · 통합 점검 26단계
 >
 > 2026-11-10 화면 사용성 반영 — PMS-X 1.3.11(간트 확대·축소·크게 보기, 고객 승인함, SM 홈) · AX Platform 0.9.1(화면 말 정리, 위험 동작 확인, 감사 로그 거르기) · AX-DataLake 0.5.1(분석가 첫 화면, 차트 추천, 열 골라 필터) · AX-NAVI IDE(로그인 안내, 승인 단계 이름). 새 기능 줄은 보고·거버넌스의 고객 승인함 하나다.
 >
 > 2026-11-11 차트 통일 — 세 웹 제품의 차트를 ECharts 하나로 바꿨다. AX-DataLake 0.5.2(트리맵·깔때기·게이지·상자 그림 추가, 진행 중인 끝 칸 표시, 옛 차트 자동 변환) · AX Platform 0.9.2(대시보드 8일 막대·7일 평균, 사용량·관측 차트) · PMS-X 1.3.12(S-curve·일정·결함·MM·처리 기한 차트, 테마 따라감).
+>
+> 2026-11-13 기능별 검토·화면 점검 반영 — 네 제품 전 화면을 다시 점검해 권한 빈틈(레이크 거버넌스 대소문자·뷰 우회, PMS-X 고객 조회 범위, 플랫폼 런북 헤더, IDE 승인 없는 명령 실행)을 막고, 한국 시각 집계·처리 기한 숫자·용어(서비스 요청·처리 기한·지식 문서·버전·승인 대기 등)를 정리했다. AX Platform 0.9.2 · PMS-X 1.3.14 · AX-DataLake 0.5.3 · AX-NAVI IDE 1.2.8. 기능별 AI 모델 고르기(PMS-X·레이크)와 게이트웨이 서버 모델 불러오기를 더했다.
 
 ## 접수 — 요청·경보가 들어오는 곳
 
@@ -46,7 +48,7 @@
 
 | 기능 | 상태 | 문서 | 남은 것 |
 |---|---|---|---|
-| 변경 리뷰 GO/HOLD/STOP·보안 Findings·CI 게이트 | 제품에 있음 | [변경 리뷰와 보안 점검](/axnavi/review.md) | — |
+| 변경 리뷰 GO/HOLD/STOP·보안 점검 결과·CI 게이트 | 제품에 있음 | [변경 리뷰와 보안 점검](/axnavi/review.md) | — |
 | SDLC 산출물·단계 게이트·ADR | 제품에 있음 | [SDLC 산출물과 단계 게이트](/axnavi/sdlc.md) | 고객 양식 반영 |
 | 요청별 테스트 계획·골격·진행, 바뀐 줄 커버리지, CI 템플릿 | 제품에 있음 | [CLI와 CI 게이트](/axnavi/cli.md#테스트-계획과-커버리지) | 테스트 본문 작성 에이전트 |
 | 모델 평가(정답 세트) | 현장 확인 | [모델 평가](/platform/eval.md) | 고객 GPU 서버 설치, 사내 요청으로 만든 세트 |
@@ -57,7 +59,7 @@
 | 기능 | 상태 | 문서 | 남은 것 |
 |---|---|---|---|
 | 레이크(표준 Parquet · 시점 조회 · 바뀐 행), 카탈로그(설명·등급·태그) | 제품에 있음 | [AX-DataLake](/datalake/README.md) | — |
-| ITO 온톨로지(객체·관계·액션·승인), 계보·영향 범위, 커넥터(SQL Server·Snowflake·REST·폴더/S3) | 제품에 있음(0.2.0) | [온톨로지](/datalake/ontology.md) · [계보](/datalake/lineage.md) | SQL Server·Snowflake 실서버 연결은 PoC, 열 단위 계보 |
+| ITO 온톨로지(객체·관계·액션·승인), 계보·영향 범위, 커넥터(SQL Server·Snowflake·REST·폴더/S3) | 제품에 있음 | [온톨로지](/datalake/ontology.md) · [계보](/datalake/lineage.md) | SQL Server·Snowflake 실서버 연결은 PoC, 열 단위 계보 |
 | 파일 수집(EUC-KR CSV·Excel·Parquet·JSON) | 제품에 있음 | [수집](/datalake/ingest.md#파일) | — |
 | 원본 DB 동기화(PostgreSQL·MySQL — 통째로·증분·병합, 주기) | 제품에 있음 | [수집](/datalake/ingest.md#원본-db) | — |
 | 원본 DB 동기화 — Oracle(클라이언트 설치 불필요) | 현장 확인 | [수집](/datalake/ingest.md#원본-db) | 고객 Oracle 서버로 연결 확인(타입 변환은 시험 완료) |
@@ -65,7 +67,9 @@
 | 조회 권한·개인정보 열 가림·소속 행 제한(화면·API·에이전트·AI 질문 공통) | 제품에 있음 | [거버넌스](/datalake/governance.md) | 고객 개인정보 분류 기준 반영 |
 | AI 질문(자연어 → SQL, 기밀은 사내 모델만), MCP 도구(허브 등록) | 제품에 있음 | [AI 질문과 에이전트](/datalake/ai.md) | 고객 데이터로 질문 정답 세트 |
 | 폐쇄망 설치본(Windows·Linux 서비스), 매일 파일 정리 | 제품에 있음 | [설치와 운영](/datalake/operations.md) | Linux 설치본을 고객 서버에서 첫 확인, 여러 대(PostgreSQL 카탈로그·S3 호환 저장소) 실측 |
-| 외부 데이터 형식(Iceberg) 읽기, 비정형 문서 | 계획 | — | — |
+| 비정형 문서(Word·PDF·한글·PPT·스캔) 수집·찾기, 개인정보 가림, AI 로 값을 표로 추출 | 제품에 있음 | [문서(비정형)](/datalake/documents.md) | 고객 문서 양식으로 추출 품질 확인 |
+| 분석(차트·대시보드·AI 분석, 열 때마다 보는 사람 권한으로 다시 조회) | 제품에 있음 | [분석](/datalake/analysis.md) | — |
+| 외부 데이터 형식(Iceberg) 읽기 | 계획 | — | — |
 
 ## 보고·거버넌스
 
@@ -83,5 +87,5 @@
 | 기능 | 상태 | 문서 | 남은 것 |
 |---|---|---|---|
 | 폐쇄망 설치 패키지·서비스·백업·LDAP·OIDC | 제품에 있음 | [설치와 운영](/platform/operations.md) | — |
-| PostgreSQL·여러 대 운영·보안 헤더·부하 시험 | 제품에 있음 | [설치와 운영](/platform/operations.md#여러-대로-띄우기-이중화) | 운영 서버에서 다시 측정, 공인 취약점 진단, DB 복제 전환 연습, 11월 새 기능(마이그레이션 023~029)의 PostgreSQL 실검증 |
+| PostgreSQL·여러 대 운영·보안 헤더·부하 시험 | 제품에 있음 | [설치와 운영](/platform/operations.md#여러-대로-띄우기-이중화) | 운영 서버에서 다시 측정, 공인 취약점 진단, DB 복제 전환 연습, 11월 새 기능(마이그레이션 023~030)·시간대(Asia/Seoul) 집계의 PostgreSQL 실검증 |
 | 현장 연결 점검 | 제품에 있음 | [고객사 설치와 연결 점검](/getting-started/onsite.md) | — |

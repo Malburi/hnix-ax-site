@@ -176,7 +176,7 @@ export const SCENARIOS = {
       await r.type("css:[data-test=flow-run-input-title] textarea", "사원 조회에 퇴사자가 같이 나와요", { delay: 40 });
       await r.type("css:[data-test=flow-run-input-body] textarea", "인사팀에서 사원 조회 화면을 열면 퇴사한 사람까지 함께 나온다고 문의했습니다.", { delay: 15 });
       await r.clickSel("[data-test=flow-run-start]", 1500);
-      await r.waitFor("!!document.querySelector('[data-test=flow-run-result]') && /사람 확인 대기|승인함에서 결정/.test(document.querySelector('[data-test=flow-run-result]').innerText)", 150000);
+      await r.waitFor("!!document.querySelector('[data-test=flow-run-result]') && /승인 대기|사람 확인 대기|승인함에서 결정/.test(document.querySelector('[data-test=flow-run-result]').innerText)", 150000);
       await r.caption("담당자 확인에서 멈춤 — 승인함으로", "지나간 노드가 캔버스에 표시됩니다");
       await w(2);
 

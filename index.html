@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>HNIX AX</title>
-  <meta name="description" content="HNIX AX — SI·SM 현장을 위한 AI 제품군(AX Platform · AX-NAVI · PMS-X) 소개와 문서">
+  <meta name="description" content="HNIX AX — SI·SM 현장을 위한 AI 제품군(AX Platform · AX-NAVI IDE · PMS-X · AX-DataLake) 소개와 문서">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -146,6 +146,10 @@
     .sidebar-nav li.active > a { color: var(--accent-ink); background: var(--accent-soft); border-left-color: var(--accent); font-weight: 500; }
     .sidebar-nav ul ul { margin-left: 10px; }
     .sidebar-nav ul ul li > a { font-size: .85rem; padding: 3px 10px; color: var(--muted); }
+    /* 묶음 안의 소제목(링크 없는 줄) — 예: AX Platform › 기반 */
+    .sidebar-nav > ul > li > ul > li:not(:has(> a)) { margin-top: 8px; padding-left: 10px; font-size: .72rem; font-weight: 700; letter-spacing: .04em; color: var(--muted); }
+    .sidebar-nav > ul > li > ul > li:not(:has(> a)) > ul { margin-left: -10px; }
+    :where(.sidebar-nav > ul > li > ul > li:not(:has(> a)) > ul) a { font-weight: 400; letter-spacing: 0; }
     .sidebar-toggle {
       position: fixed; left: 0; bottom: 0; z-index: 30;
       width: 44px; height: 44px; border: 0; cursor: pointer;

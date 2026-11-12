@@ -105,11 +105,11 @@ export const SCENARIOS = {
       await pause(4000);
 
       // ── ④ 담당자 확인 — SM 운영 책임자가 승인함에서
-      await r.go(`${L}/hub?tab=approvals`);
+      await r.go(`${L}/approvals`);
       await pause(1500);
-      await r.caption("④ 담당자 확인 — 흐름의 처리안이 MCP 허브 승인함에 올라옵니다", "SM 운영 책임자(관리자)가 분류 결과와 처리안을 읽고 결정 · 실행한 사람은 스스로 승인할 수 없습니다");
+      await r.caption("④ 담당자 확인 — 흐름의 처리안이 승인함에 올라옵니다", "SM 운영 책임자(관리자)가 분류 결과와 처리안을 읽고 결정 · 실행한 사람은 스스로 승인할 수 없습니다");
       await pause(4000);
-      if (await clickNear(r, "flows__confirm", "검토", { after: 1500 })) {
+      if ((await clickNear(r, "자동화 흐름 — 사람 확인", "검토", { after: 1500 })) || (await clickNear(r, "flows__confirm", "검토", { after: 1500 }))) {
         await pause(4500);
         await r.type("결정 사유", "처리안대로 진행 — 개발 담당 배정", { delay: 45 });
         await modalBtn(r, "승인", 2000);

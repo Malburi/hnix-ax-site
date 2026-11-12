@@ -46,21 +46,21 @@ flowchart LR
 | 캡처 | 실제 캡처 · 정적 렌더링 · 와이어프레임 위 번호 핫스팟 |
 | 컴포넌트 · 이벤트 목록 | 화면의 모든 요소와 이벤트, 좌표가 없는 요소까지 |
 | CRUD | 이벤트 × 테이블 C/R/U/D |
-| 코드 순서도 | 이벤트를 의도별(초기화 · 조회 · 저장·수정 · 삭제 · 기타)로 묶은 카드 맵과 **공유 로직**(두 이벤트 이상이 부르는 함수·프로시저) |
-| 통합 추적 | 조망 매트릭스 · 단계 추적 · 네트워크 (아래) |
+| 이벤트 묶음 | 이벤트를 의도별(초기화 · 조회 · 저장·수정 · 삭제 · 기타)로 묶은 카드 맵과 **공유 로직**(두 이벤트 이상이 부르는 함수·프로시저) |
+| 통합 추적 | 단계 표 · 단계 추적 · 네트워크 (아래) |
 | 데이터 흐름도 | 읽는 테이블 → 화면 → 쓰는 테이블 (파랑 읽기 / 빨강 쓰기) |
-| 한국어 설명 | 워크플로우를 단계별 문장으로 푼다. 단계를 펼치면 소스, **원본 소스** 대화상자는 호출 트리 + 코드 |
+| 흐름 설명 | 이벤트별 요약과 함께 워크플로우를 단계별 문장으로 푼다. 단계를 펼치면 소스, **원본 소스** 대화상자는 호출 트리 + 코드 |
 | 트리거 | 이 화면의 등록·수정·삭제가 실행시키는 DB 트리거와 **연쇄**(트리거 → 테이블 → 트리거, 최대 5단계) |
 
-<figure><img src="img/pmsx-viewer-flowchart.png" alt="코드 순서도 — 의도별 이벤트 카드"><figcaption>코드 순서도 — 이벤트를 의도별로 묶고 SQL·테이블·호출·API 건수와 CRUD를 붙인다.</figcaption></figure>
+<figure><img src="img/pmsx-viewer-flowchart.png" alt="이벤트 묶음 — 의도별 이벤트 카드"><figcaption>이벤트 묶음 — 이벤트를 의도별로 묶고 SQL·테이블·호출·API 건수와 CRUD를 붙인다.</figcaption></figure>
 
 ### 통합 추적
 
 통합 추적은 같은 그래프를 세 가지 방법으로 보여 준다.
 
-**조망 매트릭스**는 이벤트 × 레이어(화면 · 프론트 · API · 서버 · SQL · 테이블) 표다. 옆에 인사이트 다섯 가지가 붙는다 — 핵심 데이터(가장 많이 쓰이는 테이블), 주요 참조, 공유 함수, 무거운 이벤트, CRUD 프로파일.
+**단계 표**는 이벤트 × 레이어(화면 · 프론트 · API · 서버 · SQL · 테이블) 표다. 표와 함께 인사이트 다섯 가지가 붙는다 — 핵심 데이터(가장 많이 쓰이는 테이블), 주요 참조, 공유 함수, 무거운 이벤트, CRUD 프로파일.
 
-<figure><img src="img/pmsx-viewer-trace.png" alt="통합 추적 조망 매트릭스와 인사이트"><figcaption>조망 매트릭스 — 이벤트마다 레이어별 노드, 오른쪽에 인사이트</figcaption></figure>
+<figure><img src="img/pmsx-viewer-trace.png" alt="통합 추적의 단계 표"><figcaption>단계 표 — 이벤트마다 프론트 · API · 서버 · SQL · 테이블 레이어별 노드</figcaption></figure>
 
 **단계 추적**은 이벤트 하나(또는 화면 전체)의 경로를 단계 카드로 따라간다. 카드의 "다음 단계"를 누르며 흐름을 탄다. 상세도는 세 단계다.
 
@@ -76,13 +76,13 @@ flowchart LR
 
 <figure><img src="img/pmsx-trace-network.png" alt="네트워크 — 이벤트와 테이블 연결 그래프"><figcaption>네트워크 — TB_EMP를 저장·삭제·엑셀 이벤트가 함께 쓰는 것이 한눈에 보인다.</figcaption></figure>
 
-### 데이터 흐름도 · 한국어 설명 · 트리거
+### 데이터 흐름도 · 흐름 설명 · 트리거
 
 <figure><img src="img/pmsx-viewer-dataflow.png" alt="데이터 흐름도"><figcaption>데이터 흐름도 — 왼쪽은 읽는 테이블, 오른쪽은 쓰는 테이블</figcaption></figure>
 
-한국어 설명은 워크플로우를 그대로 문장으로 옮긴다. 예를 들어 "EmpServiceImpl.saveEmp 에서 SQL EmpMapper.insertEmp 를 실행해 TB_EMP 에 등록(C)합니다"처럼 쓴다. AI 설명 초안([SM 운영과 AI 보조](/pmsx/sm-ai.md))과 달리 규칙 기반이라 항상 같은 결과가 나온다.
+흐름 설명은 워크플로우를 그대로 문장으로 옮긴다. 예를 들어 "EmpServiceImpl.saveEmp 에서 SQL EmpMapper.insertEmp 를 실행해 TB_EMP 에 등록(C)합니다"처럼 쓴다. AI 설명 초안([SM 운영과 AI 보조](/pmsx/sm-ai.md))과 달리 규칙 기반이라 항상 같은 결과가 나온다.
 
-<figure><img src="img/pmsx-viewer-explain.png" alt="한국어 설명"><figcaption>한국어 설명 — 이벤트별 한 줄 요약과 단계 문장, 원본 소스</figcaption></figure>
+<figure><img src="img/pmsx-viewer-explain.png" alt="흐름 설명"><figcaption>흐름 설명 — 이벤트별 요약과 단계 문장, 원본 소스</figcaption></figure>
 
 트리거 탭은 화면이 직접 부르지 않지만 DB가 대신 실행하는 일을 드러낸다. 수정 한 번이 이력 테이블에 쓰는 트리거를 거쳐 또 다른 트리거로 이어지는 경로까지 보여 준다.
 
@@ -133,7 +133,7 @@ flowchart LR
 - **상태와 진척**: 화면마다 미착수 → 분석 중 → 검토 요청 → 확정. 분석 진척 화면에서 담당자·메뉴별로 보고 일괄 배정한다.
 - **메모와 이력**: 업무 규칙 메모, 분석 이력, 수집 회차 간 비교(diff).
 - **산출물 출력**: 화면정의서 · 프로그램 사양서 · 테이블 정의서를 xlsx/pptx로 낸다.
-- **영향도 분석**: 테이블(컬럼)·함수·API·SQL을 바꾸면 영향받는 화면·버튼·배치와 관련 서비스 요청(SR)·결함, 담당자를 보여 준다. 같은 결과를 MCP 도구 `pmsx__impact`로 AX-NAVI나 에이전트가 쓴다.
+- **영향도 분석**: 테이블(컬럼)·함수·API·SQL을 바꾸면 영향받는 화면·버튼·배치와 관련 서비스 요청·결함, 담당자를 보여 준다. 같은 결과를 MCP 도구 `pmsx__impact`로 AX-NAVI나 에이전트가 쓴다.
 
 테이블·트리거·패키지 같은 DB 쪽 분석과 ERD는 [DB · PL/SQL 분석](/pmsx/db.md)에 있다.
 

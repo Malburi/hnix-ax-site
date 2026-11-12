@@ -31,7 +31,7 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (Postgr
 | 사내 모델 | Ollama CPU 판 — 임베딩(문서 RAG)과 CPU 대화 모델 |
 | AX-NAVI CLI · 연습 저장소 | 허브의 `axnavi__` 도구와 자동 점검용 |
 | `server.ps1` · `server.config.json` | 설치·시작·멈춤·상태·내리기, 설정 하나 |
-| `scripts\` | 제품 잇기(시드)와 자동 점검 21단계 |
+| `scripts\` | 제품 잇기(시드)와 자동 점검 26단계 |
 
 ## 서버 준비
 
@@ -107,7 +107,7 @@ server.ps1 status       # 서비스·응답·접속 주소
 server.ps1 stop | start
 server.ps1 backup       # DB 백업을 지금 한 번(매일 02:00 에는 저절로)
 server.ps1 uninstall    # 서비스·방화벽 규칙 내림(데이터는 남김, -RemoveData 로 다 지움)
-tools\node\node.exe scripts\smoke.mjs   # 자동 점검 21단계 — 시험 기록이 서버에 남는다
+tools\node\node.exe scripts\smoke.mjs   # 자동 점검 26단계 — 시험 기록이 서버에 남는다
 ```
 
 - 백업은 `backups\postgresql\<날짜-시각>\` 에 네 DB 의 덤프와 시크릿을 푸는 열쇠(`*.master.key`)가 함께 쌓인다(최근 14개). 서버 밖에 한 번 더 복사하되 DB 와 같은 수준으로 보관한다. 되살리는 법은 [서버 PC 설치](https://malburi.github.io/hnix-ax-site/#/getting-started/install-server) 7번.

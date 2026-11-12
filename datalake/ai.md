@@ -6,7 +6,7 @@ AX-DataLake의 AI 기능은 사람이 말로 묻는 **AI 질문**, 카탈로그�
 
 SQL 작업창 위의 질문 칸에 "지난달 계열사별 수주 금액 합계"처럼 쓰고 **SQL 초안 만들기**(0.5.1 전 이름 "AI 에게 묻기")를 누르면, 모델이 SQL 을 써서 실행하고 결과와 SQL 을 함께 보여 준다. 만든 SQL 은 작업창에 들어가 사람이 확인·수정해 다시 돌린다. 표·차트로 답을 받고 이어 물으려면 옆의 **AI 분석에서 묻기 →** 로 [AI 분석](/datalake/analysis.md#ai-분석)에 간다.
 
-<figure><img src="img/datalake-ask.png" alt="AI 질문 — '상태별 주문 건수와 금액 합계'를 사내 모델이 SQL 로 써서 실행, 결과에 가림·행 제한 적용됨 표시"><figcaption>분석가(HD01)의 AI 질문. 사내 모델(<code>hnix-local</code>)이 SQL 을 쓰고, 결과는 행 제한이 적용된 HD01 주문만 집계한다.</figcaption></figure>
+<figure><img src="img/datalake-ask.png" alt="AI 질문 — SQL 작업창에서 '장애 등급별 건수'를 SQL 초안 만들기로 물어 사내 모델이 SQL 을 써서 실행, 결과 4행(P1~P4)에 가림·행 제한 적용됨 표시"><figcaption>분석가(HD01)의 AI 질문. 사내 모델(<code>hnix-local</code>)이 SQL 을 쓰고, 결과는 행 제한이 적용된 HD01 장애만 센다.</figcaption></figure>
 
 | 단계 | 하는 일 |
 |---|---|

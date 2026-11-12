@@ -432,7 +432,7 @@ export const SCENARIOS = {
 
       // ── 업무 흐름 개선
       await r.go(`${L}/process`);
-      await r.caption("업무 흐름 개선 — 업무 문서에서 As-Is 흐름과 Pain point 를 뽑고 To-Be 를 제안", "단계마다 문서 원문을 인용하고, 서버가 원문과 대조해 근거 등급(녹·황·적)을 매깁니다");
+      await r.caption("업무 흐름 개선 — 업무 문서에서 As-Is 흐름과 문제점을 뽑고 To-Be 를 제안", "단계마다 문서 원문을 인용하고, 서버가 원문과 대조해 근거 등급(원문 일치·의역·근거 없음)을 매깁니다");
       await pause(4000);
       await r.click("새 분석", { selector: "button" });
       await r.caption("새 분석 — 업무 문서 컬렉션·문서 · 레거시 화면 연결(PMS-X 시스템) · 모델", "한 문서에 2~3분 — 아래는 '인사 발령 업무 절차서'로 미리 돌려 둔 결과");
@@ -444,9 +444,9 @@ export const SCENARIOS = {
       await r.click("황", { selector: ".n-tag, span", exact: true, after: 1200 });
       await r.caption("근거 등급 — 녹: 문서 원문 그대로 · 황: 비슷함 · 적: 원문에 없음(확인 필요)", "마우스를 올리면 인용한 원문");
       await pause(3500);
-      await tab(r, "Pain point", "Pain point — 문서에 적힌 어려움을 근거와 함께");
+      await tab(r, "문제점", "문제점 — 문서에 적힌 어려움을 근거와 함께");
       await tab(r, "To-Be (AI 제안)", "To-Be — AI 제안을 사람이 고쳐 확정합니다", "고친 뒤 'To-Be 저장'");
-      await tab(r, "설계도(BPMN)", "설계도 — As-Is 와 To-Be 를 나란히", "BPMN(다른 모델링 도구로 열기)·Mermaid·보고서(MD)로 내보내기", 5000);
+      await tab(r, "흐름도", "흐름도 — As-Is 와 To-Be 를 나란히", "BPMN(다른 모델링 도구로 열기)·Mermaid·보고서(MD)로 내보내기", 5000);
     },
   },
 
@@ -641,17 +641,17 @@ export const SCENARIOS = {
       await r.caption("생산성 보고서 — AI 를 쓴 요청과 안 쓴 요청의 공수·리드타임 비교", "PMS-X 서비스 요청 · Git 커밋 · 계약 기준값을 이어서 계산");
       await pause(4000);
       await r.click("계산", { selector: "button", exact: true, after: 3000 });
-      await r.caption("결과 — AI 관여 여부별 · 유형별(괄호는 기준) · 해결한 요청 목록", "보고서(MD)·요청 목록(CSV)으로 내려받기 · 해석할 때 주의할 점도 함께");
+      await r.caption("결과 — AI 관여 여부별 · 유형별 · 해결한 요청 목록", "보고서(MD)·요청 목록(CSV)으로 내려받기 · 해석할 때 주의할 점도 함께");
       await pause(5500);
       await tab(r, "저장소·커밋", "저장소·커밋 — 커밋 메시지의 업무 번호(SR-·CR-…)와 AI 공동 작성 표시로 잇습니다", "Git 서버 웹훅으로 받음");
       await tab(r, "기준선·요청", "기준선 — 계약 기준값(유형별 요청 1건 평균 공수·리드타임)", "PMS-X 에서 서비스 요청 가져오기");
 
       await sideMenu(r, "평가");
       await sectionTab(r, "모델 평가");
-      await r.caption("평가 › 모델 평가 — 통합ITO 정답 세트로 모델을 비교", "새 모델을 들이기 전에 · 근거 답변 · 지식 문서 초안 · 서비스 요청 분류 · 도구 호출");
+      await r.caption("평가 › 모델 평가 — 통합ITO 평가 세트로 모델을 비교", "새 모델을 들이기 전에 · 근거 답변 · 지식 문서 초안 · 서비스 요청 분류 · 도구 호출");
       await pause(4000);
       await r.click("사례 보기", { selector: "button", exact: true });
-      await r.caption("정답 세트 — 사례와 기대 답", "사내 세트를 올려 우리 업무로 평가할 수도 있습니다");
+      await r.caption("평가 세트 — 문항과 기대 답", "사내 세트를 올려 우리 업무로 평가할 수도 있습니다");
       await pause(4000);
       await closeModal(r);
       await top(r);
@@ -735,7 +735,7 @@ export const SCENARIOS = {
   },
 
   "platform-10": {
-    title: "AX Platform ⑩ 자동화 흐름 — 캔버스 · 노드 · 판 기록 · 사람 확인 · 실행 디버거",
+    title: "AX Platform ⑩ 자동화 흐름 — 캔버스 · 노드 · 버전 기록 · 사람 확인 · 실행 디버거",
     maxGap: 3,
     async run(r) {
       await r.login("platform", "admin");
@@ -759,8 +759,8 @@ export const SCENARIOS = {
       await pause(5000);
       await r.caption("노드 9종 — 모델 질문 · 도구 호출 · 에이전트 실행 · 조건 분기 · 반복 · 사람 확인 · 변수 정하기 · 시작 · 끝", "저장할 때마다 검증 — 끊긴 선·빠진 값은 '고칠 곳'으로 표시");
       await pause(5000);
-      await r.click("판 기록", { selector: "button", exact: true, after: 1500 });
-      await r.caption("판 기록 — 저장할 때마다 판이 쌓입니다", "실행은 그때의 판으로 돌고, 옛 판을 불러와 되돌릴 수 있습니다");
+      await r.click("버전 기록", { selector: "button", exact: true, after: 1500 });
+      await r.caption("버전 기록 — 저장할 때마다 버전이 쌓입니다", "실행은 그때의 버전으로 돌고, 옛 버전을 불러와 되돌릴 수 있습니다");
       await pause(4000);
       await closeModal(r);
       await down(r, 700);
@@ -780,7 +780,7 @@ export const SCENARIOS = {
       await r.caption("입력값 · '자세히 기록'을 켜면 단계마다 보낸 글·받은 답을 남깁니다", "개인정보는 게이트웨이 규칙으로 가린 뒤 보관 기한(기본 7일)까지");
       await pause(3000);
       await r.clickSel("[data-test=flow-run-start]", 1500);
-      await r.waitFor("!!document.querySelector('[data-test=flow-run-result]') && /사람 확인 대기|승인함에서 결정/.test(document.querySelector('[data-test=flow-run-result]').innerText)", 120000);
+      await r.waitFor("!!document.querySelector('[data-test=flow-run-result]') && /승인 대기|사람 확인 대기|승인함에서 결정/.test(document.querySelector('[data-test=flow-run-result]').innerText)", 120000);
       await pause(1200);
       await r.caption("모델이 '문의'로 분류 → 지식 문서 검색 → 담당자 확인에서 멈춤", "캔버스에 지나간 노드가 표시되고, 아래 실행 디버거에 단계가 쌓입니다");
       await pause(5500);
@@ -1624,7 +1624,7 @@ export const SCENARIOS = {
       await r.go(`${D}/`, DL_READY);
       await r.caption("AX-DataLake — 사내 레이크하우스", "공개 표준 Parquet(DuckLake) · 고객망 안에 설치 · 테이블·문서·업무 객체를 한 곳에");
       await pause(4500);
-      await r.caption("한눈에 보기 — 볼 수 있는 테이블 · 최근 수집 · 저장 용량 · 실시간 수집 · 내 최근 조회 · 테이블 등급", "관리자에게는 '지금 정리'(작은 파일 합치기·지난 스냅샷 정리)도");
+      await r.caption("한눈에 보기 — 볼 수 있는 테이블 · 최근 수집 · 저장 용량 · 실시간 수집 · 내 최근 조회 · 테이블 등급", "관리자에게는 '파일 정리'(작은 파일 합치기·지난 스냅샷 정리)도");
       await pause(5000);
 
       await r.go(`${D}/catalog`, DL_READY);
@@ -1683,7 +1683,7 @@ export const SCENARIOS = {
   },
 
   "datalake-2": {
-    title: "AX-DataLake ② 수집 — 파일 · 원본 연결·동기화 · 문서(비정형) · Kafka 실시간",
+    title: "AX-DataLake ② 수집 — 파일 · 원본 연결·동기화 · 문서 수집 · Kafka 실시간",
     maxGap: 3,
     async run(r) {
       const prep = JSON.parse(readFileSync(new URL("./.demo-prep.json", import.meta.url), "utf8"));
@@ -1720,7 +1720,7 @@ export const SCENARIOS = {
         await closeModal(r);
 
         await r.go(`${D}/documents`, DL_READY);
-        await r.caption("문서(비정형) — Word·PDF·한글 문서를 개인정보를 가려 레이크로", "공유 폴더를 주기로 읽거나 올리고 · 조각 테이블로 · 등급·행 제한(org)");
+        await r.caption("문서 수집 — Word·PDF·한글 문서를 개인정보를 가려 레이크로", "공유 폴더를 주기로 읽거나 올리고 · 조각 테이블로 · 등급·행 제한(org)");
         await pause(4500);
         await r.type("예: 사원 조회에", "사원 조회에 퇴사자가 같이 나와요", { delay: 60 });
         await r.click("찾기", { selector: "button", exact: true, after: 3000 });
@@ -1847,7 +1847,7 @@ export const SCENARIOS = {
   },
 
   "datalake-4": {
-    title: "AX-DataLake ④ 보고서형 엑셀 · 비정형 문서 · 문서 → 표(AI 추출)",
+    title: "AX-DataLake ④ 보고서형 엑셀 · 비정형 문서 · 문서 → 표(AI)",
     maxGap: 3,
     // 준비: node tools/feature-prep-office.mjs (문서 묶음 office-docs · '계약 요약' 정의를 돌려 둠)
     async run(r) {
@@ -1876,7 +1876,7 @@ export const SCENARIOS = {
       await pause(5000);
 
       await r.go(`${D}/documents`, DL_READY);
-      await r.caption("문서(비정형) — 견적서 PDF · 계약서 Word · 장애 보고 PPT · 실적 엑셀 · 점검표 스캔 · 회의록", "묶음 '운영·영업 문서'(대외비) — 레이크에 쓰기 전에 개인정보를 가립니다");
+      await r.caption("문서 수집 — 견적서 PDF · 계약서 Word · 장애 보고 PPT · 실적 엑셀 · 점검표 스캔 · 회의록", "묶음 '운영·영업 문서'(대외비) — 레이크에 쓰기 전에 개인정보를 가립니다");
       await pause(4000);
       await clickNear(r, "운영·영업 문서", "파일 목록", { after: 2000 });
       await r.caption("파일 목록 — 문서마다 조각 · 표 · 글자 인식(확신도) · 찾아서 가린 개인정보", "스캔 점검표는 이 서버 안에서 글자 인식 · PPT 는 발표자 메모까지 · 엑셀은 시트마다 표");

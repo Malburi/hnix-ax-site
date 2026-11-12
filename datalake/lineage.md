@@ -2,7 +2,7 @@
 
 계보는 원본(업무 DB·토픽·파일)에서 레이크 테이블·뷰를 거쳐 객체 유형과 **소비 경로**(화면·API·에이전트·AI 질문)까지 가는 길을 그래프로 보여 준다. 노드를 고르면 위·아래만 강조하고 **영향 범위**를 보여 준다 — "이 원본 테이블의 구조가 바뀌면 어디를 확인해야 하나".
 
-<figure><img src="img/datalake-lineage.png" alt="계보 화면 — 왼쪽 원본(원본 DB·HTTP 입구·폴더), 가운데 레이크 테이블·뷰, 객체 유형, 오른쪽 소비 경로. ito.incident 를 고르면 파생 테이블 mart.incident_daily·mart.change_risk, 객체 유형 장애, 화면 조회로 이어진 길만 강조되고 오른쪽에 영향 범위 4곳"><figcaption><code>ito.incident</code> 를 고른 모습. 오른쪽 패널에 어디서 왔나 · 영향 범위 · 최근 실행이 나온다.</figcaption></figure>
+<figure><img src="img/datalake-lineage.png" alt="계보 화면 — 왼쪽 원본(원본 DB·Kafka 토픽·파일), 가운데 레이크 테이블, 객체 유형, 오른쪽 소비 경로. ito.incident 를 고르면 객체 유형 장애와 소비 경로 AI 질문·에이전트(MCP)·화면 조회로 이어진 길만 강조되고 오른쪽에 영향 범위 4곳"><figcaption><code>ito.incident</code> 를 고른 모습. 오른쪽 패널에 어디서 왔나 · 영향 범위 · 최근 실행이 나온다.</figcaption></figure>
 
 ## 무엇에서 만드나
 

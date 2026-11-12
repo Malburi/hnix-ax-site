@@ -78,8 +78,8 @@ for (let i = 1; !good && i <= 4; i++) {
   if (full.status === "succeeded" && full.result?.toBe?.length) good = full;
   else await pl("DELETE", `/process/analyses/${id}`);
 }
-if (good) ok(`업무 흐름 개선 — As-Is ${good.result.asIs.length} · Pain point ${good.result.painPoints?.length ?? 0} · To-Be ${good.result.toBe.length}`);
-else console.log("  ! To-Be 까지 나온 분석을 얻지 못했습니다 — 시연에서는 As-Is·Pain point 까지만 보입니다");
+if (good) ok(`업무 흐름 개선 — As-Is ${good.result.asIs.length} · 문제점 ${good.result.painPoints?.length ?? 0} · To-Be ${good.result.toBe.length}`);
+else console.log("  ! To-Be 까지 나온 분석을 얻지 못했습니다 — 시연에서는 As-Is·문제점까지만 보입니다");
 
 // ---------- 레이크
 log(`AX-DataLake — Kafka(${values.kafka}) 실시간 · CDC`);

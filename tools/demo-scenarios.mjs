@@ -435,7 +435,7 @@ export const SCENARIOS = {
 
       // ── 업무 흐름 개선
       await r.go(`${L}/process`);
-      await r.caption("업무 흐름 개선 — 업무 문서에서 As-Is 흐름·Pain point 를 뽑고 To-Be 를 제안");
+      await r.caption("업무 흐름 개선 — 업무 문서에서 As-Is 흐름·문제점을 뽑고 To-Be 를 제안");
       await pause(1500);
       await r.click("새 분석", { selector: "button" });
       await r.caption("분석할 업무 문서와 모델을 고르면 시작 — 한 문서에 2~3분", "아래는 '인사 발령 업무 절차서'로 미리 돌려 둔 결과");
@@ -445,8 +445,8 @@ export const SCENARIOS = {
       await pause(1500);
       await r.caption("As-Is 흐름 — 담당 · 단계 · 시스템 · 입력→산출", "단계마다 문서 원문을 인용하고, 서버가 원문과 대조해 근거 등급(녹·황·적)");
       await pause(5000);
-      await r.click("Pain point", { selector: ".n-tabs-tab" });
-      await r.caption("Pain point — 문서에 적힌 어려움을 근거와 함께");
+      await r.click("문제점", { selector: ".n-tabs-tab" });
+      await r.caption("문제점 — 문서에 적힌 어려움을 근거와 함께");
       await pause(4000);
       await r.click("To-Be (AI 제안)", { selector: ".n-tabs-tab" });
       await r.caption("To-Be — AI 제안, 사람이 고쳐 확정합니다");
@@ -486,7 +486,7 @@ export const SCENARIOS = {
       await pause(1500);
       await r.caption("자동화 흐름 — 정해진 순서대로 실행합니다", "모델 질문 · 도구 호출 · 에이전트 · 조건 분기 · 반복 · 사람 확인 노드를 캔버스에 · 트리거·MCP(flows__run)로 실행");
       await pause(5500);
-      await r.caption("새 서비스 요청 → 유형 분류(사내 모델) → 갈래 → 장애 담당 에이전트 / 지식 문서 검색 → 담당자 확인(승인함)", "실행마다 실행 디버거에 단계별 시간·토큰 · 판 기록으로 되돌리기");
+      await r.caption("새 서비스 요청 → 유형 분류(사내 모델) → 갈래 → 장애 담당 에이전트 / 지식 문서 검색 → 담당자 확인(승인함)", "실행마다 실행 디버거에 단계별 시간·토큰 · 버전 기록으로 되돌리기");
       await pause(5000);
       await r.go(`${L}/agent-eval`);
       await pause(1500);

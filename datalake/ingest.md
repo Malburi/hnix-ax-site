@@ -10,7 +10,7 @@
 
 ## 파일
 
-<figure><img src="img/datalake-ingest.png" alt="파일 수집 화면 — 끌어다 놓기, 열 이름·타입 미리 보기, 스키마·테이블·방식 고르기"><figcaption>파일 수집. 올리면 열 이름·타입을 추정해 앞 20행을 보여 주고, 확인하면 레이크 테이블로 넣는다.</figcaption></figure>
+<figure><img src="img/datalake-ingest.png" alt="파일 수집 화면 — 1. 파일 올리기 끌어다 놓기 칸(CSV·TSV·Excel·Parquet·JSON·NDJSON, EUC-KR 자동 변환)과 수집 기록 표"><figcaption>파일 수집. 올리면 열 이름·타입을 추정해 앞 20행을 보여 주고, 확인하면 레이크 테이블로 넣는다.</figcaption></figure>
 
 - 형식: CSV · TSV · 엑셀(XLSX · XLS) · Parquet · JSON · NDJSON. 한 파일 1GB 까지.
 - **EUC-KR(CP949) CSV** 는 자동으로 알아보고 UTF-8 로 바꿔 읽는다(국내 업무 시스템에서 내려받은 파일 대부분).
@@ -36,7 +36,7 @@
 
 ## 원본 연결
 
-<figure><img src="img/datalake-sources.png" alt="원본 연결 화면 — ERP(SQLite)와 점검 배치(폴더) 연결, 동기화 check-daily(증분, 파일 이름 기준)와 erp-customer(병합)"><figcaption>원본 연결. 연결을 시험하면 원본 테이블(REST 는 자원, 폴더는 파일 패턴) 목록이 나오고, 누르면 그 동기화를 만든다.</figcaption></figure>
+<figure><img src="img/datalake-sources.png" alt="원본 연결 화면(데이터 엔지니어) — ERP 계약(시연) SQLite 파일 연결과 연결 시험, 동기화 erp-contracts(main.contracts → erp.contracts, 병합(키로 바꿈), 기준 updated_at, 60분)와 지금 실행·고치기"><figcaption>원본 연결. 연결을 시험하면 원본 테이블(REST 는 자원, 폴더는 파일 패턴) 목록이 나오고, 누르면 그 동기화를 만든다.</figcaption></figure>
 
 | 원본 | 붙는 방법 |
 |---|---|
@@ -64,7 +64,7 @@
 
 ## 실시간 스트림
 
-<figure><img src="img/datalake-streams.png" alt="실시간 수집 화면 — HTTP 붙이기 스트림, 키로 바꾸기 스트림, Kafka 변경 반영 스트림과 누적 행·분당·밀린 메시지"><figcaption>실시간 수집. 누적 행·분당 행·대기·건너뜀·밀린 메시지(Kafka)·마지막 쓰기를 5초마다 갱신한다.</figcaption></figure>
+<figure><img src="img/datalake-streams.png" alt="실시간 수집 화면 — Kafka 변경 반영(CDC) 스트림 erp-orders-cdc 와 붙이기 스트림 monitoring-alerts, 상태 '오류'와 원인(Kafka 브로커에 연결하지 못함), 누적 행·마지막 쓰기, 분당 행·대기 행, 밀린 메시지(건) '세어 보기', 줄 끝 다시 시작·멈추기·삭제"><figcaption>실시간 수집. 누적 행·분당 행·대기 행·밀린 메시지(Kafka)·마지막 쓰기를 5초마다 갱신한다. 시연 환경은 Kafka 를 꺼 두어 두 스트림이 '오류'로 보인다.</figcaption></figure>
 
 | 받는 곳 | 형식 | 쌓는 방식 |
 |---|---|---|
