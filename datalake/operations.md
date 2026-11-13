@@ -9,7 +9,7 @@ AX-DataLake는 고객사 폐쇄망 설치를 전제로 만들었다. 설치본 �
 | `ax-datalake-<버전>-win-x64.zip` | Windows Server / Windows 10+ — WinSW 서비스 |
 | `ax-datalake-<버전>-linux-x64.tar.gz` | Linux x64 — systemd 서비스(전용 사용자 `axdl`) |
 
-받는 곳: GitHub `Malburi/ax-datalake` › Releases › **v0.5.2**(비공개 저장소). 회사 서버에 세 제품을 한꺼번에 깔 때는 [서버판](/getting-started/server-kit.md)에 이 설치본이 들어 있다.
+받는 곳: GitHub `Malburi/ax-datalake` › Releases › **v0.5.3**(비공개 저장소). 회사 서버에 세 제품을 한꺼번에 깔 때는 [서버판](/getting-started/server-kit.md)에 이 설치본이 들어 있다.
 
 | 들어 있는 것 | 비고 |
 |---|---|
