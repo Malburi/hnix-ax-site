@@ -71,6 +71,8 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (Postgr
 
 **모델** — CPU의 3B 모델은 흐름 확인용이다. 품질까지 보려면 `server.config.json`의 `model.gpu`에 사내 GPU 모델 서버(OpenAI 호환, [GPU 모델 서버](/platform/eval.md))를 넣거나, 설치 전에 환경 변수 `ANTHROPIC_API_KEY`로 조직 API 키를 준다. 기밀 등급 데이터는 어느 경우든 게이트웨이가 사내 모델로만 보낸다.
 
+**레이크 문서** — 설치가 레이크 분석가(`ana01`)의 조회 키를 만들어 플랫폼 설정 `docs.lake`에 넣고 플랫폼을 다시 시작한다. 그래서 문서 검색·채팅·현업 창구가 레이크 문서 묶음도 함께 찾고, 분석가가 볼 수 있는 묶음·열·행만 나온다. 이미 설치한 서버도 `server.ps1 install`을 다시 돌리면 연결된다. 끄려면 `server.config.json`의 `datalake.platformDocs`를 `false`로 두고 `install`을 다시 돌린다. 다른 키를 쓰려면 플랫폼 설정 폴더의 `hnix-ax.local.yaml`에 `docs.lake`를 적는다. 그쪽이 이긴다.
+
 ## 사용자·권한
 
 | | 하는 법 |
@@ -107,7 +109,7 @@ server.ps1 status       # 서비스·응답·접속 주소
 server.ps1 stop | start
 server.ps1 backup       # DB 백업을 지금 한 번(매일 02:00 에는 저절로)
 server.ps1 uninstall    # 서비스·방화벽 규칙 내림(데이터는 남김, -RemoveData 로 다 지움)
-tools\node\node.exe scripts\smoke.mjs   # 자동 점검 28단계 — 시험 기록이 서버에 남는다. ㉖(레이크 문서)은 플랫폼에 docs.lake 를 넣기 전에는 '주의 — 건너뜀'
+tools\node\node.exe scripts\smoke.mjs   # 자동 점검 28단계 — 시험 기록이 서버에 남는다
 ```
 
 - 백업은 `backups\postgresql\<날짜-시각>\` 에 네 DB 의 덤프와 시크릿을 푸는 열쇠(`*.master.key`)가 함께 쌓인다(최근 14개). 서버 밖에 한 번 더 복사하되 DB 와 같은 수준으로 보관한다. 되살리는 법은 [서버 PC 설치](https://malburi.github.io/hnix-ax-site/#/getting-started/install-server) 7번.
@@ -121,6 +123,8 @@ tools\node\node.exe scripts\smoke.mjs   # 자동 점검 28단계 — 시험 기�
 2026-10-31 개발 PC에서 `-NoService` 모드로 꾸러미를 새 폴더에 풀어 설치했다. 다른 PC가 여는 주소(LAN IP)로 세 제품 로그인·주요 화면을 확인했고, 꾸러미 안 자동 점검은 21단계 통과 20·주의 1(작은 로컬 모델의 창구 답변)·실패 0이었다. 현장 연결 점검은 문제 0이었다. 개발자 PC 연결(`connect-client.ps1`)은 별도 프로필로 돌려 보았다. 내 권한으로 쓸 수 있는 허브 도구 50개, `axnavi doctor`의 Insight·게이트웨이 경로, 게이트웨이 대화까지 확인했다. 사용자 일괄 등록은 틀린 명단(아무것도 안 만들고 고칠 곳 5군데 표시)·확인만(-Dry)·실제·엑셀 기본 저장(CP949)·다시 돌리기(있음)로 시험했고, 만든 계정이 세 제품에서 역할·PMS-X 프로젝트·레이크 소속 행 제한대로 동작하고 각자 비밀번호를 바꿀 수 있는 것을 확인했다. **Windows 서비스 등록과 방화벽 규칙(접속 대역 포함)은 관리자 권한이 없어 아직 실제로 돌려 보지 못했다** — 첫 설치 때 `server.ps1 status`로 확인한다.
 
 2026-11-06 PostgreSQL 로 바꾼 판을 새 폴더에 `-NoService` 로 다시 설치했다. 세 제품이 DB 4개(`hnix_ax` 72표 · `pmsx` 98표 · `axdl` 23표 · `axdl_lake` 39표)를 쓰고 내장 DB 파일은 생기지 않았다. 자동 점검 21단계는 통과 21·주의 0·실패 0이었다. `server.ps1 backup` → 받은 덤프를 새 DB 에 `pg_restore` 로 되살리기, `stop`·`start`(PostgreSQL 먼저), `uninstall -RemoveData` 를 확인했다. 서비스 모드(PostgreSQL 서비스·매일 백업 예약)는 관리자 권한이 필요해 아직 실제로 돌려 보지 못했다.
+
+2026-11-13 레이크 문서 자동 연결을 넣은 판을 새 폴더에 `-NoService`로 설치했다. 레이크 시드 뒤 키가 생기고 플랫폼이 다시 시작되어 연결됐다. 키가 없던 예전 설치를 흉내 내 `install`을 다시 돌려도 키를 만들고 플랫폼을 다시 시작했다. 자동 점검 28단계는 통과 28·주의 0·실패 0이었다. 서비스 모드의 `Restart-Service` 경로는 관리자 권한이 없어 돌려 보지 못했다.
 
 ## 꾸러미 만들기(개발 PC)
 
