@@ -8,6 +8,8 @@ AX-NAVI IDE는 레거시 개발용 AI IDE다. VS Code처럼 설치해 쓰면 AX-
 
 > **1.1부터 로그인이 필요하다.** 설치본은 HNIX AX 플랫폼에서 승인받은 기기에서만 동작하고, 스킬·에이전트·판정 엔진은 로그인하면 플랫폼이 내려 준다. CLI를 따로 깔지 않아도 IDE 하나로 모든 기능을 쓴다. [사용 허가 — 로그인과 기기 승인](/axnavi/license.md)
 
+> **VS Code를 쓰지 않는다면 AX-NAVI CLI.** 이클립스·인텔리J를 쓰거나 서버에 접속해 터미널에서 일하는 개발자는 터미널용 AX-NAVI CLI를 설치한다. IDE와 같은 엔진·같은 사용 허가(좌석·기기 승인)이고, 설치한 뒤 `axnavi login` 한 번이면 엔진·사내 모델·사용량 기록이 맞춰진다. [AX-NAVI CLI — 터미널과 CI](/axnavi/cli.md)
+
 
 <figure><img src="img/axnavi-ide-welcome.png" alt="AX-NAVI IDE — 오른쪽 AX-NAVI 채팅과 마스코트 나침이, 예시 요청 버튼, 아래 점검 결과와 상세 칸"><figcaption>오른쪽은 AX-NAVI 채팅(첫 화면에서 나침이가 인사하고 예시 요청을 보여 준다), 아래는 변경 리뷰 결과 점검 결과 패널과 상세 칸. 상태 표시줄 왼쪽에 판정 <code>리뷰 STOP</code>과 <code>AX-NAVI · 이름</code>이 뜬다.</figcaption></figure>
 
@@ -33,9 +35,9 @@ AX-NAVI IDE는 레거시 개발용 AI IDE다. VS Code처럼 설치해 쓰면 AX-
     <span class="desc">허가된 사람·기기만. 스킬·엔진은 플랫폼이 내려 주고, 새면 누가 흘렸는지 안다.</span>
   </a>
   <a class="home-card" href="#/axnavi/cli">
-    <span class="eyebrow">CI</span>
-    <strong>CLI와 CI 게이트</strong>
-    <span class="desc">IDE가 쓰는 판정 엔진을 터미널과 머지 요청 파이프라인에서 그대로 쓴다.</span>
+    <span class="eyebrow">터미널</span>
+    <strong>AX-NAVI CLI — 터미널과 CI</strong>
+    <span class="desc">IDE를 쓰지 않는 개발자·서버는 터미널에서, 머지 요청 파이프라인은 CI에서 같은 엔진을 쓴다.</span>
   </a>
 </div>
 
@@ -45,7 +47,8 @@ AX-NAVI IDE는 레거시 개발용 AI IDE다. VS Code처럼 설치해 쓰면 AX-
 |---|---|---|
 | **AX-NAVI IDE** | 설치형 IDE. 이름·아이콘·데이터 폴더가 따로라 VS Code와 함께 깔아도 서로 영향이 없다. 한국어 표시, 폐쇄망 빌드(확장 마켓 연결 없음) | VSCodium 재포장 |
 | **AX-NAVI 확장** | 채팅 에이전트, 변경 리뷰·점검 결과, 보안 점검, 단계 게이트, 코드 색인 연결, AI 모델 연결 관리. IDE에 내장되어 있고 VS Code에도 깔 수 있다 | Roo Code 포크 |
-| **판정 엔진** (AX-NAVI CLI) | 색인, 리뷰, 보안 점검, 게이트를 실제로 계산한다. IDE는 로그인하면 플랫폼에서 받아 자기 안에서 돌리고(PC에 따로 설치하지 않는다), CI와 플랫폼 서버는 같은 엔진을 CLI로 쓴다 | 플랫폼이 배포 |
+| **AX-NAVI CLI** | 터미널용 AX-NAVI. 대화형 모드와 같은 스킬·에이전트를 터미널에서 쓴다. 설치본에는 엔진이 없고 로그인하면 플랫폼에서 받는다 | IDE와 같은 사용 허가 |
+| **판정 엔진** | 색인, 리뷰, 보안 점검, 게이트를 실제로 계산한다. IDE·CLI 설치본은 로그인하면 플랫폼에서 받아 PC에서 돌리고, CI와 플랫폼 서버는 같은 엔진을 그대로 쓴다 | 플랫폼이 배포 |
 | **HNIX AX 플랫폼** (사용 허가) | 로그인·기기 승인, 허가(좌석) 관리, 스킬·엔진 배포, 서버 엔진 | [사용 허가](/axnavi/license.md) |
 
 IDE와 CI가 같은 엔진을 쓰므로 **개발자가 IDE에서 본 판정과 머지 요청에서 받는 판정이 같다.** 리뷰·보안 점검·게이트·색인은 AI를 부르지 않아 같은 변경에는 늘 같은 결과가 나온다.

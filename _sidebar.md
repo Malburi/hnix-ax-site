@@ -43,7 +43,7 @@
   - [변경 리뷰와 보안 점검](/axnavi/review.md)
   - [SDLC 산출물과 단계 게이트](/axnavi/sdlc.md)
   - [플랫폼 연동](/axnavi/integration.md)
-  - [CLI와 CI 게이트](/axnavi/cli.md)
+  - [AX-NAVI CLI — 터미널과 CI](/axnavi/cli.md)
 
 - **PMS-X**
   - [개요](/pmsx/README.md)

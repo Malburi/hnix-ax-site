@@ -33,6 +33,10 @@ AX-NAVI IDE 설치본은 **HNIX AX 플랫폼에 로그인해 승인받은 기기
 
 플랫폼에 잠시 닿지 않아도 플랫폼이 정한 기간(기본 3일)까지는 받아 둔 스킬과 엔진으로 계속 쓴다. 그 기간이 지나면 다시 로그인해야 한다.
 
+### AX-NAVI CLI도 같은 방식
+
+터미널용 AX-NAVI CLI 설치본도 같은 기기 승인을 쓴다. `axnavi login`을 실행하면 브라우저에 같은 승인 화면이 뜨고(프로그램이 `AX-NAVI CLI`로 보인다), 승인하면 엔진과 연결 키를 받는다. 좌석과 1인 기기 수(기본 3대)는 IDE와 CLI를 합쳐 센다 — 같은 PC에서 IDE와 CLI를 둘 다 쓰면 2대다. 기기 폐기·좌석 회수·오프라인 기간도 IDE와 같다. [AX-NAVI CLI — 터미널과 CI](/axnavi/cli.md)
+
 ## 잠기는 때
 
 | 상황 | IDE |
@@ -64,7 +68,7 @@ AX-NAVI IDE 설치본은 **HNIX AX 플랫폼에 로그인해 승인받은 기기
 ```yaml
 axnavi:
   seats: listed        # listed — 허가받은 사람만 · all — 로그인하는 모든 사용자
-  maxDevices: 2        # 한 사람당 기기 수
+  maxDevices: 3        # 한 사람당 기기 수(IDE·CLI 합쳐서)
   licenseMinutes: 60   # 사용권 토큰 수명(분) — 회수가 반영되는 최대 시간
   offlineDays: 3       # 플랫폼에 닿지 않아도 쓸 수 있는 날수
   defaultEngine: local # 새 허가의 엔진 위치 — local(PC) · server

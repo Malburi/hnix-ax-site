@@ -2038,7 +2038,7 @@ async function palette(r, text) {
 }
 
 /**
- * 녹화마다 IDE 를 새 임시 프로필로 띄우므로 dev1 의 기기가 쌓인다(한 사람 2대까지) — 지난 녹화의 기기를 본인 화면 API 로 끊는다.
+ * 녹화마다 IDE 를 새 임시 프로필로 띄우므로 dev1 의 기기가 쌓인다(한 사람 3대까지) — 지난 녹화의 기기를 본인 화면 API 로 끊는다.
  * dev1 토큰을 돌려준다.
  */
 function freeDevices() {
@@ -2107,7 +2107,7 @@ Object.assign(SCENARIOS, {
       await r.browser(async (b) => {
         await b.login("platform", "dev");
         await b.go(`${A.platform.url}/axnavi/activate?code=${code}`);
-        await b.caption("플랫폼 승인 화면 — 승인 코드 · 기기 이름 · 등록한 기기 수", "허가(좌석)를 받은 사람만, 한 사람당 기기 2대까지");
+        await b.caption("플랫폼 승인 화면 — 승인 코드 · 기기 이름 · 등록한 기기 수", "허가(좌석)를 받은 사람만, 한 사람당 기기 3대까지");
         await pause(4500);
         await b.click("이 기기 승인", { selector: "button" });
         await b.caption("승인했습니다 — IDE 로 돌아갑니다");

@@ -1,6 +1,24 @@
-# CLI와 CI 게이트
+# AX-NAVI CLI — 터미널과 CI
 
-AX-NAVI CLI(`axnavi`)는 AX-NAVI IDE가 내부에서 부르는 판정 엔진이다. 색인, 변경 리뷰, 보안 점검, 단계 게이트를 계산한다. 같은 명령을 터미널과 CI 파이프라인에서 그대로 쓸 수 있어서, IDE에서 본 판정과 머지 요청에서 받는 판정이 같다.
+AX-NAVI CLI(`axnavi`)는 터미널용 AX-NAVI다. VS Code를 쓰지 않는 개발자(이클립스·인텔리J 등)나 서버에 접속해 일하는 사람이 IDE 대신 쓴다. 엔진·스킬·에이전트는 IDE와 같고, 사용 허가(좌석·기기 승인)도 IDE와 함께 센다. 색인, 변경 리뷰, 보안 점검, 단계 게이트도 같은 엔진이 계산하므로 IDE에서 본 판정, 터미널에서 본 판정, 머지 요청에서 받는 판정이 같다.
+
+## 설치와 로그인
+
+1. 플랫폼 웹 **내 연결 설정**의 **터미널에서 쓰려면 — AX-NAVI CLI**에서 `HNIX-AX-CLI-Setup-<판>.exe`를 받아 설치한다. 관리자 권한 없이 내 계정에 설치되고(`%LOCALAPPDATA%ProgramsAX-NAVI CLI`), `axnavi` 명령이 사용자 PATH에 들어간다. 설치 화면에서 플랫폼 주소를 물으면 같은 화면에 나온 주소를 넣는다.
+2. **새 터미널**을 열고 `axnavi login`을 실행한다. 브라우저에 승인 화면이 뜨면 플랫폼에 로그인해 확인 코드가 같은지 보고 **승인**을 누른다.
+3. 터미널로 돌아오면 엔진·사내 모델 연결·사용량 기록이 자동으로 맞춰진다. 작업 폴더에서 `axnavi`를 실행한다.
+
+```text
+axnavi login [--server <주소>]   브라우저에서 승인 — 이 PC 를 등록한다
+axnavi whoami                   로그인·사용 허가·엔진·연결 상태
+axnavi logout                   이 PC 로그아웃(플랫폼의 기기 승인도 끊는다)
+```
+
+- **설치본에는 엔진이 없다.** 에이전트·스킬·색인 엔진은 로그인한 PC만 플랫폼에서 받는다(기기마다 표식이 들어간다). 설치 파일이 밖으로 새도 로그인 없이는 쓸 수 없다.
+- **Node.js·Python을 따로 깔지 않아도 된다.** 설치본에 Node와 Python(3.12, SQLAlchemy 포함)이 들어 있다. PC의 다른 Node와 섞이지 않게 PATH에는 `axnavi` 명령 하나만 넣는다.
+- **모델은 사내 게이트웨이가 기본이다.** 로그인하면 이 기기 전용 게이트웨이·사용량 키를 받아 쓴다. 개인 Claude 구독을 쓰려면 `AXNAVI_AUTH=subscription`(PC 정책이 허용할 때만).
+- 로그인 정보는 이 PC 사용자 폴더(`%LOCALAPPDATA%AX-NAVI CLI`)에 Windows 사용자 보호(DPAPI)로 둔다. 플랫폼에 잠시 닿지 않아도 정해진 기간(기본 3일)까지는 받아 둔 엔진으로 쓴다. 제거하면 받은 엔진과 로그인 정보도 지운다.
+- 조용히 설치(배포 도구): `HNIX-AX-CLI-Setup-<판>.exe /VERYSILENT /SERVER=<플랫폼 주소>` — PC 공용 설치는 `/ALLUSERS`.
 
 > CLI 자체의 설치·대화형 모드·스킬 설명은 [AX-NAVI CLI 문서](https://malburi.github.io/AX-NAVI-CLI/)에 있다.
 
@@ -11,11 +29,12 @@ AX-NAVI CLI(`axnavi`)는 AX-NAVI IDE가 내부에서 부르는 판정 엔진이�
 | 개발자가 평소에 코드를 보고 고친다 | **IDE** |
 | 머지 요청마다 리뷰·보안 점검으로 막는다 | **CLI** — CI 러너에서 |
 | 단계 게이트 결과를 진행 기록서에 남긴다 | **CLI** — `axnavi gate <단계> --record` |
-| 터미널에서 일하는 개발자, 원격 서버 | **CLI** — 대화형 모드 `axnavi` |
+| VS Code를 쓰지 않는 개발자, 터미널에서 일하는 사람 | **CLI 설치본** — `axnavi login` 뒤 대화형 모드 `axnavi` |
 
 ## 명령 한눈에
 
 ```text
+axnavi login|whoami|logout      회사 플랫폼 로그인·상태·로그아웃 (설치본)
 axnavi                          대화형 모드
 axnavi ask <요청>               한 번 묻고 답받기 (읽기 전용)
 axnavi doctor                   실행 환경 진단 (실행 경로 · 과금 · 조직 정책)

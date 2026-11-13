@@ -164,7 +164,7 @@ export const SCENARIOS = {
         await r.browser(async (b) => {
           await b.login("platform", "dev");
           await b.go(`${A.platform.url}/axnavi/activate?code=${code}`);
-          await b.caption("플랫폼 승인 화면 — 승인 코드·기기 이름·등록한 기기 수를 확인합니다", "허가(좌석)를 받은 사람만, 한 사람당 기기 2대까지 — 관리자가 언제든 회수");
+          await b.caption("플랫폼 승인 화면 — 승인 코드·기기 이름·등록한 기기 수를 확인합니다", "허가(좌석)를 받은 사람만, 한 사람당 기기 3대까지 — 관리자가 언제든 회수");
           await pause(5000);
           await b.click("이 기기 승인", { selector: "button" });
           await b.caption("승인했습니다 — IDE 로 돌아갑니다");
