@@ -13,7 +13,7 @@
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (PostgreSQL · AX Platform 0.9.2 · AX-DataLake 0.5.2 · PMS-X 1.3.12 · AX-NAVI IDE 1.2.6)**(`server-kit-20261105`, 설치 파일은 `HNIX-AX-Server-Setup-20261111.exe`) (비공개 저장소). 설치 파일과 사내 모델 파일(`ollama-model-*`)이 이 릴리스에 모두 있다.
+GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (PostgreSQL · AX Platform 0.9.3 · AX-DataLake 0.5.3 · PMS-X 1.3.15 · AX-NAVI IDE 1.2.8)**(`server-kit-20261105`, 설치 파일은 `HNIX-AX-Server-Setup-20261113.exe`) (비공개 저장소). 설치 파일과 사내 모델 파일(`ollama-model-*`)이 이 릴리스에 모두 있다.
 
 설치 파일은 **서버 PC 용**과 **개인 PC 용** 두 가지다. 둘 다 회사 코드 서명이 된 설치 프로그램이다.
 
@@ -26,12 +26,12 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (Postgr
 
 | 서버 꾸러미 안 | 내용 |
 |---|---|
-| 설치본 셋 | AX Platform 0.9.2(Node 포함) · AX-DataLake 0.5.2(Node·SQL 엔진·글자 인식 데이터 포함) · PMS-X 1.3.12(JRE 21, 시연 데이터, 소스 분석기 0.5.1) |
+| 설치본 셋 | AX Platform 0.9.3(Node 포함) · AX-DataLake 0.5.3(Node·SQL 엔진·글자 인식 데이터 포함) · PMS-X 1.3.15(JRE 21, 시연 데이터, 소스 분석기 0.5.1) |
 | DB | PostgreSQL 18 — 세 제품의 DB 를 한곳에(서버 안에서만 열고, 매일 백업) |
 | 사내 모델 | Ollama CPU 판 — 임베딩(문서 RAG)과 CPU 대화 모델 |
 | AX-NAVI CLI · 연습 저장소 | 허브의 `axnavi__` 도구와 자동 점검용 |
 | `server.ps1` · `server.config.json` | 설치·시작·멈춤·상태·내리기, 설정 하나 |
-| `scripts\` | 제품 잇기(시드)와 자동 점검 26단계 |
+| `scripts\` | 제품 잇기(시드)와 자동 점검 28단계 |
 
 ## 서버 준비
 
@@ -107,7 +107,7 @@ server.ps1 status       # 서비스·응답·접속 주소
 server.ps1 stop | start
 server.ps1 backup       # DB 백업을 지금 한 번(매일 02:00 에는 저절로)
 server.ps1 uninstall    # 서비스·방화벽 규칙 내림(데이터는 남김, -RemoveData 로 다 지움)
-tools\node\node.exe scripts\smoke.mjs   # 자동 점검 26단계 — 시험 기록이 서버에 남는다
+tools\node\node.exe scripts\smoke.mjs   # 자동 점검 28단계 — 시험 기록이 서버에 남는다. ㉖(레이크 문서)은 플랫폼에 docs.lake 를 넣기 전에는 '주의 — 건너뜀'
 ```
 
 - 백업은 `backups\postgresql\<날짜-시각>\` 에 네 DB 의 덤프와 시크릿을 푸는 열쇠(`*.master.key`)가 함께 쌓인다(최근 14개). 서버 밖에 한 번 더 복사하되 DB 와 같은 수준으로 보관한다. 되살리는 법은 [서버 PC 설치](https://malburi.github.io/hnix-ax-site/#/getting-started/install-server) 7번.
