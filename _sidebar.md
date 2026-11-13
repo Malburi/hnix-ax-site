@@ -8,6 +8,7 @@
   - [HNIX AX란](/)
   - [사용자·관리자 매뉴얼 ↗](https://malburi.github.io/hnix-ax-manual/)
   - [제품 구성과 구조](/getting-started/architecture.md)
+  - [제품 조합과 함께 설치할 때](/getting-started/together.md)
   - [빠른 시작](/getting-started/quickstart.md)
   - [설치 가이드 — 서버 PC](/getting-started/install-server.md)
   - [설치 가이드 — 개인 PC](/getting-started/install-pc.md)

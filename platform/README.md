@@ -29,6 +29,30 @@ AX Platform은 HNIX AX 제품군이 함께 쓰는 AI 기반이다. 모델 호출
 | [설치와 운영](/platform/operations.md) | 폐쇄망 설치 패키지, Windows·Linux 서비스, 백업·복원, LDAP(AD)·SSO 로그인, PostgreSQL·여러 대 |
 | [현장 연결 점검](/getting-started/onsite.md) | 고객사 설치 뒤 기본 설치·모델·도구 서버·ITSM·Git·외부 AI·자동화 연결 상태를 한 화면에서, 연결 시험 |
 
+## 기반과 선택 모듈
+
+설치본은 하나다. **기반**은 늘 켜져 있고, **선택 모듈**은 현장마다 설정 파일의 `modules`에서 켜고 끈다(기본은 모두 켜짐).
+
+| 구분 | 들어 있는 것 |
+|---|---|
+| 기반 | LLM 게이트웨이 · AI 사용 현황(사용량·비용) · MCP 허브와 승인함 · 문서 검색 · AX-NAVI 사용 허가·조직 설정 · 워크스페이스 채팅 · 업무 흐름 개선 · 사용자·감사·알림·현장 연결 점검 |
+| `automation` 에이전트·자동화 | 에이전트 실행기 · A2A · 자동화 흐름 · 자동 실행(웹훅·예약·감시) · 런북 — 서로를 불러 한 모듈 |
+| `desk` 현업 창구 | 창구 화면 · 메신저·메일 · 담당자 접수 |
+| `itsm` 고객 ITSM 연동 | ServiceNow·Jira·일반 REST 동기화 · 창구의 'ITSM 연결' 접수 |
+| `biz` 업무 시스템 연결 | SAP·Salesforce·Microsoft 365·네이버웍스·사내 REST 도구 |
+| `voice` 음성 | 채팅·현업 창구의 말로 묻기·읽어 주기 |
+| `productivity` 생산성 보고서 | 커밋·서비스 요청·AI 관여 보고서 · 저장소 웹훅 |
+| `enterpriseAi` 전사 AI 관측 | 외부 AI 사용량 · AI 자산 대장 |
+| `evaluation` 평가 | 모델 평가 · 에이전트 평가(`automation`도 켜져 있어야) |
+
+```yaml
+modules:
+  itsm: false     # 고객이 ITSM을 쓰지 않는 현장
+  voice: false
+```
+
+끈 모듈은 메뉴·바로 가기·대시보드·통합 검색에서 빠지고, API·웹훅은 `404 module_disabled`로 답하며, 내장 도구와 예약 작업도 멈춘다. 자료는 지우지 않으므로 다시 켜고 재시작하면 그대로 돌아온다. 지금 켜진 모듈은 **관리 › 현장 연결 점검**의 '기능 모듈'에서 본다. 다른 제품과 묶는 법은 [제품 조합과 함께 설치할 때](/getting-started/together.md)에 있다.
+
 ## 한 프로세스, 한 포트
 
 ```text

@@ -2,7 +2,7 @@
 
 통합ITO 운영에 필요한 기능을 영역별로 정리한 표다. **제품에 있음**은 각 저장소의 자동 시험과 네 제품 통합 점검([E2E 꾸러미](/getting-started/e2e-kit.md))을 통과한 것, **현장 확인**은 기능은 있지만 고객 시스템(ITSM·GitLab·AI 조직 계정·GPU 서버)에 붙여 봐야 끝나는 것, **계획**은 아직 만들지 않은 것이다.
 
-> 2026-11-13 기준 · 자동 시험: AX Platform 485건 · PMS-X 서버 315건·웹 393건 · AX-DataLake 216건 · AX-NAVI IDE 확장 5,369건·화면 1,222건 · 통합 점검 26단계
+> 2026-11-13 기준 · 자동 시험: AX Platform 503건 · PMS-X 서버 321건·웹 393건 · AX-DataLake 216건 · AX-NAVI IDE 확장 5,369건·화면 1,222건 · 통합 점검 26단계
 >
 > 2026-11-10 화면 사용성 반영 — PMS-X 1.3.11(간트 확대·축소·크게 보기, 고객 승인함, SM 홈) · AX Platform 0.9.1(화면 말 정리, 위험 동작 확인, 감사 로그 거르기) · AX-DataLake 0.5.1(분석가 첫 화면, 차트 추천, 열 골라 필터) · AX-NAVI IDE(로그인 안내, 승인 단계 이름). 새 기능 줄은 보고·거버넌스의 고객 승인함 하나다.
 >
@@ -62,8 +62,8 @@
 | 레이크(표준 Parquet · 시점 조회 · 바뀐 행), 카탈로그(설명·등급·태그) | 제품에 있음 | [AX-DataLake](/datalake/README.md) | — |
 | ITO 온톨로지(객체·관계·액션·승인), 계보·영향 범위, 커넥터(SQL Server·Snowflake·REST·폴더/S3) | 제품에 있음 | [온톨로지](/datalake/ontology.md) · [계보](/datalake/lineage.md) | SQL Server·Snowflake 실서버 연결은 PoC, 열 단위 계보 |
 | 파일 수집(EUC-KR CSV·Excel·Parquet·JSON) | 제품에 있음 | [수집](/datalake/ingest.md#파일) | — |
-| 원본 DB 동기화(PostgreSQL·MySQL — 통째로·증분·병합, 주기) | 제품에 있음 | [수집](/datalake/ingest.md#원본-db) | — |
-| 원본 DB 동기화 — Oracle(클라이언트 설치 불필요) | 현장 확인 | [수집](/datalake/ingest.md#원본-db) | 고객 Oracle 서버로 연결 확인(타입 변환은 시험 완료) |
+| 원본 DB 동기화(PostgreSQL·MySQL — 통째로·증분·병합, 주기) | 제품에 있음 | [수집](/datalake/ingest.md#원본-연결) | — |
+| 원본 DB 동기화 — Oracle(클라이언트 설치 불필요) | 현장 확인 | [수집](/datalake/ingest.md#원본-연결) | 고객 Oracle 서버로 연결 확인(타입 변환은 시험 완료) |
 | 실시간 수집(Kafka·HTTP, Debezium 변경 반영, 정확히 한 번) | 제품에 있음 | [수집](/datalake/ingest.md#실시간-스트림) | 고객 Kafka·CDC 연결 |
 | 조회 권한·개인정보 열 가림·소속 행 제한(화면·API·에이전트·AI 질문 공통) | 제품에 있음 | [거버넌스](/datalake/governance.md) | 고객 개인정보 분류 기준 반영 |
 | AI 질문(자연어 → SQL, 기밀은 사내 모델만), MCP 도구(허브 등록) | 제품에 있음 | [AI 질문과 에이전트](/datalake/ai.md) | 고객 데이터로 질문 정답 세트 |
@@ -90,3 +90,7 @@
 | 폐쇄망 설치 패키지·서비스·백업·LDAP·OIDC | 제품에 있음 | [설치와 운영](/platform/operations.md) | — |
 | PostgreSQL·여러 대 운영·보안 헤더·부하 시험 | 제품에 있음 | [설치와 운영](/platform/operations.md#여러-대로-띄우기-이중화) | 운영 서버에서 다시 측정, 공인 취약점 진단, DB 복제 전환 연습, 11월 새 기능(마이그레이션 023~030)·시간대(Asia/Seoul) 집계의 PostgreSQL 실검증 |
 | 현장 연결 점검 | 제품에 있음 | [고객사 설치와 연결 점검](/getting-started/onsite.md) | — |
+| 플랫폼 기반·선택 모듈(설정으로 켜고 끔, 끄면 메뉴·API·도구·예약 작업에서 빠짐) | 현장 확인 | [기반과 선택 모듈](/platform/README.md#기반과-선택-모듈) | 통합 점검(E2E)에 모듈 끈 설치 단계 추가 |
+| 문서 검색에 AX-DataLake 문서 선택 연결(레이크 권한 그대로, 레이크가 멈추면 플랫폼 문서만) | 현장 확인 | [문서 검색](/platform/docs-rag.md#ax-datalake-문서-함께-찾기) | 통합 점검(E2E)에 단계 추가 |
+| PMS-X 사내 AD 첫 로그인 계정 자동 생성(허용 그룹·관리자 그룹, 기본 꺼짐) | 현장 확인 | [제품 조합과 함께 설치할 때](/getting-started/together.md) | 고객사 AD로 확인 |
+| AX-DataLake 사내 AD·SSO 로그인 | 계획 | — | 지금은 로컬 계정만 |
