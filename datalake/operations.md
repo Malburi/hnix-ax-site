@@ -9,7 +9,7 @@ AX-DataLake는 고객사 폐쇄망 설치를 전제로 만들었다. 설치본 �
 | `ax-datalake-<버전>-win-x64.zip` | Windows Server / Windows 10+ — WinSW 서비스 |
 | `ax-datalake-<버전>-linux-x64.tar.gz` | Linux x64 — systemd 서비스(전용 사용자 `axdl`) |
 
-받는 곳: GitHub `Malburi/ax-datalake` › Releases › **v0.5.3**(비공개 저장소). 회사 서버에 세 제품을 한꺼번에 깔 때는 [서버판](/getting-started/server-kit.md)에 이 설치본이 들어 있다.
+받는 곳: GitHub `Malburi/ax-datalake` › Releases › **v0.6.0**(비공개 저장소). 회사 서버에 세 제품을 한꺼번에 깔 때는 [서버판](/getting-started/server-kit.md)에 이 설치본이 들어 있다.
 
 | 들어 있는 것 | 비고 |
 |---|---|
@@ -51,8 +51,23 @@ sudo ./install.sh --admin-password '<관리자 비밀번호>'
 | AI 질문 | `ai.gateway`(플랫폼 게이트웨이 주소·가상 키·모델 별칭) |
 | 실시간·동기화 | `streams.enabled` · `syncs.scheduler` — 점검·복구 때 끈다(정의는 남는다) |
 | 파일 정리 | `maintenance.hour`(기본 새벽 3시) · `retainDays`(시점 보관, 기본 30일) |
+| 사내 계정 로그인(선택) | `auth.ldap`(AD) · `auth.oidc`(SSO) · `auth.directory`(첫 로그인 계정 만들기·허용 그룹·그룹 → 역할) — 기본 꺼짐, 아래 참고 |
 
-비밀번호는 설정 파일에 `${env:이름}` 으로 환경 변수에서 받는다.
+비밀번호는 설정 파일에 `${env:이름}` 으로 환경 변수에서 받는다. 사람이 고친 값은 같은 폴더의 `ax-datalake.local.yaml` 에 두면 설치가 설정 파일을 다시 써도 남고, 그 값이 이긴다.
+
+## 사내 계정 로그인(AD·SSO) — 선택
+
+0.6.0 부터 사내 AD(LDAP)·SSO(OpenID Connect)로 로그인할 수 있다. 켜지 않으면 지금처럼 레이크 계정(아이디·비밀번호)만 쓴다. 켜도 레이크에서 직접 만든 계정은 그대로 쓸 수 있다 — 디렉터리가 멈췄을 때 관리자가 들어올 길이다.
+
+| 할 일 | 어떻게 |
+|---|---|
+| 누가 들어오나 | 기본은 관리자가 관리 › 사용자에서 '사내 계정'으로 먼저 등록한 사람만. `auth.directory.autoCreate` 를 켜면 처음 로그인하는 사람의 계정이 생긴다(`allowedGroups` 로 그룹 제한) |
+| 역할 | `roleGroups` — 그룹 → 관리자·엔지니어·분석가(여럿이면 높은 쪽), 안 맞으면 `defaultRole`(기본 분석가). 적어 두면 로그인할 때마다 맞춘다 — 그룹에서 빠지면 내려간다 |
+| 소속(행 제한) | `orgAttr`(AD 속성, 예 `company`)·`orgClaim`(SSO) 값이 소속이 된다. 값이 없으면 소속 행 제한 테이블은 아무 행도 안 보인다 |
+| 같은 아이디 | 직접 만든 레이크 계정이 있으면 사내 계정으로 이어 쓰지 않고 거절한다(관리자 계정 가로채기 방지) |
+| 퇴사자 | AD 에서 지워도 레이크 계정·API 키는 저절로 멈추지 않는다 — 관리 › 사용자에서 정지 |
+
+설정 예시는 매뉴얼 [계정 · 권한 · 로그인 연동](https://malburi.github.io/hnix-ax-manual/#/admin/accounts)에 있다. SSO 는 `server.publicUrl` 이 있어야 하고, 돌아올 주소는 `<레이크 주소>/api/v1/auth/oidc/callback` 이다. 감사 로그에 로그인 방법(local·ldap·oidc)과 거절 사유가 남는다.
 
 ## 파일 정리
 

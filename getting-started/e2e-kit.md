@@ -8,7 +8,7 @@
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **E2E 꾸러미 2026-11-13 (13판 — AX Platform 0.9.3·AX-DataLake 0.5.3·PMS-X 1.3.15·AX-NAVI IDE 1.2.8)**(`e2e-kit-20261113`) (비공개 저장소 — 접근 권한으로 로그인). 모델 zip 은 바뀌지 않아 서버판 꾸러미 릴리스(`server-kit-20261105`)에 둔다 — 같은 파일이다.
+GitHub `Malburi/hnix-ax-platform` › Releases › **E2E 꾸러미 2026-11-13 (14판 — AX Platform 0.9.3·AX-DataLake 0.6.0·PMS-X 1.3.15·AX-NAVI IDE 1.2.8)**(`e2e-kit-20261113-2`) (비공개 저장소 — 접근 권한으로 로그인). 모델 zip 은 바뀌지 않아 서버판 꾸러미 릴리스(`server-kit-20261105`)에 둔다 — 같은 파일이다.
 
 | 파일 | 크기 | 필요 |
 |---|---|---|
@@ -22,7 +22,7 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **E2E 꾸러미 2026-11-13 (1
 | 구성 | 내용 |
 |---|---|
 | AX Platform 0.9.3 오프라인 패키지 | 서버 번들·웹·**Node 24 런타임** 포함 |
-| AX-DataLake 0.5.3 설치본 | **Node·SQL 엔진·확장·글자 인식 데이터** 포함, 시연 테이블(장애·운영 인력)·ITO 온톨로지·가림·행 제한, 허브에 외부 MCP 서버로 등록. 엑셀·비정형 문서 시연 샘플 6개(`docs\datalake\`) |
+| AX-DataLake 0.6.0 설치본 | **Node·SQL 엔진·확장·글자 인식 데이터** 포함, 시연 테이블(장애·운영 인력)·ITO 온톨로지·가림·행 제한, 허브에 외부 MCP 서버로 등록. 엑셀·비정형 문서 시연 샘플 6개(`docs\datalake\`) |
 | PMS-X 1.3.15 오프라인 패키지 | **JRE 21** 포함, 시연 데이터(○○공사 인사시스템 SI·SM), 업무 템플릿·인수인계 퀴즈 |
 | AX-NAVI IDE 1.2.8 | 설치 프로그램(서명)을 화면 없이 사용자 폴더에 설치, 이 PC 의 플랫폼으로 연결 |
 | AX-NAVI CLI | 판정 엔진 — 실행에 필요한 의존성만 |

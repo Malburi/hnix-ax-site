@@ -24,9 +24,9 @@ AX-NAVI(IDE·CLI)만은 혼자 돌지 않는다. 로그인해 사용 허가와 �
 |---|---|---|
 | AX Platform | `auth.ldap` 또는 `auth.oidc` | 계정이 생겨 기본 워크스페이스에 들어간다 |
 | PMS-X | `pmsx.auth.ldap` — `auto-create: true`, `allowed-groups` | 계정이 생긴다(역할·프로젝트 없음 — 관리자가 프로젝트에 넣는다). 기본은 꺼짐 |
-| AX-DataLake | 로컬 계정 | 관리자가 만든다 |
+| AX-DataLake | `auth.ldap` 또는 `auth.oidc` + `auth.directory` — `autoCreate`, `allowedGroups`, `roleGroups`(그룹 → 관리자·엔지니어·분석가), 소속은 `orgAttr` | 기본은 관리자가 '사내 계정'으로 먼저 등록. `autoCreate` 를 켜면 계정이 생긴다(역할은 그룹, 없으면 분석가). 기본은 꺼짐 |
 
-세 제품의 관리자 그룹을 같은 디렉터리 그룹으로 맞추면 권한 관리가 한 번에 끝난다. 자세한 것은 매뉴얼의 [계정 · 권한 · 로그인 연동](https://malburi.github.io/hnix-ax-manual/#/admin/accounts)에 있다.
+AD·SSO 는 선택이다. 어느 제품이든 켜지 않으면 지금처럼 그 제품의 자체 계정으로 로그인하고, 켜도 자체 계정(특히 관리자)은 그대로 쓸 수 있다 — 디렉터리가 멈췄을 때 들어올 길이다. 세 제품의 관리자 그룹을 같은 디렉터리 그룹으로 맞추면 권한 관리가 한 번에 끝난다. 자세한 것은 매뉴얼의 [계정 · 권한 · 로그인 연동](https://malburi.github.io/hnix-ax-manual/#/admin/accounts)에 있다.
 
 ### 2. 요청 창구 — 문은 하나로
 

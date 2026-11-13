@@ -13,7 +13,7 @@
 
 ## 받을 것
 
-GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (PostgreSQL · AX Platform 0.9.3 · AX-DataLake 0.5.3 · PMS-X 1.3.15 · AX-NAVI IDE 1.2.8)**(`server-kit-20261105`, 설치 파일은 `HNIX-AX-Server-Setup-20261113.exe`) (비공개 저장소). 설치 파일과 사내 모델 파일(`ollama-model-*`)이 이 릴리스에 모두 있다.
+GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (PostgreSQL · AX Platform 0.9.3 · AX-DataLake 0.6.0 · PMS-X 1.3.15 · AX-NAVI IDE 1.2.8)**(`server-kit-20261105`, 설치 파일은 `HNIX-AX-Server-Setup-20261113.exe`) (비공개 저장소). 설치 파일과 사내 모델 파일(`ollama-model-*`)이 이 릴리스에 모두 있다.
 
 설치 파일은 **서버 PC 용**과 **개인 PC 용** 두 가지다. 둘 다 회사 코드 서명이 된 설치 프로그램이다.
 
@@ -26,7 +26,7 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (Postgr
 
 | 서버 꾸러미 안 | 내용 |
 |---|---|
-| 설치본 셋 | AX Platform 0.9.3(Node 포함) · AX-DataLake 0.5.3(Node·SQL 엔진·글자 인식 데이터 포함) · PMS-X 1.3.15(JRE 21, 시연 데이터, 소스 분석기 0.5.1) |
+| 설치본 셋 | AX Platform 0.9.3(Node 포함) · AX-DataLake 0.6.0(Node·SQL 엔진·글자 인식 데이터 포함) · PMS-X 1.3.15(JRE 21, 시연 데이터, 소스 분석기 0.5.1) |
 | DB | PostgreSQL 18 — 세 제품의 DB 를 한곳에(서버 안에서만 열고, 매일 백업) |
 | 사내 모델 | Ollama CPU 판 — 임베딩(문서 RAG)과 CPU 대화 모델 |
 | AX-NAVI CLI · 연습 저장소 | 허브의 `axnavi__` 도구와 자동 점검용 |
