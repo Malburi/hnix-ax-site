@@ -6,3 +6,4 @@ tools/.scenario-prep.json
 tools/.demo-erp.db
 tools/.demo-servers.json
 tools/.demo-devices.json
+tools/.story-prep.json

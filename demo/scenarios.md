@@ -50,7 +50,7 @@ flowchart LR
 
 장애 경보에서 시작하는 요청(예: 야간 배치 실패)은 ②가 다르다 — 경보가 웹훅으로 들어오면 '경보 진단' 에이전트가 비슷한 과거 장애와 매뉴얼로 원인 후보와 확인 순서를 정리하고, 반복 조치는 [런북](/platform/runbooks.md)을 승인받아 실행한다.
 
-## 시나리오 B — 메신저·메일과 전화로 들어온 요청 (4분 23초)
+## 시나리오 B — 메신저·메일과 전화로 들어온 요청 (5분 36초)
 
 <video controls preload="none" poster="video/scenarios/sm-b.jpg" src="video/scenarios/sm-b.mp4" style="width:100%;border-radius:10px"></video>
 

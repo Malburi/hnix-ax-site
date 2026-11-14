@@ -523,8 +523,9 @@ export const SCENARIOS = {
       await r.click("보내기", { selector: "button" });
       await r.waitFor("document.body.innerText.includes('재직')", 120000);
       await pause(1200);
-      await r.caption("매뉴얼 근거로 답합니다 — 근거 문서가 함께", "해결됐으면 '해결됐어요' — 자동 해결률로 셉니다");
+      await r.caption("근거 번호를 단 답 — 운영 매뉴얼·운영 보고서 중 어느 문서인지 함께", "해결됐으면 '해결됐어요' — 자동 해결률로 셉니다");
       await pause(5000);
+      await r.click("해결됐어요", { selector: "button", exact: true, after: 2000 });
       await r.type("예: 사원 조회에", "회의실 예약은 어떻게 하나요?", { delay: 55 });
       await r.click("보내기", { selector: "button" });
       await r.waitFor("document.body.innerText.includes('찾지 못했습니다')", 120000);

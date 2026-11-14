@@ -29,7 +29,8 @@ async function tabPart(r, label, wait = 2500) {
 async function openSr(r, no) {
   await r.go(`${P}/sm/srs`);
   await pause(1500);
-  await vtype(r, "조회", no, 60);
+  // PMS-X 1.3.13+ 목록 검색 칸
+  await r.type("css:[data-test=sr-search] input", no, { clear: true, delay: 60 });
   await r.press("Enter");
   await pause(1500);
   await r.click(no, { selector: "td", after: 1800 });
@@ -261,7 +262,7 @@ export const SCENARIOS = {
       if (!spoke) await r.click("사원 조회에 퇴사자가 같이 나와요", { selector: ".chip", exact: true });
       await r.waitFor("document.body.innerText.includes('이 답으로 해결됐나요')", 120000);
       await pause(1500);
-      await r.caption("① 근거 번호를 단 답 — 어느 매뉴얼의 어느 절인지 함께", "해결되면 '해결됐어요'(Teams 는 \"해결\" 한마디) — 자동 해결률로 셉니다");
+      await r.caption("① 근거 번호를 단 답 — 운영 매뉴얼·운영 보고서 중 어느 문서인지 함께", "해결되면 '해결됐어요'(Teams 는 \"해결\" 한마디) — 자동 해결률로 셉니다");
       await pause(6000);
       await r.click("해결됐어요", { selector: "button", exact: true, after: 2000 });
 
@@ -337,7 +338,7 @@ export const SCENARIOS = {
       await transition(r, "분류 완료");
       await transition(r, "담당 배정", { assignee: pp.pmsxOpName ?? "" });
       await transition(r, "처리 시작");
-      await transition(r, "처리 완료");
+      await transition(r, "처리 완료", { comment: "통화 중 매뉴얼 5절대로 본인 확인 후 잠금 해제 안내 — 요청자 확인" });
       await r.caption(`③ 바로 '처리 완료' — ${no ?? "요청"} 도 처리 기한·월간 운영보고에 들어갑니다`, "즉답이 안 되면 담당자에게 배정 → 시나리오 A 의 원인 찾기부터 같은 흐름");
       await pause(6000);
       await r.caption("같은 사람이 같은 문의로 자주 전화하면 — 현업 창구 주소나 고객 요청 창구로 안내해 B-1 로", "전화·메신저·ITSM 어느 길로 와도 PMS-X 서비스 요청 하나로 모입니다");

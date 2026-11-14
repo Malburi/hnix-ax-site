@@ -6,13 +6,14 @@
  *  시나리오 A  시험용 고객 ITSM 연결을 새로 만들고, 처음 티켓 5건은 미리 한 번 동기화해 둔다.
  *             그 뒤 고객(김현업)이 새 티켓 "사원 조회에 퇴사자가 같이 나와요"를 등록한 상태로 둔다 — 녹화에서 '지금 동기화'.
  *  시나리오 B  현업 창구 hr-help 에 창구 모양(색·로고·자주 묻는 질문), 매뉴얼 보강 시연 문서 정리.
+ *  --only=b 이면 시나리오 B 준비만(시나리오 A 의 ITSM 연결·감시 트리거는 그대로).
  *  결과는 tools/.scenario-prep.json
  *
  * 시험용 ITSM 은 Basic 인증이고 비밀번호는 플랫폼 비밀 저장소에만 있다 — 이 PC 의 E2E 플랫폼 데이터에서 읽는다
  * (PLATFORM_REPO, E2E 설정 run/platform/hnix-ax.yaml). 다른 PC 에서는 쓰지 않는다.
  */
 import { spawnSync } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { APPS } from "./demo-scenarios.mjs";
@@ -49,8 +50,10 @@ await ctx.close();`;
   return r.stdout.trim();
 }
 
-const out = {};
+const ONLY_B = process.argv.includes("--only=b");
+const out = ONLY_B && existsSync(join(HERE, ".scenario-prep.json")) ? JSON.parse(readFileSync(join(HERE, ".scenario-prep.json"), "utf8")) : {};
 const pl = await client("platform", "admin");
+if (!ONLY_B) {
 
 // ---------- 시나리오 A — 고객 ITSM
 log("시나리오 A — 시험용 고객 ITSM 연결과 새 티켓");
@@ -108,15 +111,17 @@ const trig = await pl("POST", "/triggers", {
 const base = await pl("POST", `/triggers/${trig.id}/fire`, { body: {} });
 out.flow = { id: flow.id, triggerId: trig.id };
 ok(`감시 트리거 ${trig.id} — pmsx__srs(프로젝트 ${smProject}) · 실행 사용자 dev1 · 기준선: ${base?.detail ?? base?.outcome ?? "?"}`);
+}
 
 // ---------- 시나리오 B — 현업 창구 모양·매뉴얼 보강 문서
 log("시나리오 B — 현업 창구 hr-help 모양");
 const desk = items(await pl("GET", "/desks")).find((d) => d.slug === "hr-help");
 if (!desk) throw new Error("현업 창구 hr-help 가 없습니다 — demo-prep.mjs 를 먼저 돌리세요");
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="132" height="40" viewBox="0 0 132 40"><rect width="132" height="40" rx="6" fill="#ffffff"/><circle cx="20" cy="20" r="11" fill="#0f7b85"/><path d="M14 20h12M20 14v12" stroke="#ffffff" stroke-width="3"/><text x="38" y="26" font-family="Malgun Gothic, Arial" font-weight="700" font-size="15" fill="#0f7b85">HD 인사팀</text></svg>`;
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="150" height="40" viewBox="0 0 150 40"><rect width="150" height="40" rx="6" fill="#ffffff"/><circle cx="20" cy="20" r="11" fill="#0f7b85"/><path d="M14 20h12M20 14v12" stroke="#ffffff" stroke-width="3"/><text x="38" y="26" font-family="Malgun Gothic, Arial" font-weight="700" font-size="15" fill="#0f7b85">○○공사 인사팀</text></svg>`;
 await pl("PUT", `/desks/${desk.id}`, {
   slug: desk.slug, name: desk.name, description: desk.description, greeting: desk.greeting, instructions: desk.instructions, modelAlias: desk.model_alias, collections: desk.collections, kbTool: desk.kb_tool, kbArgs: desk.kb_args, escalation: desk.escalation,
-  look: { color: "#0f7b85", logo: `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`, faq: ["사원 조회에 퇴사자가 같이 나와요", "급여 계산 배치가 실패했어요", "권한 신청은 어떻게 하나요?", "계정이 잠겼어요"] },
+  workspaceId: desk.workspace_id, runAs: desk.run_as, replyFormat: desk.reply_format, enabled: !!desk.enabled, ...(desk.voice ? { voice: desk.voice } : {}),
+  look: { color: "#0f7b85", logo: `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`, faq: desk.look?.faq?.length ? desk.look.faq : ["사원 조회에 퇴사자가 같이 나와요", "급여 계산 배치가 실패했어요", "권한 신청은 어떻게 하나요?", "계정이 잠겼어요"] },
 });
 ok("색 #0f7b85 · 로고 · 자주 묻는 질문 4개");
 

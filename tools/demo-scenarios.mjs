@@ -451,8 +451,8 @@ export const SCENARIOS = {
       await r.click("To-Be (AI 제안)", { selector: ".n-tabs-tab" });
       await r.caption("To-Be — AI 제안, 사람이 고쳐 확정합니다");
       await pause(4000);
-      await r.click("설계도(BPMN)", { selector: ".n-tabs-tab" });
-      await r.caption("설계도 — As-Is 와 To-Be 를 나란히, BPMN·Mermaid 로 내보내기");
+      await r.click("흐름도", { selector: ".n-tabs-tab", exact: true });
+      await r.caption("흐름도 — As-Is 와 To-Be 를 나란히", "설계도는 BPMN · 흐름도 원본은 Mermaid 로 내려받기");
       await pause(4500);
 
       // ── 에이전트
@@ -529,8 +529,9 @@ export const SCENARIOS = {
       await r.click("보내기", { selector: "button" });
       await r.waitFor("document.body.innerText.includes('재직')", 90000);
       await pause(1200);
-      await r.caption("매뉴얼 근거로 답합니다 — 근거 문서가 함께 보입니다");
+      await r.caption("근거 번호를 단 답 — 운영 매뉴얼·운영 보고서 중 어느 문서인지 함께", "해결됐으면 '해결됐어요' — 자동 해결률로 셉니다");
       await pause(5000);
+      await r.click("해결됐어요", { selector: "button", exact: true, after: 2000 });
       await r.type("예: 사원 조회에", "회의실 예약은 어떻게 하나요?", { delay: 60 });
       await r.click("보내기", { selector: "button" });
       // 3B 모델은 '찾지 못했습니다' 대신 '근거를 확인하지 못한 답'을 붙이기도 한다 — 답이 끝날 때까지

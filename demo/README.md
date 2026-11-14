@@ -2,7 +2,7 @@
 
 HNIX AX 네 제품이 실제로 도는 모습을 영상으로 담았다. 영상은 모두 **실제로 띄운 제품**(E2E 환경 — 플랫폼·PMS-X·AX-NAVI IDE·AX-DataLake를 한 PC에)을 조작하며 녹화했다. 꾸민 화면이나 목업이 아니다. 아래 자막은 녹화할 때 화면 위에 덧그린 설명이고, 주황 물결은 누른 곳이다.
 
-## 전체 투어 — 18분 23초
+## 전체 투어 — 19분 04초
 
 <video controls preload="metadata" poster="video/tour.jpg" src="video/tour.mp4" style="width:100%;border-radius:10px;background:#0f1d2b"></video>
 
@@ -11,10 +11,12 @@ HNIX AX 네 제품이 실제로 도는 모습을 영상으로 담았다. 영상�
 > 메뉴·탭·버튼을 **하나씩 빠짐없이** 보고 싶으면 [기능 전체 영상](/demo/features.md) — 제품별 장(章) 30편으로 나눠, 화면마다 실제로 눌러 본다.
 >
 > 유지보수(SM) 요청 **한 건이 들어와서 닫히고 지식으로 남기까지** 여러 제품을 오가는 순서는 [SM 업무 흐름 시나리오](/demo/scenarios.md) — 시나리오 A(고객 ITSM 티켓 → 자동화 흐름 → AX-NAVI IDE 로 수정)·B(메신저·메일·음성과 전화) 두 편.
+>
+> 목소리 해설이 붙은 시연 영상은 [해설 시연 영상](/demo/narrated.md) — ① 운영(현업 문의 한 건이 지식이 되기까지, 7분 4초) · ② 데이터·통제·도입 구성(3분 36초). 시험 데이터 없이 새로 띄운 환경에서 녹화했다.
 
 ## 제품별 영상
 
-### AX Platform — 공통 AI 기반 (3분 30초)
+### AX Platform — 공통 AI 기반 (4분 11초)
 
 <video controls preload="metadata" poster="video/platform.jpg" src="video/platform.mp4" style="width:100%;border-radius:10px"></video>
 

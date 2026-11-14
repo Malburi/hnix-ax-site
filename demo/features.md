@@ -3,9 +3,9 @@
 네 제품의 **메뉴·탭·버튼을 하나씩 실제로 써 보는** 장별 영상이다. [시연 영상](/demo/README.md)이 이야기 흐름으로 핵심만 보여 준다면, 이 쪽은 기능을 빠짐없이 훑는다. 모두 실제로 띄운 제품(E2E 환경)을 조작하며 녹화했고, 화면 아래 자막은 녹화할 때 덧그린 설명, 주황 물결은 누른 곳이다. 모델이 답하는 장면은 사내 로컬 모델(`hnix-local`)이 그 자리에서 낸 답이다.
 
 <!-- CHAPTERS -->
-모두 81분 04초. [AX Platform](#ax-platform) · [PMS-X](#pms-x) · [AX-NAVI IDE](#ax-navi-ide) · [AX-DataLake](#ax-datalake)
+모두 81분 35초. [AX Platform](#ax-platform) · [PMS-X](#pms-x) · [AX-NAVI IDE](#ax-navi-ide) · [AX-DataLake](#ax-datalake)
 
-## AX Platform — 13장 · 29분 21초
+## AX Platform — 13장 · 29분 52초
 
 공통 AI 기반 — 모든 AI 호출·도구 호출·현업 문의가 지나는 곳.
 
@@ -52,7 +52,7 @@
 - sm-helper 실행 — 모델 → PMS-X 도구 → 모델 단계와 시간, 지난 실행 기록
 - **런북** — 등록(HTTP·명령·매개변수 형식·위험도·원복), 실행 요청 → 다른 관리자 승인
 
-### 6. 현업 창구 — 답 · 담당자 접수 · 매뉴얼 보강 · 시험 질문 · 창구 설정 (1분 55초)
+### 6. 현업 창구 — 답 · 담당자 접수 · 매뉴얼 보강 · 시험 질문 · 창구 설정 (2분 00초)
 
 <video controls preload="none" poster="video/features/platform-6.jpg" src="video/features/platform-6.mp4" style="width:100%;border-radius:10px"></video>
 
@@ -99,7 +99,7 @@
 - 지난 평가 결과와 문항별 이유, 문항의 **디버거**
 - **평가 실행** → **이전과 비교**(통과율·점수·지연·토큰, 문항마다 좋아짐·나빠짐) — 사내 3B 모델의 답 흔들림이 그대로 드러남
 
-### 12. 업무 시스템 연결 · 외부 에이전트 가져오기 · 말로 묻기 (4분 21초)
+### 12. 업무 시스템 연결 · 외부 에이전트 가져오기 · 말로 묻기 (4분 46초)
 
 <video controls preload="none" poster="video/features/platform-12.jpg" src="video/features/platform-12.mp4" style="width:100%;border-radius:10px"></video>
 

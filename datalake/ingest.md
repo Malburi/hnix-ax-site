@@ -64,7 +64,7 @@
 
 ## 실시간 스트림
 
-<figure><img src="img/datalake-streams.png" alt="실시간 수집 화면 — Kafka 변경 반영(CDC) 스트림 erp-orders-cdc 와 붙이기 스트림 monitoring-alerts, 상태 '오류'와 원인(Kafka 브로커에 연결하지 못함), 누적 행·마지막 쓰기, 분당 행·대기 행, 밀린 메시지(건) '세어 보기', 줄 끝 다시 시작·멈추기·삭제"><figcaption>실시간 수집. 누적 행·분당 행·대기 행·밀린 메시지(Kafka)·마지막 쓰기를 5초마다 갱신한다. 시연 환경은 Kafka 를 꺼 두어 두 스트림이 '오류'로 보인다.</figcaption></figure>
+<figure><img src="img/datalake-streams.png" alt="실시간 수집 화면 — Kafka 변경 반영(CDC) 스트림 erp-orders-cdc 와 붙이기 스트림 monitoring-alerts, 상태 '멈춤', 누적 행·마지막 쓰기, 분당 행·대기 행, 밀린 메시지(건) '세어 보기', 줄 끝 시작·고치기·삭제"><figcaption>실시간 수집. 누적 행·분당 행·대기 행·밀린 메시지(Kafka)·마지막 쓰기를 5초마다 갱신한다. 시연 환경은 Kafka 를 꺼 두어 두 스트림을 멈춰 두었다(시작하면 브로커에 붙지 못해 '오류'로 바뀐다).</figcaption></figure>
 
 | 받는 곳 | 형식 | 쌓는 방식 |
 |---|---|---|

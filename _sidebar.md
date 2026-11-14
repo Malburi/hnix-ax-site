@@ -1,5 +1,6 @@
 - **시연**
   - [시연 영상과 진행 순서](/demo/README.md)
+  - [해설 시연 영상 ①운영 · ②데이터·통제](/demo/narrated.md)
   - [기능 전체 영상](/demo/features.md)
   - [SM 업무 흐름 시나리오](/demo/scenarios.md)
   - [AI 생태계 워크플로우](/demo/ecosystem.md)

@@ -37,7 +37,7 @@ txt, md, html, csv, json, xml, sql, 소스 코드, docx(EUC-KR 포함), PDF(한�
 
 문서 목록에는 이름마다 **최신 버전 한 줄**만 보인다. 이전 버전이 있으면 제목 앞에 '이전 버전 2개' 표시가 붙고, 왼쪽 ▸ 를 눌러 펼쳐 본다. 이전 버전도 검색 근거에 섞일 수 있어 지우기를 권한다. 조각 칸의 `12/12` 는 나눈 조각 수 중 의미 색인이 된 수다.
 
-<figure><img src="img/platform-docs-replace.png" alt="같은 이름의 문서가 있습니다 — 새 버전으로 바꾸기 / 따로 추가 확인 창"><figcaption>급여 마감 점검표를 고쳐 다시 올린 순간. 뒤 목록의 '이전 버전 N개' 표시는 따로 추가해 둔 예전 버전이다.</figcaption></figure>
+<figure><img src="img/platform-docs-replace.png" alt="같은 이름의 문서가 있습니다 — 새 버전으로 바꾸기 / 따로 추가 확인 창"><figcaption>운영 매뉴얼을 고쳐 같은 이름으로 다시 올린 순간. '따로 추가'로 남긴 예전 버전은 목록에 '이전 버전 N개'로 표시된다.</figcaption></figure>
 
 ## 다른 도구에서 쓰기
 

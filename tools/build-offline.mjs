@@ -87,6 +87,11 @@ function render(src) {
     /<video[^>]*src="video\/tour\.mp4"[^>]*><\/video>/g,
     () => `<div class="tour-note">전체 투어 영상은 오프라인판에 넣지 않았습니다 — 제목 카드와 <b>제품 영상 네 편</b>(AX Platform · PMS-X · AX-NAVI IDE · AX-DataLake)을 이어 붙인 것이라 같은 영상을 <a href="${linkOf("/demo/README.md", prefix)}#제품별-영상">시연 쪽의 제품별 영상</a>으로 차례로 보면 됩니다. 온라인 사이트에서는 한 편으로 볼 수 있습니다.</div>`,
   );
+  // 해설 시연 영상(video/narrated/)도 오프라인판에는 넣지 않는다(zip 100MiB 한도) — 온라인 사이트 주소로 안내
+  html = html.replace(
+    /<video[^>]*src="video\/narrated\/([a-z0-9-]+)\.mp4"[^>]*><\/video>/g,
+    () => `<div class="tour-note">해설 시연 영상은 용량 때문에 오프라인판에 넣지 않았습니다 — <a href="${ONLINE}#/demo/narrated" target="_blank" rel="noopener">온라인 사이트의 해설 시연 영상</a>에서 볼 수 있습니다.</div>`,
+  );
   // 마크다운 안에 직접 쓴 HTML(홈 카드·그림)의 경로도 고친다
   html = html
     .replace(/href="#(\/[^"]*)"/g, (_m, r) => `href="${linkOf(r, prefix)}"`)
@@ -298,7 +303,7 @@ rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, "assets"), { recursive: true });
 cpSync(join(ROOT, "img"), join(OUT, "img"), { recursive: true });
 // 지금 판 영상만 — 날짜 폴더(지난 판 보관)와 전체 투어(제품 영상 네 편을 이은 것, 위 render 참고)는 오프라인판에 넣지 않는다
-if (existsSync(join(ROOT, "video"))) cpSync(join(ROOT, "video"), join(OUT, "video"), { recursive: true, filter: (src) => !/[\\/]video[\\/]\d{4}-\d{2}-\d{2}/.test(src) && !/[\\/]video[\\/]tour\.(mp4|jpg)$/.test(src) });
+if (existsSync(join(ROOT, "video"))) cpSync(join(ROOT, "video"), join(OUT, "video"), { recursive: true, filter: (src) => !/[\\/]video[\\/]\d{4}-\d{2}-\d{2}/.test(src) && !/[\\/]video[\\/]narrated/.test(src) && !/[\\/]video[\\/]tour\.(mp4|jpg)$/.test(src) });
 cpSync(join(ROOT, "tools", "node_modules", "mermaid", "dist", "mermaid.min.js"), join(OUT, "assets", "mermaid.min.js"));
 writeFileSync(join(OUT, "assets", "style.css"), stylesheet());
 writeFileSync(join(OUT, "assets", "app.js"), APP_JS);
