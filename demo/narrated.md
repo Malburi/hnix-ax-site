@@ -6,7 +6,7 @@
 - AI 답을 기다리는 구간(창구 답 · 흐름 실행 · 분류 의견 · IDE 에이전트 · 지식 문서 초안)은 빨리 감았다. 답 자체는 사내 로컬 모델이 그 자리에서 낸 것이다.
 - 등장 인물과 회사는 시연용으로 만든 것이다(김현업 · 서운영 · 이개발, ○○공사 인사팀).
 
-## ① 운영 — 현업 문의 한 건이 지식이 되기까지 (7분 4초)
+## ① 운영 — 현업 문의 한 건이 지식이 되기까지 (6분 42초)
 
 <video controls preload="metadata" poster="video/narrated/ops.jpg" src="video/narrated/ops.mp4" style="width:100%;border-radius:10px;background:#0f1d2b"></video>
 
