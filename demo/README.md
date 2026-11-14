@@ -82,7 +82,7 @@ AX Platform이 실제로 무엇을 하는지 기능마다 한 번씩 써 본다.
 ### 라이브 시연 준비
 
 1. 시연 PC에 [E2E 꾸러미](/getting-started/e2e-kit.md)를 풀고 `start.ps1 -Fresh`로 네 제품을 띄운다(처음 3~5분).
-2. `node scripts\smoke.mjs`로 26단계 자동 점검을 돌려 모두 통과하는지 본다 — 통과하면 위 각본의 데이터가 대부분 준비된 것이다.
+2. `node scripts\smoke.mjs`로 28단계 자동 점검을 돌려 모두 통과하는지 본다 — 통과하면 위 각본의 데이터가 대부분 준비된 것이다.
 3. 실시간 수집 장면에는 Kafka 브로커가 필요하다(JDK 17 이상 — 아래 [영상 다시 만들기](#영상-다시-만들기)). 브로커를 띄우고 이 저장소에서 `node tools/demo-prep.mjs`를 한 번 돌리면 현업 창구 `hr-help`, 업무 흐름 개선 결과, 인수인계 퀴즈, 경보 토픽과 CDC 스트림이 준비된다. 경보는 `node tools/demo-kafka-producer.mjs <토픽>`으로 흘려 보낸다.
 4. 계정 — 플랫폼 `admin`·`dev1`, PMS-X `op.seo`(운영자), AX-DataLake `ana01`(분석가, 소속 HD01)·`eng`(엔지니어). 비밀번호는 꾸러미 README.
 5. 브라우저 탭을 미리 연다 — 플랫폼 `:8710`, PMS-X `:8080`, AX-DataLake `:8790`. AX-NAVI IDE는 `start.ps1`이 연습 저장소로 띄운다. IDE 1.1은 로그인이 필요하다 — `dev1`에게 AX-NAVI 사용 허가가 있는지(꾸러미 시드가 준다) 플랫폼 › **AX-NAVI 사용 허가**에서 확인하고, 로그인 장면을 보여 주려면 시연 전에 **AX-NAVI: 로그아웃**으로 승인을 지워 둔다.

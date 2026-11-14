@@ -12,7 +12,7 @@ AX-NAVI는 된다. 본인 PC에서 `claude`에 로그인해 두면 AX-NAVI가 �
 
 AX-NAVI IDE는 **구독 로그인**을 먼저 고르고, 구독 연결에서는 API 키 환경 변수를 빼서 구독으로 과금되게 한다. 채팅 입력창 아래 연결 이름으로 확인하고, 바꾸려면 명령 팔레트 › **AX-NAVI: AI 모델 연결 설정**.
 
-AX-NAVI CLI는 기본이 API 키다. `AXNAVI_AUTH=subscription`을 넣으면 구독을 먼저 쓰고, 이때 위임 프로세스에서 API 키를 뺀다. `axnavi doctor`의 **과금** 줄로 확인한다.
+AX-NAVI CLI 설치본은 플랫폼에 로그인하면 **사내 게이트웨이**가 기본이다(이 기기 전용 게이트웨이 키를 받아 쓴다). 개인 구독을 쓰려면 PC 정책이 허용할 때 `AXNAVI_AUTH=subscription`을 넣는다 — 이때 위임 프로세스에서 API 키를 뺀다. 설치본 없이 저장소에서 바로 돌리는 개발용 CLI는 API 키를 먼저 쓴다. 어느 쪽이든 `axnavi doctor`의 **실행 경로**·**과금** 줄로 확인한다([AX-NAVI CLI](/axnavi/cli.md)).
 
 ### Claude 없이 사내 모델만으로 쓸 수 있나요?
 

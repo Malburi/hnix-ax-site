@@ -80,7 +80,7 @@ GitHub `Malburi/hnix-ax-platform` › Releases › **서버판 꾸러미 (Postgr
 | 접속 대역 | `server.config.json`의 `allowedSubnets`(예 `["10.20.30.0/24"]`)에 적고 `server.ps1 install`을 다시 — Windows 방화벽이 그 대역만 허용한다. 비우면 사내망 어디서나 |
 | 사용자 등록 | 엑셀 명단(아이디·이름·소속·제품별 역할) 하나로 `server.ps1 users -Csv users.csv` — 세 제품 계정과 PMS-X 프로젝트 멤버를 한 번에 만든다. 틀린 칸이 있으면 아무것도 만들지 않고 고칠 곳을 알려 주고, 이미 있는 계정은 건드리지 않는다 |
 | 첫 비밀번호 | 비워 두면 만들어 서버의 결과 파일에만 적는다. 각자 첫 로그인 뒤 바꾼다 — 플랫폼·AX-DataLake는 오른쪽 위 '비밀번호 바꾸기', PMS-X는 이름 › '비밀번호 변경'. 바꾸면 다른 PC의 로그인은 끊긴다 |
-| 사내 계정 | 플랫폼은 AD(LDAP)·SSO(OIDC) — 첫 로그인 때 계정이 생긴다. PMS-X는 AD 로그인 — 기본은 미리 등록한 사람만, `pmsx.auth.ldap.auto-create: true` 면 첫 로그인 때 생긴다(역할·프로젝트 없음). AX-DataLake는 로컬 계정만 |
+| 사내 계정 | 플랫폼은 AD(LDAP)·SSO(OIDC) — 첫 로그인 때 계정이 생긴다. PMS-X는 AD 로그인 — 기본은 미리 등록한 사람만, `pmsx.auth.ldap.auto-create: true` 면 첫 로그인 때 생긴다(역할·프로젝트 없음). AX-DataLake는 0.6.0부터 AD(LDAP)·SSO(OIDC)를 선택으로 켤 수 있다(기본 꺼짐 — 서버판 설치는 로컬 계정으로 시작, 켜는 법은 [제품 조합과 함께 설치할 때](/getting-started/together.md)) |
 
 | 제품 | 역할 |
 |---|---|
