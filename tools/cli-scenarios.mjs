@@ -119,6 +119,42 @@ async function until(re, timeout = 120000) {
   }
 }
 
+/** 대화형 모드에 스킬을 친다 */
+let skillAt = 0;
+async function skill(r, text) {
+  await typeCmd(text, 0.05);
+  await pause(600);
+  await typeCmd("\r");
+  skillAt = Date.now();
+}
+/** 스킬이 끝날 때까지 — 도는 동안은 바닥의 진행 표시가 계속 바뀐다. 읽기 전용 명령 확인이 뜨면 허용한다 */
+async function skillDone(timeout = 600000) {
+  for (;;) {
+    const s = await state();
+    if (/이번 세션 동안 (모두 )?묻지 않음/.test(s.tail.slice(-800)) && s.idle > 1) {
+      await typeCmd("\r");
+      await pause(1500);
+      continue;
+    }
+    if (Date.now() - skillAt > 8000 && s.idle > 3) return;
+    if (Date.now() - skillAt > timeout) throw new Error(`스킬이 끝나지 않았습니다\n${s.tail.slice(-600)}`);
+    await pause(400);
+  }
+}
+/** 답의 첫머리(친 스킬 줄)부터 보여 주고 seconds 동안 끝까지 천천히 내린다 */
+async function scrollAnswer(r, marker, seconds) {
+  const info = await r.eval(`(() => { const t = window.__term, b = t.buffer.active; let i = b.length - 1; for (; i >= 0; i--) { if ((b.getLine(i)?.translateToString(true) || '').includes(${JSON.stringify(marker)})) break; } if (i >= 0) t.scrollToLine(i); return { i, base: b.baseY }; })()`);
+  if (!info || info.i < 0) return;
+  const lines = Math.max(0, info.base - info.i);
+  if (!lines) return;
+  await pause(1500);
+  const step = Math.max(80, ((seconds - 2) * 1000) / lines);
+  for (let k = 0; k < lines; k++) {
+    await r.eval("window.__term.scrollLines(1)");
+    await pause(step);
+  }
+}
+
 let bridge = null;
 function setup() {
   mkdirSync(ROOT, { recursive: true });
@@ -130,12 +166,11 @@ function setup() {
   }
   const prep = spawnSync(process.execPath, [new URL("./cli-prep.mjs", import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1"), WORK], { encoding: "utf8" });
   if (prep.status !== 0) throw new Error(`cli-prep 실패: ${prep.stderr}`);
+  // 런처 상태(로그인·받은 엔진)만 W: 에 둔다 — 홈 폴더는 그대로(개발자 본인 claude 로그인을 에이전트가 쓴다)
   const home = `${DRIVE}\\home`;
   // 막 설치한 PC 처럼 — 지난 로그인·받아 둔 엔진을 지운다
   rmSync(home, { recursive: true, force: true, maxRetries: 5, retryDelay: 300 });
-  for (const d of [`${home}\\.axnavi`, `${home}\\AppData\\Local`, `${home}\\AppData\\Roaming`, `${DRIVE}\\bin`]) mkdirSync(d, { recursive: true });
-  // 엔진의 새 판 알림(GitHub 조회)을 녹화에서 뺀다
-  writeFileSync(`${home}\\.axnavi\\update-check.json`, JSON.stringify({ at: Date.now(), latest: null }));
+  for (const d of [`${home}\\AppData\\Local`, `${DRIVE}\\bin`]) mkdirSync(d, { recursive: true });
   // 설치본의 axnavi 명령 — 런처(launcher/src)를 W:\AX-NAVI CLI 로 복사해 돌린다(whoami 의 설치 폴더가 사용자 폴더를 드러내지 않게)
   const inst = `${DRIVE}\\AX-NAVI CLI`;
   rmSync(inst, { recursive: true, force: true });
@@ -149,11 +184,12 @@ function setup() {
   // 기기 이름은 PC 이름(hostname)이다 — 녹화에는 개인 PC 이름 대신 DEV-PC01
   writeFileSync(`${DRIVE}\\bin\\demo-host.mjs`, `import os from "node:os"; import { syncBuiltinESMExports } from "node:module"; os.hostname = () => "DEV-PC01"; syncBuiltinESMExports();\n`);
   const env = {
-    USERPROFILE: home, HOME: home, LOCALAPPDATA: `${home}\\AppData\\Local`, APPDATA: `${home}\\AppData\\Roaming`,
     AXNAVI_LAUNCHER_HOME: `${home}\\AppData\\Local\\AX-NAVI CLI`,
     HNIX_AX_SERVER: L,
     NODE_OPTIONS: `--import=file:///${DRIVE}/bin/demo-host.mjs`,
-    AXNAVI_AUTH: "", AXNAVI_PROVIDER: "", ANTHROPIC_API_KEY: "",
+    // 스킬의 에이전트는 개발자 본인 Claude 구독(claude CLI 로그인) — 시연 PC 의 사내 CPU 모델(4B)은 코드 탐색 답이 부정확하다.
+    // 설치본 기본은 사내 게이트웨이이고, 구독은 PC 정책이 허용할 때만. 비용 표시는 cli-bridge 가 녹화 화면에서 가린다
+    AXNAVI_AUTH: process.env.CLI_AUTH ?? "subscription", AXNAVI_PROVIDER: "", ANTHROPIC_API_KEY: "",
   };
   const args = [new URL("./cli-bridge.py", import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1"), "--port", String(PORT), "--cwd", WORK, "--path-prepend", `${DRIVE}\\bin;${DRIVE}\\py`, "--title", "Windows PowerShell"];
   for (const [k, v] of Object.entries(env)) args.push("--env", `${k}=${v}`);
@@ -213,36 +249,36 @@ export const SCENARIOS = {
         await r.click("이 기기 승인", { selector: "button", exact: true, after: 1500 });
         await w();
         await r.go(`${B}/`, "!!window.__term");
-        await ff(r, () => until(/이제 작업 폴더에서/, 180000), 3, "엔진과 사내 게이트웨이 연결을 받는 중");
+        await ff(r, () => until(/이제 작업 폴더에서/, 180000), 3, "엔진을 받는 중");
         await pause(1500);
 
-        // ── whoami
-        await run("axnavi whoami");
-        w = await beat(r, "c04", "axnavi whoami — 사람 · 사용 허가 · 엔진 · 사내 모델", "모델 호출은 모두 사내 LLM 게이트웨이로 — 사용량이 플랫폼에 남습니다");
-        await w();
-
-        // ── 색인
+        // ── 색인 — AI 없이
         await run("cls");
+        w = await beat(r, "c04", "axnavi index build — AI 없이 코드 전체 지도", "화면 · 자바 · 매퍼 SQL · 테이블 · 호출 관계 · SQL 사용처");
         await run("axnavi index build");
-        await run("axnavi index coverage");
-        w = await beat(r, "c05", "axnavi index build — AI 없이 코드 전체 지도", "화면 · 자바 · 매퍼 SQL · 테이블 · 호출 관계 — 커버리지 진단으로 다룰 수 있는 범위를 숫자로");
         await w();
 
-        // ── 대화형 모드 — 에이전트·스킬 목록(모델은 부르지 않는다: 시연 PC 의 CPU 모델은 코드 탐색 답이 부정확해 넣지 않음)
+        // ── 대화형 모드 — /find · /impact 스킬
         await run("cls");
         await typeCmd("axnavi");
         await pause(400);
         await typeCmd("\r");
         await until(/자연어로 물어보세요/, 60000);
-        await pause(1200);
-        w = await beat(r, "c06", "axnavi — 대화형 모드 · 에이전트 19종 · 스킬 26종", "프로젝트 · 인덱스 상태 · 실행 경로(사내 게이트웨이)가 먼저 보입니다 · 파일을 바꾸기 전에는 묻습니다");
-        await pause(Math.max(3000, ((DUR.c06 ?? 10) * 1000) / 2));
-        await typeCmd("/agents", 0.08);
-        await pause(400);
-        await typeCmd("\r");
-        await until(/writer/, 30000);
+        await pause(1000);
+        w = await beat(r, "c05", "axnavi — 대화형 모드 · IDE 와 같은 스킬 26종", "이클립스·인텔리J 옆 터미널, 서버 SSH 에서도 · 이 시연의 에이전트는 개발자 본인 Claude 구독");
+        await pause(2500);
+        await skill(r, "/find 사원 목록 조회 기능이 어디 있어?");
         await w();
-        await pause(1500);
+        await ff(r, () => skillDone(), 4, "find 스킬 — 색인을 조회하고 파일을 읽는 중");
+        w = await beat(r, "c06", "/find — 화면 버튼부터 테이블까지, 파일과 줄 번호로", "찾은 것 · 확인했는데 없는 것 · 확인하지 못한 것을 나눠서");
+        await scrollAnswer(r, "/find 사원", (DUR.c06 ?? 15) - 2);
+        await w();
+
+        await skill(r, "/impact EmpMapper.selectEmpList 의 정렬(ORDER BY)을 바꾸면 영향 받는 곳");
+        await ff(r, () => skillDone(), 4, "impact 스킬 — 호출자와 화면을 거슬러 올라가는 중");
+        w = await beat(r, "c07", "/impact — 같은 SQL 을 쓰는 곳 · 화면 · 테스트 유무 · 위험도", "목록 조회와 엑셀 다운로드 두 곳 · 확인하지 못한 것까지");
+        await scrollAnswer(r, "/impact EmpMapper", (DUR.c07 ?? 15) - 2);
+        await w();
         {
           const before = (await state()).prompts;
           await typeCmd("/exit", 0.08);
@@ -254,29 +290,24 @@ export const SCENARIOS = {
           }
         }
 
-        // ── 변경 리뷰
+        // ── IDE 에 없는 일괄 명령 — 현대화 레시피
         await run("cls");
-        await run("git --no-pager diff --stat; git --no-pager diff -- src/main/resources", { delay: 0.035 });
-        w = await beat(r, "c08", "개발자의 변경 — 사원 목록에 정렬 추가", "화면에서 고른 정렬 컬럼을 ${} 로 SQL 에 그대로 붙였습니다");
-        await w();
-        await run("cls");
-        await run("axnavi review");
-        w = await beat(r, "c09", "axnavi review — STOP · MyBatis ${} 직접 치환(OWASP A03 · CWE-89)", "AI 없이 바뀐 줄만 검사 · 위치와 고치는 법");
-        await w();
-        await run("$LASTEXITCODE");
-        w = await beat(r, "c10", "종료 코드 4 — CI 에서 머지를 막습니다", "GO 0 · HOLD 3 · STOP 4 — 같은 판정을 IDE 상태 표시줄과 CI 가 씁니다");
+        w = await beat(r, "c08", "axnavi modernize oracle-pg — 저장소 전체를 한 번에(AI 없이)", "IDE 에 없는 일괄 명령 · 자동으로 고칠 것과 사람이 볼 것을 나눔 · --apply 뒤 --verify");
+        await run("axnavi modernize oracle-pg");
+        await pause(1200);
+        await run("Get-Content _workspace\\reports\\modernize_oracle-pg.md -Encoding utf8 -TotalCount 19", { delay: 0.03 });
         await w();
 
-        // ── 관리자 — 기기
-        await r.login("platform", "admin");
-        await r.go(`${L}/axnavi-seats`);
-        await pause(1500);
-        await r.click("기기 (", { selector: ".n-tabs-tab", after: 1200 });
-        w = await beat(r, "c11", "플랫폼 › AX-NAVI 사용 허가 — 사람 · 기기 · 엔진", "방금 승인한 DEV-PC01 · 끊으면 그 PC 의 CLI 는 바로 잠깁니다");
+        // ── 머지 게이트 — 리뷰 STOP · 종료 코드
+        await run("cls");
+        await run("axnavi review");
+        w = await beat(r, "c09", "axnavi review — STOP · MyBatis ${} 직접 치환(OWASP A03 · CWE-89)", "AI 없이 바뀐 줄만 검사 · CI 러너에서는 종료 코드로 머지를 막습니다");
+        await pause(Math.max(3000, ((DUR.c09 ?? 12) * 1000) / 2));
+        await run("$LASTEXITCODE");
         await w();
 
         await r.go(card("cli-end"));
-        w = await beat(r, "c12");
+        w = await beat(r, "c10");
         await w(1);
         await finish(r, "cli");
       } finally {

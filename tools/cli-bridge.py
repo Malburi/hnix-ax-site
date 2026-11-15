@@ -51,6 +51,21 @@ ANSI = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]|\x1b\][^\x07]*(\x07|\x1b\\)|\x1b[()]
 PROMPT = re.compile(r"PS [A-Z]:\\[^>\r\n]*>")
 
 
+# 녹화 화면에서 가릴 것 — 개인 구독으로 돌릴 때 CLI 가 보여 주는 비용($0.1385)과 사용자 폴더 경로
+COST = re.compile(r"(?: · )?\$\d+\.\d+")
+HOME_PATH = re.compile(re.escape(os.path.expanduser("~")), re.I)
+# 비용·경로가 읽기 경계에 걸리면 다음 읽기와 합쳐서 가린다
+TAIL_KEEP = re.compile(r"(?: · ?|\$[\d.]*|[A-Za-z]:\\[^\r\n\x1b]{0,40})$")
+
+
+def mask(s):
+    s = HOME_PATH.sub(r"C:\\Users\\dev", s)
+    return COST.sub("", s)
+
+
+carry = [""]
+
+
 def reader():
     while proc.isalive():
         try:
@@ -59,8 +74,24 @@ def reader():
             break
         if s:
             with lock:
-                buf.append(s)
+                s = carry[0] + s
+                m = TAIL_KEEP.search(s)
+                carry[0], s = (s[m.start():], s[: m.start()]) if m else ("", s)
+                buf.append(mask(s))
                 last[0] = time.time()
+
+
+def flusher():
+    """붙잡아 둔 끝부분은 다음 출력이 0.15초 안에 없으면 그대로 내보낸다(프롬프트가 늦게 보이지 않게)"""
+    while True:
+        time.sleep(0.05)
+        with lock:
+            if carry[0] and time.time() - last[0] > 0.15:
+                buf.append(mask(carry[0]))
+                carry[0] = ""
+
+
+threading.Thread(target=flusher, daemon=True).start()
 
 
 threading.Thread(target=reader, daemon=True).start()

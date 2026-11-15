@@ -20,7 +20,7 @@ axnavi logout                   이 PC 로그아웃(플랫폼의 기기 승인�
 - 로그인 정보는 이 PC 사용자 폴더(`%LOCALAPPDATA%AX-NAVI CLI`)에 Windows 사용자 보호(DPAPI)로 둔다. 플랫폼에 잠시 닿지 않아도 정해진 기간(기본 3일)까지는 받아 둔 엔진으로 쓴다. 제거하면 받은 엔진과 로그인 정보도 지운다.
 - 조용히 설치(배포 도구): `HNIX-AX-CLI-Setup-<판>.exe /VERYSILENT /SERVER=<플랫폼 주소>` — PC 공용 설치는 `/ALLUSERS`.
 
-> 로그인부터 색인, 변경 리뷰 STOP 까지 실제 터미널 화면은 [해설 시연 영상 ③ AX-NAVI CLI](/demo/narrated.md)(3분 28초)에서 볼 수 있다.
+> 로그인, 색인, 대화형 모드의 `/find` · `/impact` 스킬, 현대화 레시피, 변경 리뷰 STOP 까지 실제 터미널 화면은 [해설 시연 영상 ③ AX-NAVI CLI](/demo/narrated.md)(3분 33초)에서 볼 수 있다.
 
 > CLI 자체의 설치·대화형 모드·스킬 설명은 [AX-NAVI CLI 문서](https://malburi.github.io/AX-NAVI-CLI/)에 있다.
 
@@ -31,6 +31,7 @@ axnavi logout                   이 PC 로그아웃(플랫폼의 기기 승인�
 | 개발자가 평소에 코드를 보고 고친다 | **IDE** |
 | 머지 요청마다 리뷰·보안 점검으로 막는다 | **CLI** — CI 러너에서 |
 | 단계 게이트 결과를 진행 기록서에 남긴다 | **CLI** — `axnavi gate <단계> --record` |
+| 저장소 전체를 한 번에 바꾸거나 잰다(현대화 레시피 · 테스트 골격 · 바뀐 줄 커버리지) | **CLI** — `axnavi modernize` · `test` · `coverage` (IDE 에 없는 명령) |
 | VS Code를 쓰지 않는 개발자, 터미널에서 일하는 사람 | **CLI 설치본** — `axnavi login` 뒤 대화형 모드 `axnavi` |
 
 ## 명령 한눈에
