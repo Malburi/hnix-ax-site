@@ -476,7 +476,7 @@ export const SCENARIOS = {
       await r.caption("트리거 — 경보 웹훅 · 예약 · 감시가 사람 대신 에이전트를 깨웁니다");
       await pause(3500);
 
-      // ── 자동화 흐름 · 에이전트 평가 · 업무 시스템 연결(2026-11 판)
+      // ── 업무 자동화 · 에이전트 평가 · 업무 시스템 연결(2026-11 판)
       const flowId = await (async () => {
         const tok = (await (await fetch(`${L}/api/v1/auth/login`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(A.platform.users.admin) })).json()).accessToken;
         const j = await (await fetch(`${L}/api/v1/flows`, { headers: { authorization: `Bearer ${tok}` } })).json();
@@ -484,9 +484,9 @@ export const SCENARIOS = {
       })().catch(() => null);
       await r.go(flowId ? `${L}/flows?flow=${flowId}` : `${L}/flows`);
       await pause(1500);
-      await r.caption("자동화 흐름 — 정해진 순서대로 실행합니다", "모델 질문 · 도구 호출 · 에이전트 · 조건 분기 · 반복 · 사람 확인 노드를 캔버스에 · 트리거·MCP(flows__run)로 실행");
+      await r.caption("업무 자동화 — 정해진 순서대로 실행합니다", "AI에게 묻기 · 시스템 조회 · 에이전트에게 맡기기 · 조건에 따라 나누기 · 반복 · 사람 확인 단계를 캔버스에 · 트리거·MCP(flows__run)로 실행");
       await pause(5500);
-      await r.caption("새 서비스 요청 → 유형 분류(사내 모델) → 갈래 → 장애 담당 에이전트 / 지식 문서 검색 → 담당자 확인(승인함)", "실행마다 실행 디버거에 단계별 시간·토큰 · 버전 기록으로 되돌리기");
+      await r.caption("새 서비스 요청 → 유형 분류(사내 모델) → 갈래 → 장애 담당 에이전트 / 지식 문서 검색 → 답변 초안 → 담당자 확인(승인함)", "실행마다 실행 디버거에 단계별 시간·토큰 · 버전 기록으로 되돌리기");
       await pause(5000);
       await r.go(`${L}/agent-eval`);
       await pause(1500);
@@ -506,7 +506,7 @@ export const SCENARIOS = {
       await pause(3500);
       // ── 승인함(0.9.1 — 도구 이름·입력값 요약을 읽기 쉽게)
       await r.go(`${L}/approvals`);
-      await r.caption("승인함 — 사람 승인이 필요한 도구 호출·런북·자동화 흐름이 한곳에", "누가 · 어느 도구를 · 어떤 입력값으로 — 도구 이름과 입력값 요약을 읽기 쉽게");
+      await r.caption("승인함 — 사람 승인이 필요한 도구 호출·런북·업무 자동화가 한곳에", "누가 · 어느 도구를 · 어떤 입력값으로 — 도구 이름과 입력값 요약을 읽기 쉽게");
       await pause(3000);
       // 맨 위 줄은 방금 에이전트가 멈춘 관리자 본인의 요청 — 본인 요청에는 검토 버튼이 없다
       const mine = await r.find("관리자", { selector: "td", exact: true, timeout: 2000 });

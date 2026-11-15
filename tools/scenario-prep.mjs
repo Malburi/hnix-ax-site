@@ -84,10 +84,10 @@ const ticket = (await res.json()).result;
 out.itsm = { connectionId: conn.id, ticket: ticket.number.value };
 ok(`고객 티켓 ${ticket.number.value} 등록(아직 동기화 전)`);
 
-// ---------- 시나리오 A — 자동화 흐름: PMS-X 새 서비스 요청을 감시해 '서비스 요청 분류·처리' 흐름을 깨운다
-log("시나리오 A — 감시 트리거 → 자동화 흐름 '서비스 요청 분류·처리'");
+// ---------- 시나리오 A — 업무 자동화: PMS-X 새 서비스 요청을 감시해 '서비스 요청 분류·처리' 흐름을 깨운다
+log("시나리오 A — 감시 트리거 → 업무 자동화 '서비스 요청 분류·처리'");
 const flow = items(await pl("GET", "/flows")).find((f) => f.name === "서비스 요청 분류·처리");
-if (!flow) throw new Error("자동화 흐름 '서비스 요청 분류·처리' 가 없습니다 — feature-prep-ai.mjs 를 먼저 돌리세요");
+if (!flow) throw new Error("업무 자동화 '서비스 요청 분류·처리' 가 없습니다 — feature-prep-ai.mjs 를 먼저 돌리세요");
 const smProject = items(await pl("GET", "/itsm/connections")).find((c) => c.id === conn.id)?.pmsx_project;
 if (!smProject) throw new Error("시험용 ITSM 연결의 PMS-X 프로젝트를 모릅니다");
 const devMe = await (await client("platform", "dev"))("GET", "/auth/me");

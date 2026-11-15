@@ -1,6 +1,6 @@
 /*
  * SM 업무 흐름 시나리오 영상 — 여러 제품을 오가며 한 건을 끝까지 처리한다.
- *   시나리오 A  고객 ITSM 티켓 → 서비스 요청 → 자동화 흐름(감시 트리거 → 분류·처리안 → 승인함) → 배정 → 원인 찾기 → AX-NAVI IDE 로 수정 → 처리 → 고객 반영 → 지식 문서
+ *   시나리오 A  고객 ITSM 티켓 → 서비스 요청 → 업무 자동화(감시 트리거 → 분류·처리안 → 승인함) → 배정 → 원인 찾기 → AX-NAVI IDE 로 수정 → 처리 → 고객 반영 → 지식 문서
  *   시나리오 B  메신저·웹 창구(현업 창구가 1차 응대 → 담당자 접수 → 매뉴얼 보강)와 전화(담당자가 대신 등록)
  *
  *   node tools/scenario-prep.mjs
@@ -86,7 +86,7 @@ const srOf = (r, ticket) => r.eval(`(() => { const row = [...document.querySelec
 export const SCENARIOS = {
   /* ================= 시나리오 A ================= */
   "sm-a": {
-    title: "시나리오 A — 고객 ITSM 티켓: 접수 → 자동화 흐름(분류·처리안·담당자 확인) → 배정 → AX-NAVI IDE 로 수정 → 처리 → 고객 반영 → 지식 문서",
+    title: "시나리오 A — 고객 ITSM 티켓: 접수 → 업무 자동화(분류·처리안·담당자 확인) → 배정 → AX-NAVI IDE 로 수정 → 처리 → 고객 반영 → 지식 문서",
     maxGap: 3,
     async run(r) {
       const pp = prep();
@@ -108,11 +108,11 @@ export const SCENARIOS = {
       await r.caption(`② 플랫폼 ITSM 연동이 PMS-X 서비스 요청으로 접수 — ${ticket} → ${srNo}`, "웹훅이면 바로, 아니면 주기(기본 5분) · 우선순위는 대응표대로 · 고객 티켓에는 요청 번호 댓글");
       await pause(6000);
 
-      // ── ③ 자동화 흐름 — 감시 트리거가 새 서비스 요청을 잡아 '서비스 요청 분류·처리' 흐름을 깨운다
+      // ── ③ 업무 자동화 — 감시 트리거가 새 서비스 요청을 잡아 '서비스 요청 분류·처리' 흐름을 깨운다
       await r.go(`${L}/flows`);
       await pause(1500);
       await clickNear(r, "서비스 요청 분류·처리", "열기", { after: 2500 });
-      await r.caption("③ 자동화 흐름 '서비스 요청 분류·처리' — 새 요청마다 정해진 순서대로", "유형 분류(사내 모델) → 갈래 → 장애 담당 에이전트 / 지식 문서 검색 → 담당자 확인 → 처리안 확정");
+      await r.caption("③ 업무 자동화 '서비스 요청 분류·처리' — 새 요청마다 정해진 순서대로", "유형 분류(사내 모델) → 갈래 → 장애 담당 에이전트 / 지식 문서 검색 → 담당자 확인 → 처리안 확정");
       await pause(6000);
       await r.find("새 서비스 요청 감시", { selector: "div, span, b", timeout: 4000 });
       await pause(1200);
@@ -132,7 +132,7 @@ export const SCENARIOS = {
       await pause(1500);
       await r.caption("④ 담당자 확인 — 흐름의 처리안이 승인함에 올라옵니다", "SM 운영 책임자(관리자)가 분류 결과와 처리안을 읽고 결정 · 실행한 사람은 스스로 승인할 수 없습니다");
       await pause(4000);
-      if ((await clickNear(r, "자동화 흐름 — 사람 확인", "검토", { after: 1500 })) || (await clickNear(r, "flows__confirm", "검토", { after: 1500 }))) {
+      if ((await clickNear(r, "업무 자동화 — 사람 확인", "검토", { after: 1500 })) || (await clickNear(r, "flows__confirm", "검토", { after: 1500 }))) {
         await pause(4500);
         await r.type("결정 사유", "처리안대로 진행 — 개발 담당 배정", { delay: 45 });
         await modalBtn(r, "승인", 2000);
@@ -299,7 +299,7 @@ export const SCENARIOS = {
       await r.waitFor("/SR-\\d{4}/.test(document.body.innerText)", 40000);
       await r.caption("PMS-X 서비스 요청으로 접수 — 대화 기록과 함께, 접수 번호가 바로 돌아옵니다", "Teams 는 \"접수\" 한마디 · 접수처는 창구마다(PMS-X · 고객 ITSM · 웹훅)");
       await pause(5000);
-      await r.caption("접수된 요청은 시나리오 A 와 같은 길로 — 감시 트리거가 자동화 흐름(분류·처리안·담당자 확인)에 넣습니다", "어느 길로 들어와도 처리 순서는 하나");
+      await r.caption("접수된 요청은 시나리오 A 와 같은 길로 — 감시 트리거가 업무 자동화(분류·처리안·담당자 확인)에 넣습니다", "어느 길로 들어와도 처리 순서는 하나");
       await pause(4500);
 
       // ── ③ 담당자 — 종 알림 → 매뉴얼 보강

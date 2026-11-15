@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /*
- * 기능 영상 ⑩~⑫(자동화 흐름·실행 디버거·에이전트 평가·업무 시스템 연결·음성·외부 에이전트) 준비.
+ * 기능 영상 ⑩~⑫(업무 자동화·실행 디버거·에이전트 평가·업무 시스템 연결·음성·외부 에이전트) 준비.
  * 먼저 tools/demo-servers.mjs 와 사내 음성 인식 서버(OpenAI 호환 /v1/audio/transcriptions, 기본 http://127.0.0.1:8796/v1)를 띄운다.
  *   node tools/feature-prep-ai.mjs [--stt=http://127.0.0.1:8796/v1] [--no-baseline]
  *
  *  게이트웨이  프로바이더 '사내 음성 인식 서버' + 별칭 voice-stt(음성 인식)
  *  현업 창구   hr-help 에 말로 묻기(voice-stt)·답 읽어 주기(브라우저) 켬
- *  자동화 흐름 '서비스 요청 분류·처리'(예시 흐름 — 모델 hnix-local, 장애 담당 alert-triage)
+ *  업무 자동화 '서비스 요청 분류·처리'(예시 흐름 — 모델 hnix-local, 장애 담당 alert-triage)
  *  에이전트 평가 sm-helper 시험 문항 '서비스 요청 도우미 회귀' 4문항 + 기준 평가 한 번(--no-baseline 이면 생략)
  *  녹화에서 새로 만드는 것은 지운다: 업무 시스템 연결 sap_hr·incident_api, 외부 에이전트 'purchase-agent'
  */
@@ -69,8 +69,8 @@ await pl("PUT", `/desks/${d.id}`, {
 });
 ok("hr-help 음성 켬");
 
-// ---------- 자동화 흐름
-log("자동화 흐름 — 서비스 요청 분류·처리");
+// ---------- 업무 자동화
+log("업무 자동화 — 서비스 요청 분류·처리");
 const flows = items(await pl("GET", "/flows"));
 if (!flows.some((f) => f.name === "서비스 요청 분류·처리")) {
   const ex = await pl("GET", "/flows/example?model=hnix-local&agent=alert-triage");

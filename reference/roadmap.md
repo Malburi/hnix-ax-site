@@ -40,9 +40,9 @@
 | AX-NAVI 사용 허가(로그인·기기 승인·허가 회수, 스킬·엔진 배포, 유출본 추적, 서버 엔진) | 제품에 있음 | [사용 허가](/axnavi/license.md) | 사내 SSO 직접 연동(지금은 플랫폼 로그인 — LDAP 포함) |
 | 조직 설정 배포(규칙·스킬·양식·MCP·정책·IDE 사용자 정의 모드) | 제품에 있음 | [플랫폼 연동](/axnavi/integration.md#조직-설정-배포) | IDE 화면 안에서 직접 받기(지금은 CLI 가 깔아 줌) |
 | 런북 — 승인 후 실행, 점검(dry-run), 실패 시 원복 | 제품에 있음 | [런북](/platform/runbooks.md) | 고객 자동화 도구(AWX 등) 실연결 |
-| 자동화 흐름(캔버스 — 모델·도구·에이전트·분기·반복·사람 확인, 판 기록, REST·MCP·트리거 실행) | 제품에 있음 | [자동화 흐름](/platform/flows.md) | 되돌리기·작은 지도 같은 편집 편의, 흐름 안 병렬 실행 |
+| 업무 자동화(캔버스 — 모델·도구·에이전트·분기·반복·사람 확인, 판 기록, REST·MCP·트리거 실행) | 제품에 있음 | [업무 자동화](/platform/flows.md) | 되돌리기·작은 지도 같은 편집 편의, 흐름 안 병렬 실행 |
 | 업무 시스템 연결(SAP·Salesforce·Microsoft 365·네이버웍스·OpenAPI → 허브 도구) | 현장 확인 | [업무 시스템 연결](/platform/biz.md) | 고객 SAP·M365 실연결(Teams 채널 메시지는 웹훅 방식 검토) |
-| 외부 에이전트 가져오기(A2A·LangGraph·OpenAI 호환·HTTP) | 제품에 있음 | [에이전트 실행기](/platform/agents.md#외부-에이전트-가져오기) | 스트리밍·실행 중 취소 |
+| 외부 에이전트 연결(A2A·LangGraph·OpenAI 호환·HTTP) | 제품에 있음 | [에이전트 실행기](/platform/agents.md#외부-에이전트-연결) | 스트리밍·실행 중 취소 |
 | 업무 템플릿(요청·장애·변경 절차 체크리스트) | 제품에 있음 | [SM 운영과 AI 보조](/pmsx/sm-ai.md#업무-템플릿) | 고객사 표준 양식 반영 |
 | 현대화 레시피(Java 17·21, Spring Boot 3, jakarta, Oracle → PostgreSQL) | 제품에 있음 | [AX-NAVI CLI — 터미널과 CI](/axnavi/cli.md#현대화-레시피) | IDE 화면 |
 | 여러 줄 Oracle SQL 의 AI 초안 | 제품에 있음 | [AX-NAVI CLI — 터미널과 CI](/axnavi/cli.md#현대화-레시피) | 고객 레거시로 초안 품질 측정 |

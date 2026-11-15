@@ -27,7 +27,7 @@
   - [전사 AI 관측](/platform/enterprise-ai.md)
   - [MCP 허브와 승인함](/platform/hub.md)
   - [에이전트 실행기와 A2A](/platform/agents.md)
-  - [자동화 흐름](/platform/flows.md)
+  - [업무 자동화](/platform/flows.md)
   - [에이전트 평가](/platform/agent-eval.md)
   - [현업 창구](/platform/desk.md)
   - [고객 ITSM 연동](/platform/itsm.md)

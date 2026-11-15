@@ -1,7 +1,7 @@
 /*
  * 해설 시연 영상 2026-11-13 판 — 해설 음성을 먼저 만들고(presentations/hnix-ax-demo-1113: narr.json → tts.mjs → durations.json),
  * 녹화는 장면마다 해설 길이만큼 머문다. AI 를 기다리는 긴 구간은 빨리 감는다(ff). 끝나면 timeline-<편>.json 에 장면 시각.
- *   ops  현업 문의 한 건이 지식이 되기까지 — 현업 창구(매뉴얼 + 레이크 문서) → 담당자 접수 → 자동화 흐름·승인함 → PMS-X → AX-NAVI IDE → 지식 문서
+ *   ops  현업 문의 한 건이 지식이 되기까지 — 현업 창구(매뉴얼 + 레이크 문서) → 담당자 접수 → 업무 자동화·승인함 → PMS-X → AX-NAVI IDE → 지식 문서
  *   gov  데이터·통제·도입 구성 — 레이크 대시보드·AI 분석 · 레이크 문서 · 플랫폼 문서 검색 · 게이트웨이 · 기능 모듈 · 사내 AD·SSO(선택)
  *
  *   node tools/story-prep.mjs && node tools/feature-prep-analysis.mjs
@@ -202,13 +202,13 @@ export const SCENARIOS = {
       await w();
       if (!srNo) throw new Error("접수 번호를 읽지 못했습니다");
 
-      // ── 자동화 흐름 — 감시 트리거 → 분류·처리안 → 사람 확인
+      // ── 업무 자동화 — 감시 트리거 → 분류·처리안 → 사람 확인
       await r.caption("");
       await r.login("platform", "admin");
       await r.go(`${L}/flows`);
       await pause(1500);
       await clickNear(r, "서비스 요청 분류·처리", "열기", { after: 2500 });
-      w = await beat(r, "o07", "자동화 흐름 '서비스 요청 분류·처리'", "감시 트리거가 PMS-X 의 새 서비스 요청을 찾아 흐름을 깨웁니다");
+      w = await beat(r, "o07", "업무 자동화 '서비스 요청 분류·처리'", "감시 트리거가 PMS-X 의 새 서비스 요청을 찾아 흐름을 깨웁니다");
       await w(-3);
       await clickNear(r, "새 서비스 요청 감시", "지금 실행", { after: 1500 });
       await ff(r, () => r.waitFor("!!document.querySelector('[data-test=flow-run-result]') && /사람 확인 대기|승인함에서 결정/.test(document.querySelector('[data-test=flow-run-result]').innerText)", 300000), 4, `지금 실행 — ${srNo} 를 흐름에`);
@@ -222,7 +222,7 @@ export const SCENARIOS = {
       await r.go(`${L}/approvals`);
       await pause(1500);
       w = await beat(r, "o09", "승인함 — SM 운영 책임자가 처리안을 보고 결정", "실행한 사람은 스스로 승인할 수 없습니다 · 누가 언제 승인했는지 기록");
-      if ((await clickNear(r, "자동화 흐름 — 사람 확인", "검토", { after: 1500 })) || (await clickNear(r, "flows__confirm", "검토", { after: 1500 }))) {
+      if ((await clickNear(r, "업무 자동화 — 사람 확인", "검토", { after: 1500 })) || (await clickNear(r, "flows__confirm", "검토", { after: 1500 }))) {
         await pause(3500);
         await r.type("결정 사유", "처리안대로 진행 — 개발 담당 배정", { delay: 45 });
         await modalBtn(r, "승인", 1500);

@@ -6,7 +6,7 @@
  *  레이크   문서 묶음 '운영 보고서·회의록'(ops — 분석가가 볼 수 있음, 장애 보고 PPT·회의록·운영 실적·점검표 스캔)
  *          문서 묶음 '경영 검토(제한)'(mgmt — 분석가 권한 없음, 플랫폼 검색에 안 나와야 한다)
  *  플랫폼   현업 창구 hr-help(근거: 플랫폼 '운영 매뉴얼' + 레이크 '운영 보고서·회의록', 못 찾으면 PMS-X 서비스 요청)
- *          자동화 흐름 '서비스 요청 분류·처리' + 감시 트리거 '새 서비스 요청 감시'(기준선만 잡아 둔다)
+ *          업무 자동화 '서비스 요청 분류·처리' + 감시 트리거 '새 서비스 요청 감시'(기준선만 잡아 둔다)
  *  결과는 tools/.story-prep.json
  * 레이크 분석(지표·검증된 질의·'장애 현황' 대시보드)은 feature-prep-analysis.mjs 를 따로 돌린다.
  */
@@ -107,8 +107,8 @@ if (desk) await pl("PUT", `/desks/${desk.id}`, { ...deskBody, instructions: desk
 else await pl("POST", "/desks", deskBody);
 ok(`/desk/hr-help — 근거: 운영 매뉴얼 + 레이크 '${lakeOps.label}' · 접수: PMS-X ${sm.name}`);
 
-// ---------- 자동화 흐름 + 감시 트리거
-log("AX Platform — 자동화 흐름 '서비스 요청 분류·처리' · 감시 트리거");
+// ---------- 업무 자동화 + 감시 트리거
+log("AX Platform — 업무 자동화 '서비스 요청 분류·처리' · 감시 트리거");
 let flow = items(await pl("GET", "/flows")).find((f) => f.name === "서비스 요청 분류·처리");
 if (!flow) {
   const ex = await pl("GET", "/flows/example?model=hnix-local&agent=alert-triage");

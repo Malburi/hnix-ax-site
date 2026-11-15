@@ -166,9 +166,9 @@ export const SCENARIOS = {
       await w(3);
       await r.press("Escape");
 
-      // 자동화 흐름 — 현업 담당자가 실행 → 담당자 확인에서 멈춤
+      // 업무 자동화 — 현업 담당자가 실행 → 담당자 확인에서 멈춤
       await r.go(`${L}/flows`);
-      w = await beat(r, "s18", "자동화 흐름 — 새 요청 → 모델 분류 → 갈래 → 에이전트 조사 → 담당자 확인");
+      w = await beat(r, "s18", "업무 자동화 — 새 요청 → 모델 분류 → 갈래 → 에이전트 조사 → 담당자 확인");
       await r.waitFor("document.body.innerText.includes('서비스 요청 분류·처리')", 20000);
       await pause(800);
       await clickNear(r, "서비스 요청 분류·처리", "열기", { after: 2500 });

@@ -376,7 +376,7 @@ export const SCENARIOS = {
       await tab(r, "호출 기록", "호출 기록 — 누가 · 어떤 클라이언트로 · 어떤 도구를 · 결과 · 걸린 시간", "인자는 이름만 남기고 값은 저장하지 않습니다", 6000);
 
       await sideMenu(r, "승인함");
-      await r.caption("승인함 — 왼쪽 메뉴 맨 위, 내가 결정할 대기 건수 배지", "'사람 승인' 정책에 걸린 호출 · 런북 실행 · 자동화 흐름의 사람 확인이 한곳에 · 요청한 본인은 승인 못 합니다");
+      await r.caption("승인함 — 왼쪽 메뉴 맨 위, 내가 결정할 대기 건수 배지", "'사람 승인' 정책에 걸린 호출 · 런북 실행 · 업무 자동화의 사람 확인이 한곳에 · 요청한 본인은 승인 못 합니다");
       await pause(4000);
       if (await r.click("검토", { selector: "button", exact: true, after: 1200 })) {
         await r.caption("검토 — 누가 어떤 도구를 어떤 인자로 부르려 했는지, 걸린 정책", "결정 사유는 요청자에게 보입니다");
@@ -736,29 +736,29 @@ export const SCENARIOS = {
   },
 
   "platform-10": {
-    title: "AX Platform ⑩ 자동화 흐름 — 캔버스 · 노드 · 버전 기록 · 사람 확인 · 실행 디버거",
+    title: "AX Platform ⑩ 업무 자동화 — 캔버스 · 노드 · 버전 기록 · 사람 확인 · 실행 디버거",
     maxGap: 3,
     async run(r) {
       await r.login("platform", "admin");
       await r.go(`${L}/flows`);
-      await r.caption("자동화 흐름 — 정해진 순서대로 실행", "에이전트가 알아서 판단하는 것과 달리, 흐름은 설계한 길만 갑니다 · 모델은 게이트웨이, 도구는 MCP 허브, 사람 확인은 승인함");
+      await r.caption("업무 자동화 — 정해진 순서대로 실행", "에이전트가 알아서 판단하는 것과 달리, 흐름은 설계한 길만 갑니다 · 모델은 게이트웨이, 도구는 MCP 허브, 사람 확인은 승인함");
       await pause(4500);
       await clickNear(r, "서비스 요청 분류·처리", "열기", { after: 2500 });
       await r.caption("편집기 — 노드를 끌어다 놓고 선으로 잇습니다", "새 서비스 요청 → 모델이 유형 분류 → 갈래(장애·문의·기타) → 담당 에이전트 / 지식 문서 검색 → 담당자 확인 → 끝");
       await pause(5500);
       await r.click("유형 분류", { selector: ".vue-flow__node", after: 1500 });
-      await r.caption("모델 질문 노드 — 게이트웨이 별칭 · 지시문 · 프롬프트 템플릿 · 결과를 담을 변수", "{{title}} 같은 자리에 앞 단계 값이 들어갑니다 · JSON 으로 받아 다음 노드에서 category.type 처럼 씁니다");
+      await r.caption("AI에게 묻기 — 게이트웨이 별칭 · 지시문 · 프롬프트 템플릿 · 결과를 담을 변수", "{{title}} 같은 자리에 앞 단계 값이 들어갑니다 · JSON 으로 받아 다음 노드에서 category.type 처럼 씁니다");
       await pause(5500);
       await r.click("유형별 갈래", { selector: ".vue-flow__node", after: 1500 });
-      await r.caption("조건 분기 — 규칙(category.type = 장애 · 문의)마다 갈래, 나머지는 '그 외'", "규칙 대신 모델에게 고르게 할 수도 있습니다");
+      await r.caption("조건에 따라 나누기 — 규칙(category.type = 장애 · 문의)마다 갈래, 나머지는 '그 외'", "규칙 대신 모델에게 고르게 할 수도 있습니다");
       await pause(5000);
       await r.click("장애 담당 에이전트", { selector: ".vue-flow__node", after: 1500 });
-      await r.caption("에이전트 실행 노드 — 이미 만든 에이전트(alert-triage)를 흐름 한 단계로", "에이전트 안의 도구 호출도 같은 권한·정책·승인을 지납니다");
+      await r.caption("에이전트에게 맡기기 — 이미 만든 에이전트(alert-triage)를 흐름 한 단계로", "에이전트 안의 도구 호출도 같은 권한·정책·승인을 지납니다");
       await pause(4500);
       await r.click("담당자 확인", { selector: ".vue-flow__node", after: 1500 });
-      await r.caption("사람 확인 — 승인함에 올라가 결정을 기다립니다", "승인하면 '승인' 출구로, 거부하면 '거부' 출구로 · 실행한 사람은 스스로 승인할 수 없습니다");
+      await r.caption("사람 확인(승인) — 승인함에 올라가 결정을 기다립니다", "승인하면 '승인' 출구로, 거부하면 '거부' 출구로 · 실행한 사람은 스스로 승인할 수 없습니다");
       await pause(5000);
-      await r.caption("노드 9종 — 모델 질문 · 도구 호출 · 에이전트 실행 · 조건 분기 · 반복 · 사람 확인 · 변수 정하기 · 시작 · 끝", "저장할 때마다 검증 — 끊긴 선·빠진 값은 '고칠 곳'으로 표시");
+      await r.caption("단계 9종 — AI에게 묻기 · 시스템 조회·실행 · 에이전트에게 맡기기 · 조건에 따라 나누기 · 목록 반복 · 사람 확인 · 값 정하기 · 시작 · 끝", "저장할 때마다 검증 — 끊긴 선·빠진 값은 '고칠 곳'으로 표시");
       await pause(5000);
       await r.click("버전 기록", { selector: "button", exact: true, after: 1500 });
       await r.caption("버전 기록 — 저장할 때마다 버전이 쌓입니다", "실행은 그때의 버전으로 돌고, 옛 버전을 불러와 되돌릴 수 있습니다");
@@ -854,7 +854,7 @@ export const SCENARIOS = {
       await pause(1200);
       await pick(r, "alert-triage", "sm-helper");
       await r.clickSel("[data-test=agent-eval-open]", 2500);
-      await r.caption("에이전트 평가 — 고칠 때마다 같은 시험으로", "지시문·모델·도구를 바꾼 뒤 다시 돌려 이전 평가와 문항별로 비교 · 에이전트와 자동화 흐름 모두");
+      await r.caption("에이전트 평가 — 고칠 때마다 같은 시험으로", "지시문·모델·도구를 바꾼 뒤 다시 돌려 이전 평가와 문항별로 비교 · 에이전트와 업무 자동화 모두");
       await pause(4000);
       const hasSet = await r.eval("!!document.querySelector('[data-test=eval-cases]')");
       if (!hasSet) await pick(r, "평가 세트", "서비스 요청 도우미 회귀");
@@ -883,7 +883,7 @@ export const SCENARIOS = {
       await r.caption("새 평가 결과", "같은 설정으로 다시 돌려도 작은 모델은 답이 흔들립니다 — 그래서 문항으로 잽니다");
       await pause(5000);
       await r.click("이전과 비교", { selector: "button", exact: true, after: 2500 });
-      await r.caption("비교 — 통과율 · 점수 · 지연 · 토큰의 차이, 문항마다 좋아짐·나빠짐·같음", "바뀐 설정(지시문·모델·도구)도 함께 · 밤마다 돌리려면 자동화 흐름 + 예약 트리거 + evals__run");
+      await r.caption("비교 — 통과율 · 점수 · 지연 · 토큰의 차이, 문항마다 좋아짐·나빠짐·같음", "바뀐 설정(지시문·모델·도구)도 함께 · 밤마다 돌리려면 업무 자동화 + 예약 트리거 + evals__run");
       await pause(7000);
     },
   },
@@ -914,7 +914,7 @@ export const SCENARIOS = {
       await r.caption("도구·정책 — 켠 도구만 허브에 등록", "조회(엔터티 목록·조회·한 건)는 허용 · 만들기·고치기·함수 호출은 '승인 필요' · 차단도 가능");
       await pause(6000);
       await modalBtn(r, "저장", 2500);
-      await r.caption("등록됨 — sap_hr__query 처럼 연결 이름이 도구 앞에", "에이전트·자동화 흐름·IDE·Claude Code 가 같은 정책·승인·감사로 씁니다");
+      await r.caption("등록됨 — sap_hr__query 처럼 연결 이름이 도구 앞에", "에이전트·업무 자동화·IDE·Claude Code 가 같은 정책·승인·감사로 씁니다");
       await pause(5000);
 
       // 일반 REST — OpenAPI 문서를 읽어 도구로
@@ -943,8 +943,10 @@ export const SCENARIOS = {
       // 외부 에이전트 가져오기
       await r.go(`${L}/agents`);
       await pause(1500);
+      // 에이전트 화면 개편(11-15) — [에이전트 추가] 고르기 창 안에 '외부 에이전트 연결'
+      await r.clickSel("[data-test=agent-add]", 1000);
       await r.clickSel("[data-test=agent-import]", 1500);
-      await r.caption("외부 에이전트 가져오기 — 다른 팀이 만든 에이전트를 플랫폼 에이전트로", "A2A · LangGraph · OpenAI 호환 · 일반 HTTP");
+      await r.caption("외부 에이전트 연결 — 다른 팀이 만든 에이전트를 플랫폼 에이전트로", "A2A · LangGraph · OpenAI 호환 · 일반 HTTP");
       await pause(4000);
       await r.clickSel("[data-test=ext-type-langgraph]", 800);
       await r.clickSel("[data-test=ext-next]", 1200);
@@ -965,7 +967,7 @@ export const SCENARIOS = {
       await r.click("공개 (워크스페이스)", { selector: ".n-radio-button", after: 600 });
       await pause(1500);
       await r.clickSel("[data-test=ext-save]", 2500);
-      await r.caption("플랫폼 에이전트가 됐습니다 — 실행 기록 · 디버거 · 평가 · 자동화 흐름 · MCP(agents__run) 에서 그대로");
+      await r.caption("플랫폼 에이전트가 됐습니다 — 실행 기록 · 디버거 · 평가 · 업무 자동화 · MCP(agents__run) 에서 그대로");
       await pause(4000);
       await r.type("무엇을 할까요", "총무팀 사무용 의자 구매 요청은 지금 어느 단계야?", { delay: 45 });
       await r.clickSel("[data-test=run-start]", 1500);
@@ -1028,7 +1030,7 @@ export const SCENARIOS = {
 
       // 승인함
       await sideMenu(r, "승인함");
-      await r.caption("승인함 — 메뉴 맨 위, 내가 결정할 대기 건수가 배지로", "예전에는 MCP 허브의 탭 안 · 도구 호출 · 런북 실행 · 자동화 흐름의 사람 확인이 모두 여기로");
+      await r.caption("승인함 — 메뉴 맨 위, 내가 결정할 대기 건수가 배지로", "예전에는 MCP 허브의 탭 안 · 도구 호출 · 런북 실행 · 업무 자동화의 사람 확인이 모두 여기로");
       await pause(5000);
       if (await r.click("검토", { selector: "button", exact: true, after: 1500 })) {
         await r.caption("검토 — 누가 · 어떤 도구를 · 어떤 인자로", "승인·반려는 ③ MCP 허브 장에서");
