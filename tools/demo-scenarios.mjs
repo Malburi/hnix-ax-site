@@ -461,15 +461,15 @@ export const SCENARIOS = {
       await pause(1500);
       await r.clickSel(".n-base-selection");
       await r.click("sm-helper", { selector: ".n-base-select-option" });
-      // 요청 상세(pmsx__sr)는 '요청 상세 조회는 승인 후' 정책에 걸린다 — 실행이 승인 대기로 멈추고 승인함으로 간다(아래 승인함 장면의 첫 줄).
+      // 요청자 연락처 원문(pmsx__sr_requester)은 '요청자 연락처 원문은 승인 후' 정책에 걸린다(상세 pmsx__sr 는 개인정보를 가려 바로 읽힌다) — 실행이 승인 대기로 멈추고 승인함으로 간다(아래 승인함 장면의 첫 줄).
       // 3B 모델은 도구 결과(JSON)를 요약하게 하면 엉뚱한 설명을 쓰기 쉬워 답 대신 통제 흐름을 보인다(2026-11-10)
-      await r.type("무엇을 할까요", "pmsx__sr 도구로 서비스 요청 SR-0004 의 상세를 조회해서, 증상과 처리 방향을 한국어 두 줄로 알려줘", { delay: 35 });
+      await r.type("무엇을 할까요", "pmsx__sr_requester 도구로 서비스 요청 SR-0004 요청자의 연락처를 알려줘", { delay: 35 });
       await r.click("실행", { selector: "button", exact: true });
-      await r.caption("에이전트가 PMS-X 도구(pmsx__sr)를 부릅니다", "모델 → 도구 · 단계마다 시간·결과를 기록");
+      await r.caption("에이전트가 PMS-X 도구(pmsx__sr_requester)를 부릅니다", "모델 → 도구 · 단계마다 시간·결과를 기록");
       // 실행 기록 표에도 '완료'·'승인 대기'가 있어 글자로 기다리면 바로 넘어간다 — 결과 카드의 표식으로
       await r.waitFor("!!document.querySelector('[data-test=run-resume], [data-test=run-output]')", 120000);
       await pause(1000);
-      await r.caption("요청 상세 조회는 정책상 사람 승인 — 실행이 '승인 대기'로 멈춥니다", "요청이 승인함으로 가고, 승인되면 '이어서 실행' · 에이전트는 실행한 사람의 권한 그대로");
+      await r.caption("요청자 연락처 원문은 정책상 사람 승인 — 실행이 '승인 대기'로 멈춥니다", "요청이 승인함으로 가고, 승인되면 '이어서 실행' · 에이전트는 실행한 사람의 권한 그대로");
       await pause(6000);
       const trig = await r.find("트리거 — 사람 대신 깨우기", { selector: "div, span" });
       if (trig) await r.pointAt(trig);

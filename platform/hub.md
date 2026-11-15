@@ -18,7 +18,7 @@ claude mcp add --transport http hnix-ax http://ax-platform:8700/mcp \
 
 | 서버 | 도구 예 | 내용 |
 |---|---|---|
-| `pmsx` (16개) | `pmsx__screen`, `pmsx__workflow`, `pmsx__impact`, `pmsx__crud`, `pmsx__tables`, `pmsx__srs`, `pmsx__sr`, `pmsx__similar`, `pmsx__spec`, `pmsx__sla`, `pmsx__handover_gaps` … | 화면·버튼 흐름, 영향도, CRUD, 테이블, 서비스 요청(SR) 목록·상세·유사 사례, 구현 명세, 처리 기한(SLA), 인수인계 갭 |
+| `pmsx` (17개) | `pmsx__screen`, `pmsx__workflow`, `pmsx__impact`, `pmsx__crud`, `pmsx__tables`, `pmsx__srs`, `pmsx__sr`, `pmsx__sr_requester`, `pmsx__similar`, `pmsx__spec`, `pmsx__sla`, `pmsx__handover_gaps` … | 화면·버튼 흐름, 영향도, CRUD, 테이블, 서비스 요청(SR) 목록·상세(요청자 개인정보는 가림)·요청자 연락처 원문·유사 사례, 구현 명세, 처리 기한(SLA), 인수인계 갭 |
 | `axnavi` (12개) | `axnavi__search`, `axnavi__callers`, `axnavi__callees`, `axnavi__trace`, `axnavi__sql`, `axnavi__table`, `axnavi__endpoint` … | 심볼 검색, 호출 관계, 흐름 추적, SQL·테이블·컬럼 사용처, 엔드포인트 |
 | `docs` | `docs__collections`, `docs__search`, **`docs__save`** | 문서 검색, 정리한 내용을 문서함에 문서로 저장(매뉴얼 보강) |
 | `agents` | `agents__list`, **`agents__run`**, `agents__run_status` | 플랫폼 에이전트를 부른다 — 내가 만든 것과 공개된 것, 내 권한으로 |

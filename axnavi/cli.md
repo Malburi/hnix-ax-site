@@ -20,6 +20,8 @@ axnavi logout                   이 PC 로그아웃(플랫폼의 기기 승인�
 - 로그인 정보는 이 PC 사용자 폴더(`%LOCALAPPDATA%AX-NAVI CLI`)에 Windows 사용자 보호(DPAPI)로 둔다. 플랫폼에 잠시 닿지 않아도 정해진 기간(기본 3일)까지는 받아 둔 엔진으로 쓴다. 제거하면 받은 엔진과 로그인 정보도 지운다.
 - 조용히 설치(배포 도구): `HNIX-AX-CLI-Setup-<판>.exe /VERYSILENT /SERVER=<플랫폼 주소>` — PC 공용 설치는 `/ALLUSERS`.
 
+> 로그인부터 색인, 변경 리뷰 STOP 까지 실제 터미널 화면은 [해설 시연 영상 ③ AX-NAVI CLI](/demo/narrated.md)(3분 28초)에서 볼 수 있다.
+
 > CLI 자체의 설치·대화형 모드·스킬 설명은 [AX-NAVI CLI 문서](https://malburi.github.io/AX-NAVI-CLI/)에 있다.
 
 ## 언제 CLI를 쓰나

@@ -248,7 +248,10 @@ export const SCENARIOS = {
       await r.clickSel("[data-test=sr-form-pick]", 1500);
       w = await beat(r, "o12", "대상 화면 — As-Is 메뉴 트리의 '사원관리'");
       await r.click("사원관리", { exact: true, after: 1500 });
+      // 대상 화면 선택 창 [적용](PMS-X 1.3.17~) → 서비스 요청 수정 창 [저장]
+      await r.click("적용", { selector: ".v-overlay--active button", exact: true, after: 1200 });
       await r.click("저장", { selector: ".v-overlay--active button", exact: true, after: 1500 });
+      if (!(await r.waitFor("!!document.querySelector('[data-test=sr-open-viewer]')", 8000))) console.log("  ! 대상 화면이 저장되지 않았습니다(화면 뷰어 단추 없음)");
       await w();
 
       await r.eval("[...document.querySelectorAll('button')].find((b) => b.innerText.trim() === '구현 명세')?.scrollIntoView({ block: 'center' })");
@@ -274,7 +277,7 @@ export const SCENARIOS = {
             const n0 = b.frames.length;
             await b.clickAt({ x: 1290, y: 400 });
             w = await beat(b, "o14", "AX-NAVI IDE — 서비스 요청 번호만 주고 맡깁니다", "로그인만으로 플랫폼 MCP 허브 연결 — PMS-X 요청과 코드 색인을 IDE 안에서");
-            await b.webType("textarea", `PMS-X 서비스 요청 ${srNo} 를 처리해줘. hnix-ax 허브의 pmsx__srs 로 '퇴사' 를 찾아 요청 내용을 확인하고, 코드 색인으로 HR_EMP 를 이름으로 조회하는 SQL 을 찾아 재직자만(RETIRE_YN = 'N') 나오게 고쳐줘. 다른 메서드는 건드리지 말고, 빌드·검증 명령은 돌리지 마(리뷰는 따로 한다).`);
+            await b.webType("textarea", `PMS-X 서비스 요청 ${srNo} 를 처리해줘. hnix-ax 허브의 pmsx__srs 로 '퇴사' 를 찾고 pmsx__sr 로 요청 본문을 읽어 확인하고, 코드 색인으로 HR_EMP 를 이름으로 조회하는 SQL 을 찾아 재직자만(RETIRE_YN = 'N') 나오게 고쳐줘. 다른 메서드는 건드리지 말고, 빌드·검증 명령은 돌리지 마(리뷰는 따로 한다).`);
             await w(-2);
             await b.press("Enter");
             w = await beat(b, "o15", "조회 도구는 묻지 않고 바로 · 파일 수정만 개발자가 확인", "허브가 개발자 권한·회사 정책을 적용하고 모든 호출을 기록");
