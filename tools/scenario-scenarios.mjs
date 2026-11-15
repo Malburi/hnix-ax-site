@@ -311,7 +311,8 @@ export const SCENARIOS = {
       await pause(5000);
       await r.press("Escape");
       await r.go(`${L}/desks?supplement=1`);
-      await r.click("/desk/hr-help", { selector: "code", after: 1500 });
+      // 창구 카드를 누르면 창구로 들어간다(11-15 개편) — 창구가 하나라 대화 기록은 이미 이 창구 것
+      await pause(1500);
       await r.caption("현업 창구 관리 — 창구가 답을 못 찾은 질문이 '매뉴얼 보강 대기'로 모입니다", "자동 해결률 · 답변률 · 담당자 접수율");
       await pause(5000);
       await r.click("매뉴얼 보강", { selector: "td button", exact: true, after: 1500 });

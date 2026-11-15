@@ -542,7 +542,8 @@ export const SCENARIOS = {
       // ── 관리 — 성과·대화 기록·매뉴얼 보강
       await r.login("platform", "admin");
       await r.go(`${L}/desks?supplement=1`);
-      await r.click("/desk/hr-help", { selector: "code", after: 1500 });
+      // 창구 카드를 누르면 창구로 들어간다(11-15 개편) — 창구가 하나라 대화 기록은 이미 이 창구 것
+      await pause(1500);
       await r.caption("현업 창구 관리 — 창구마다 30일 문의 · 자동 해결률 · 답변률 · 담당자 접수율", "매뉴얼 보강 대기 — 답을 못 찾았거나 담당자에게 넘긴 질문 중 아직 매뉴얼에 없는 것");
       await pause(5000);
       // 맨 위(방금 접수한 대화)의 매뉴얼 보강 — 대화 안에서 창구가 답을 못 한 질문(회의실 예약)이 대상이 됩니다
