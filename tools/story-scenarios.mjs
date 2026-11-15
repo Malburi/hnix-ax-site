@@ -128,6 +128,25 @@ async function transition(r, label, opts = {}) {
   await r.clickSel("[data-test=sr-transition-ok]", 1500);
   return true;
 }
+/** PMS-X 접수 요청 — 분류·배정 칸에서 담당자를 정하고 바로 배정(PMS-X 1.3.17~). 운영 담당은 [나에게 배정] */
+async function classifyAssign(r, name) {
+  const me = await r.eval("!!document.querySelector('[data-test=sr-classify-me]')").catch(() => false);
+  if (me) {
+    await r.clickSel("[data-test=sr-classify-me]", 700);
+  } else {
+    const filled = await r.eval("(() => { const f = document.querySelector('[data-test=sr-classify-assignee] input'); return !!f && !!f.value; })()").catch(() => false);
+    if (!filled && name) {
+      await r.clickSel("[data-test=sr-classify-assignee] input", 500);
+      for (const ch of name) {
+        await r.send("Input.insertText", { text: ch });
+        await pause(70);
+      }
+      await pause(1500);
+      await r.click(name, { selector: ".v-list-item", after: 700 });
+    }
+  }
+  await r.clickSel("[data-test=sr-classify-assign]", 1500);
+}
 const answered = (n) => `document.querySelectorAll('[data-test=desk-answer]').length >= ${n} && !document.querySelector('.msg.bot .n-spin, .typing')`;
 
 export const SCENARIOS = {
@@ -215,12 +234,10 @@ export const SCENARIOS = {
       w = await beat(r, "o10", `PMS-X 서비스 요청 ${srNo}`, "요청자 · 대화 기록 · 처리 기한(접수 순간부터)");
       await w();
       await r.clickSel("[data-test=sr-triage-run]", 800);
-      await ff(r, () => r.waitFor("!!document.querySelector('[data-test=sr-triage-apply]')", 90000), 3, "분류 의견 — 사내 모델");
+      await ff(r, () => r.waitFor("!!document.querySelector('[data-test=sr-triage-result]')", 90000), 3, "분류 의견 — 사내 모델");
       w = await beat(r, "o11", "분류 의견 — 유형 · 우선순위 · 대상 화면 · 담당 후보", "사내 모델이 제안, 확정은 사람이");
       await pause(4500);
-      await r.clickSel("[data-test=sr-triage-apply]", 1500);
-      await transition(r, "분류 완료");
-      await transition(r, "담당 배정", { assignee: PREP.pmsxOpName ?? "" });
+      await classifyAssign(r, PREP.pmsxOpName ?? "");
       await transition(r, "처리 시작");
       await w();
 

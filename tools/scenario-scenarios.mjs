@@ -57,6 +57,25 @@ async function transition(r, label, opts = {}) {
   await r.clickSel("[data-test=sr-transition-ok]", 1500);
   return true;
 }
+/** PMS-X 접수 요청 — 분류·배정 칸에서 담당자를 정하고 바로 배정(PMS-X 1.3.17~). 운영 담당은 [나에게 배정] */
+async function classifyAssign(r, name) {
+  const me = await r.eval("!!document.querySelector('[data-test=sr-classify-me]')").catch(() => false);
+  if (me) {
+    await r.clickSel("[data-test=sr-classify-me]", 700);
+  } else {
+    const filled = await r.eval("(() => { const f = document.querySelector('[data-test=sr-classify-assignee] input'); return !!f && !!f.value; })()").catch(() => false);
+    if (!filled && name) {
+      await r.clickSel("[data-test=sr-classify-assignee] input", 500);
+      for (const ch of name) {
+        await r.send("Input.insertText", { text: ch });
+        await pause(70);
+      }
+      await pause(1500);
+      await r.click(name, { selector: ".v-list-item", after: 700 });
+    }
+  }
+  await r.clickSel("[data-test=sr-classify-assign]", 1500);
+}
 
 /** 이은 티켓 표에서 고객 티켓 번호 줄의 서비스 요청 번호 */
 const srOf = (r, ticket) => r.eval(`(() => { const row = [...document.querySelectorAll('tr')].find((t) => t.innerText.includes(${JSON.stringify(ticket)})); return row ? (row.innerText.match(/SR-\\d+/) || [null])[0] : null; })()`);
@@ -126,13 +145,11 @@ export const SCENARIOS = {
       await pause(5000);
       await r.clickSel("[data-test=sr-triage-run]", 1000);
       await r.caption("분류 의견 — 비슷한 과거 요청·지식 문서를 근거로 유형·우선순위·대상 화면·담당 후보", "사내 모델이 제안하고, 확정은 사람이 합니다");
-      await r.waitFor("!!document.querySelector('[data-test=sr-triage-apply]')", 90000);
+      await r.waitFor("!!document.querySelector('[data-test=sr-triage-result]')", 90000);
       await pause(5000);
-      await r.clickSel("[data-test=sr-triage-apply]", 2000);
-      await transition(r, "분류 완료");
-      await transition(r, "담당 배정", { assignee: pp.pmsxOpName ?? "" });
+      await classifyAssign(r, pp.pmsxOpName ?? "");
       await transition(r, "처리 시작");
-      await r.caption("분류 완료 → 담당 배정 → 처리 시작", "담당자는 플랫폼 종 알림과 Teams 로 받습니다");
+      await r.caption("분류·담당 배정 → 처리 시작", "담당자는 플랫폼 종 알림과 Teams 로 받습니다");
       await pause(4000);
 
       // ── 대상 화면 잇기 — AI 가 근거 부족으로 비워 둔 칸은 사람이
