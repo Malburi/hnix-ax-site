@@ -38,6 +38,9 @@ async function openSr(r, no) {
 
 /** PMS-X 서비스 요청 상태 바꾸기 — 버튼 → (담당자·사유) → 확인 */
 async function transition(r, label, opts = {}) {
+  // 상태 버튼은 상세 칸 맨 위 '다음 단계' 띠에 있다(PMS-X 1.3.16~) — 처리 내역까지 내려와 있으면 화면 밖이라 먼저 올린다
+  await r.eval("document.querySelector('[data-test=sr-transitions]')?.scrollIntoView({ block: 'center' })").catch(() => undefined);
+  await pause(500);
   const ok = await r.click(label, { selector: "[data-test=sr-transitions] button", exact: true, after: 900 });
   if (!ok) return false;
   if (opts.assignee) {

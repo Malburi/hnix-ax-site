@@ -110,6 +110,9 @@ async function openSr(r, no) {
 }
 /** PMS-X 서비스 요청 상태 바꾸기 */
 async function transition(r, label, opts = {}) {
+  // 상태 버튼은 상세 칸 맨 위 '다음 단계' 띠에 있다(PMS-X 1.3.16~) — 처리 내역까지 내려와 있으면 화면 밖이라 먼저 올린다
+  await r.eval("document.querySelector('[data-test=sr-transitions]')?.scrollIntoView({ block: 'center' })").catch(() => undefined);
+  await pause(500);
   const ok = await r.click(label, { selector: "[data-test=sr-transitions] button", exact: true, after: 900 });
   if (!ok) return false;
   if (opts.assignee) {
@@ -261,14 +264,17 @@ export const SCENARIOS = {
 
       // ── AX-NAVI IDE — 이개발
       const original = readFileSync(DEMO_FILE);
+      // IDE 를 띄우고 로그인하는 동안은 화면이 멈춰 있다 — 빨리 감기로 1초만 남긴다(11-14 판 4:40~5:02 정지)
+      const tPre = now();
       try {
         await r.browser(
           async (b) => {
             const tb = now();
+            if (tb - tPre > 2) ffs.push([tPre, tb, 1]);
             const n0 = b.frames.length;
             await b.clickAt({ x: 1290, y: 400 });
             w = await beat(b, "o14", "AX-NAVI IDE — 서비스 요청 번호만 주고 맡깁니다", "로그인만으로 플랫폼 MCP 허브 연결 — PMS-X 요청과 코드 색인을 IDE 안에서");
-            await b.webType("textarea", `PMS-X 서비스 요청 ${srNo} 를 처리해줘. hnix-ax 허브의 pmsx__srs 로 '퇴사자' 를 찾아 요청 내용을 확인하고, 코드 색인으로 HR_EMP 를 이름으로 조회하는 SQL 을 찾아 재직자만(RETIRE_YN = 'N') 나오게 고쳐줘. 다른 메서드는 건드리지 말고, 빌드·검증 명령은 돌리지 마(리뷰는 따로 한다).`);
+            await b.webType("textarea", `PMS-X 서비스 요청 ${srNo} 를 처리해줘. hnix-ax 허브의 pmsx__srs 로 '퇴사' 를 찾아 요청 내용을 확인하고, 코드 색인으로 HR_EMP 를 이름으로 조회하는 SQL 을 찾아 재직자만(RETIRE_YN = 'N') 나오게 고쳐줘. 다른 메서드는 건드리지 말고, 빌드·검증 명령은 돌리지 마(리뷰는 따로 한다).`);
             await w(-2);
             await b.press("Enter");
             w = await beat(b, "o15", "조회 도구는 묻지 않고 바로 · 파일 수정만 개발자가 확인", "허브가 개발자 권한·회사 정책을 적용하고 모든 호출을 기록");
