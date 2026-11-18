@@ -141,6 +141,7 @@ flowchart LR
 
 ```bat
 pmsx-collector.exe init D:\src\hr-web --code HR --name 인사시스템   :: 기술 자동 감지, 설정 초안
+pmsx-collector.exe selfcheck                                        :: 수집기 자체 점검(DB 드라이버를 실제로 불러 봄)
 pmsx-collector.exe doctor -c collector.yaml                         :: 브라우저·DB·URL·글꼴 점검
 pmsx-collector.exe run -c collector.yaml                            :: 결과 패키지
 pmsx-collector.exe upload -c collector.yaml --server https://pmsx.local --user analyst

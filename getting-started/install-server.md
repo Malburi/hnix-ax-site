@@ -171,7 +171,7 @@ powershell -ExecutionPolicy RemoteSigned -File server.ps1 backup      # DB 백�
 |---|---|
 | 로그 | `apps\platform\hnix-ax-*\logs` · `apps\datalake\ax-datalake-*\logs` · `apps\pmsx\pmsx-*\logs` · `data\pgsql\log` |
 | DB 백업 | `backups\postgresql\<날짜-시각>\` — 매일 02:00(예약 작업 'HNIX AX PostgreSQL 백업'), 최근 14개. 네 DB 의 `.dump`, 계정 `globals.sql`, 시크릿을 푸는 열쇠(`*.master.key`·`secrets.json`). 서버 밖 저장소로 한 번 더 복사하되 열쇠가 들어 있으니 DB 와 같은 수준으로 보관한다 |
-| 파일 백업 | DB 에 들지 않는 파일 — PMS-X 첨부·캡처 `apps\pmsx\pmsx-*\data-demo`, 레이크 데이터 `apps\datalake\ax-datalake-*\data\lake`. 서비스를 멈추고 폴더째 복사 |
+| 파일 백업 | DB 에 들지 않는 파일 — PMS-X 첨부·캡처 `apps\pmsx\pmsx-*\data-demo`, 레이크 데이터 `data\datalake`. 서비스를 멈추고 폴더째 복사 |
 | 비밀번호·키 | `server.config.json`, `run\secrets.json` |
 
 **DB 되살리기** — 그 제품의 서비스를 멈추고, 백업 폴더의 파일로:
@@ -181,13 +181,13 @@ $env:PGPASSWORD = '<server.config.json 의 database.password>'
 apps\pgsql\bin\pg_restore -h 127.0.0.1 -p 5432 -U postgres --clean --if-exists -d pmsx backups\postgresql\20261106-0200\pmsx.dump
 ```
 
-서버를 새로 깔아 되살릴 때는 같은 백업의 `platform.master.key`·`datalake.master.key` 를 각 제품의 `data\master.key` 로 넣은 뒤 서비스를 시작한다.
+서버를 새로 깔아 되살릴 때는 같은 백업의 `platform.master.key` 를 플랫폼의 `data\master.key` 로, `datalake.master.key` 를 `data\datalake\master.key` 로 넣은 뒤 서비스를 시작한다.
 
-**판 올리기** — 먼저 `server.ps1 backup`. 새 `HNIX-AX-Server-Setup` 을 같은 위치에 덮어 설치한다. `server.config.json` 과 DB(`data\pgsql`)는 그대로 둔다. 제품 판이 바뀌었으면 `server.ps1 stop` 뒤 옛 판 폴더의 파일 데이터(레이크 `data`, PMS-X `data-demo`)를 새 판 폴더로 옮기고 설치를 다시 돌린다. DB 구조는 제품이 새 판에서 스스로 올린다.
+**판 올리기** — 새 `HNIX-AX-Server-Setup` 을 같은 위치에 덮어 설치한다. 설치가 판이 바뀐 제품만 골라 제품 멈춤 → 백업(`backups\pre-upgrade-<날짜>`) → 새 판 풀기·파일 데이터 옮기기(옛 판 폴더는 `old\<날짜>`) → 서비스 다시 등록 → 포트마다 실행 중인 판 확인까지 한다. 중간에 실패하거나 새 판이 뜨지 않으면 옛 판으로 되돌리고, 끝 화면에 '판 올리기 실패 — 옛 판으로 되돌림'과 설치한 판·실행 중인 판을 보여 준다. `server.config.json`·DB(`data\pgsql`)·레이크 데이터(`data\datalake`)는 그대로 둔다. DB 구조는 제품이 새 판에서 스스로 올린다. 자세한 것은 README 의 '판 올리기'.
 
 ## 8. 제거
 
-'앱 및 기능' › **HNIX AX 서버** › 제거 — 서비스·방화벽 규칙·백업 예약을 내리고 프로그램을 지운다. DB(`data\pgsql`)·제품 파일(`apps\*\data`)·백업(`backups`)·`server.config.json` 은 남긴다. 다 지우려면 제거 전에 `server.ps1 uninstall -RemoveData`(백업 폴더는 그래도 남는다).
+'앱 및 기능' › **HNIX AX 서버** › 제거 — 서비스·방화벽 규칙·백업 예약을 내리고 프로그램을 지운다. DB(`data\pgsql`)·레이크 데이터(`data\datalake`)·제품 파일(`apps\*\data`)·백업(`backups`)·`server.config.json` 은 남긴다. 다 지우려면 제거 전에 `server.ps1 uninstall -RemoveData`(백업 폴더는 그래도 남는다).
 
 ## 9. 자주 막히는 곳
 
