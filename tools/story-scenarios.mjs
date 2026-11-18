@@ -429,4 +429,140 @@ export const SCENARIOS = {
       await finish(r, "gov");
     },
   },
+
+  /* ================= ④ As-Is 분석 (PMS-X 1.3.18) ================= */
+  asis: {
+    title: "레거시 화면 하나를 분석서로 — PMS-X As-Is 분석",
+    maxGap: 600,
+    async run(r) {
+      marks = [];
+      ffs = [];
+      await r.go(card("asis-intro"));
+      let w = await beat(r, "a01");
+      await w();
+
+      await r.login("pmsx", "admin");
+      await pmsxProject(r, "SI");
+      // 급여시스템(PY) · 급여계산(PY0101) · 급여관리 묶음 · SP_PAY_CALC — 시연 데이터를 새로 만들면 ID 가 바뀌므로 이름으로 찾는다
+      const ids = await r.eval(`(async () => {
+        const t = await fetch('/api/v1/auth/login', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(${JSON.stringify(APPS.pmsx.users.admin)}) }).then((x) => x.json()).then((j) => j.accessToken);
+        const h = { authorization: 'Bearer ' + t };
+        const p = (await fetch('/api/v1/projects', { headers: h }).then((x) => x.json())).find((x) => x.type === 'SI');
+        const ss = await fetch('/api/v1/projects/' + p.projectId + '/systems', { headers: h }).then((x) => x.json());
+        const sys = ((ss.content ?? ss).find((s) => s.code === 'PY') ?? {}).systemId;
+        const tree = await fetch('/api/v1/systems/' + sys + '/menu-tree', { headers: h }).then((x) => x.json());
+        let scr = null, menu = null;
+        const walk = (ns) => { for (const n of ns ?? []) { if (n.screen?.screenCode === 'PY0101') scr = n.screen.screenId; if (n.name === '급여관리') menu = n.menuId; walk(n.children); } };
+        walk(tree);
+        return { sys, scr, menu };
+      })()`);
+      if (!ids?.sys || !ids?.scr) throw new Error("급여시스템·급여계산 화면을 찾지 못했습니다");
+      console.log("  ids", JSON.stringify(ids));
+
+      // ── 화면 분석 뷰어 + 메뉴 묶음
+      await r.go(`${P}/asis/viewer/${ids.sys}/${ids.scr}`);
+      await pause(2500);
+      w = await beat(r, "a02", "As-Is 메뉴 — 준비 · 화면으로 보기 · 데이터로 보기 · 업무로 보기 · 진척·산출", "화면 분석 뷰어 — 급여시스템 › 급여관리 › 급여계산");
+      await pause(5500);
+      await r.pointAt({ x: 130, y: 420 });
+      await w();
+
+      // ── PL/SQL 탭
+      await r.eval("document.querySelector('[data-test=tab-plsql]')?.scrollIntoView({ block: 'nearest', inline: 'center' })").catch(() => undefined);
+      await r.clickSel("[data-test=tab-plsql]", 1800);
+      await r.eval("document.querySelector('[data-test=screen-plsql]')?.scrollIntoView({ block: 'center' })").catch(() => undefined);
+      w = await beat(r, "a03", "PL/SQL — 이 화면이 부르는 프로시저·함수", "급여 계산 SP_PAY_CALC → 세금 계산 SP_PAY_TAX · 루틴마다 직접 읽고 쓰는 테이블");
+      await w();
+
+      // ── 로직 분석
+      await r.clickSel("[data-test=plsql-name]", 2500);
+      await r.waitFor("!!document.querySelector('[data-test=routine-logic]')", 15000);
+      w = await beat(r, "a04", "PL/SQL 분석 › SP_PAY_CALC — 로직 분석 개요", "파라미터 · 저장하는 테이블 · 부르는 루틴 · 쓰는 화면 · 복잡도(분기 수·중첩 깊이)");
+      await pause(5000);
+      await r.wheel(420, { x: 1050, y: 600 });
+      await w();
+      await r.clickSel("[data-test=rl-tab-logic]", 1500);
+      await r.clickSel("[data-test=rl-view-flow]", 1500);
+      w = await beat(r, "a05", "로직 — 조건 · 반복 · 예외 처리를 순서도로", "AI 없이 소스 구조만으로 · 줄 번호를 누르면 원본 소스로");
+      await pause(5500);
+      await r.wheel(360, { x: 1050, y: 600 });
+      await pause(3000);
+      await r.clickSel("[data-test=rl-view-pseudo]", 1500);
+      await r.caption("같은 내용을 의사코드로 · 한국어 설명으로", "");
+      await pause(3500);
+      await r.clickSel("[data-test=rl-view-explain]", 1500);
+      await w();
+      await r.clickSel("[data-test=rl-tab-review]", 1500);
+      w = await beat(r, "a06", "점검 — 업무 규칙 후보와 확인 필요", "조건 → 오류·저장·종료 · 반복 안 저장 · 정의를 찾지 못한 호출 — 업무 규칙인지는 현업이 확인");
+      await pause(6000);
+      await r.wheel(380, { x: 1050, y: 600 });
+      await w();
+
+      // ── As-Is 분석서
+      await r.go(`${P}/asis/viewer/${ids.sys}/${ids.scr}`);
+      await pause(2000);
+      await r.click("분석서로 보기", { selector: "a, button", after: 2500 });
+      await r.waitFor("!!document.querySelector('[data-test=report-doc]')", 15000);
+      w = await beat(r, "a07", "As-Is 분석서 — 화면 문서 7절", "문단마다 출처: 소스 확인 · 분석 추림 · 분석자 · 수집 안 함");
+      await pause(6000);
+      await r.eval("document.querySelector('[data-test=report-legend]')?.scrollIntoView({ block: 'center' })").catch(() => undefined);
+      await w();
+      await r.eval("document.querySelector('[data-test=report-sec-flow]')?.scrollIntoView({ block: 'start' })").catch(() => undefined);
+      w = await beat(r, "a08", "업무 흐름상 위치 — 여는 팝업 · 앞선 화면 · 이어지는 화면", "수행 절차 — 버튼 순서대로 확인 메시지와 저장 테이블");
+      await pause(7000);
+      await r.eval("document.querySelector('[data-test=report-sec-procedure]')?.scrollIntoView({ block: 'start' })").catch(() => undefined);
+      await w();
+      await r.eval("document.querySelector('[data-test=report-sec-questions]')?.scrollIntoView({ block: 'start' })").catch(() => undefined);
+      w = await beat(r, "a09", "현업 확인 항목 — 현업에 물을 것 / 분석이 더 읽을 것", "실행 로그가 없으면 '알 수 없음'이라고 적습니다");
+      await w();
+
+      // ── AI 서술(개요 절)
+      await r.eval("document.querySelector('[data-test=report-sec-overview]')?.scrollIntoView({ block: 'start' })").catch(() => undefined);
+      await pause(800);
+      const canDraft = await r.eval("!!document.querySelector('[data-test=report-sec-overview] [data-test=narrative-draft]')").catch(() => false);
+      if (canDraft) {
+        await r.clickSel("[data-test=report-sec-overview] [data-test=narrative-draft]", 500);
+        await ff(r, () => r.waitFor("!!document.querySelector('[data-test=report-sec-overview] [data-test=narrative-text]') || /서술을 처리하지 못했습니다|근거/.test(document.querySelector('.v-snackbar')?.innerText ?? '')", 240000), 3, "AI 서술 만들기 — 사내 모델");
+        await pause(800);
+        await r.eval("document.querySelector('[data-test=report-sec-overview] [data-test=narrative-facts-toggle]')?.click()").catch(() => undefined);
+      }
+      await r.eval("document.querySelector('[data-test=report-sec-overview]')?.scrollIntoView({ block: 'start' })").catch(() => undefined);
+      const drafted = await r.eval("!!document.querySelector('[data-test=report-sec-overview] [data-test=narrative-text]')").catch(() => false);
+      w = await beat(r, "a10", "AI 서술 — 이 절의 사실 목록만 넘기고, 문장마다 근거 사실 번호",
+        drafted ? "근거 없는 문장 · 사실을 그대로 옮긴 문장은 버림 · 확정 전에는 'AI · 검수 전'" : "작은 시연 모델 — 근거를 단 문장이 남지 않아 붙이지 않음 · 더 큰 모델을 정하거나 분석자가 직접");
+      await pause(drafted ? 9000 : 11000);
+      if (!drafted && (await r.clickSel("[data-test=report-sec-overview] [data-test=narrative-write]", 1200))) {
+        await r.type("css:[data-test=report-sec-overview] [data-test=narrative-edit] textarea", "급여 대상자를 조회해 급여를 계산하고, 결과를 급여계산과 급여항목에 저장한 뒤 마감하는 화면입니다.", { delay: 35 });
+        await pause(600);
+        await r.clickSel("[data-test=report-sec-overview] [data-test=narrative-save]", 2000);
+        await r.caption("분석자가 직접 쓴 서술 — '분석자' 출처로 표시, 확정은 분석자가", "");
+      }
+      await w();
+
+      // ── 묶음 문서
+      if (ids.menu) {
+        await r.eval(`document.querySelector('[data-test=report-node-${ids.menu}]')?.scrollIntoView({ block: 'center' })`).catch(() => undefined);
+        await r.clickSel(`[data-test=report-node-${ids.menu}]`, 2500);
+      }
+      w = await beat(r, "a11", "묶음 문서 — 급여관리", "아래 화면들의 구성 · 함께 쓰는 테이블 · 화면 사이 연결");
+      await pause(6000);
+      await r.wheel(420, { x: 1000, y: 600 });
+      await w();
+
+      // ── Word
+      await r.go(`${P}/asis/report?systemId=${ids.sys}&screenId=${ids.scr}`);
+      await r.waitFor("!!document.querySelector('[data-test=report-doc]')", 15000);
+      await pause(1500);
+      await r.clickSel("[data-test=report-docx]", 3000);
+      await r.go(pathToFileURL(`${V}/word-view.html`).href);
+      await pause(800);
+      w = await beat(r, "a12", "Word 로 받기 — 같은 절과 표 · 출처 표시 · 쪽 번호", "산출물 화면에서 여러 화면을 묶으면 표지 · 차례를 붙여 한 파일로");
+      await w(1);
+
+      await r.go(card("asis-end"));
+      w = await beat(r, "a13");
+      await w(1);
+      await finish(r, "asis");
+    },
+  },
 };
