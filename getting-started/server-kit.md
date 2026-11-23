@@ -2,6 +2,8 @@
 
 회사 서버 한 대에 네 제품을 설치하고 서로 잇는다. 여러 사람이 각자 PC에서 브라우저와 AX-NAVI IDE로 접속해 함께 시험한다. 혼자 PC 한 대로 시연만 볼 때는 [회사 PC 꾸러미](/getting-started/e2e-kit.md)를 쓴다.
 
+서버가 **리눅스**면 리눅스 서버판(시험판)을 쓴다 — 하는 일은 이 페이지와 같고, 서비스는 systemd, DB 는 서버의 PostgreSQL 이나 사내 DB 서버, 방화벽은 firewalld · ufw 로 다룬다. [설치 가이드 — 리눅스 서버](/getting-started/install-linux.md)와 아래 [리눅스 서버](/getting-started/server-kit.md#리눅스-서버)를 본다.
+
 ```
 [사용자 PC]                           [중앙 서버 1대 — 서버판 꾸러미]
  브라우저 ─────────────────────────▶  AX Platform  :8700  게이트웨이 · MCP 허브 · 에이전트 · Insight
@@ -125,6 +127,26 @@ tools\node\node.exe scripts\smoke.mjs   # 자동 점검 28단계 — 시험 기�
 2026-11-06 PostgreSQL 로 바꾼 판을 새 폴더에 `-NoService` 로 다시 설치했다. 세 제품이 DB 4개(`hnix_ax` 72표 · `pmsx` 98표 · `axdl` 23표 · `axdl_lake` 39표)를 쓰고 내장 DB 파일은 생기지 않았다. 자동 점검 21단계는 통과 21·주의 0·실패 0이었다. `server.ps1 backup` → 받은 덤프를 새 DB 에 `pg_restore` 로 되살리기, `stop`·`start`(PostgreSQL 먼저), `uninstall -RemoveData` 를 확인했다. 서비스 모드(PostgreSQL 서비스·매일 백업 예약)는 관리자 권한이 필요해 아직 실제로 돌려 보지 못했다.
 
 2026-11-13 레이크 문서 자동 연결을 넣은 판을 새 폴더에 `-NoService`로 설치했다. 레이크 시드 뒤 키가 생기고 플랫폼이 다시 시작되어 연결됐다. 키가 없던 예전 설치를 흉내 내 `install`을 다시 돌려도 키를 만들고 플랫폼을 다시 시작했다. 자동 점검 28단계는 통과 28·주의 0·실패 0이었다. 서비스 모드의 `Restart-Service` 경로는 관리자 권한이 없어 돌려 보지 못했다.
+
+## 리눅스 서버
+
+리눅스 서버용은 따로 묶은 꾸러미 `hnix-ax-server-linux-<날짜>.tar.gz`(약 860MB)다. **시험판** — 실제 리눅스 서버 리허설 전이라 릴리스에 아직 올리지 않았다.
+
+| | Windows 서버판 | 리눅스 서버판 |
+|---|---|---|
+| 설치 | `HNIX-AX-Server-Setup-<날짜>.exe`(마법사) | 꾸러미를 `/opt` 에 풀고 `sudo ./server.sh install` |
+| 대상 OS | Windows Server 2019 이상 | x86_64 · systemd — RHEL · Rocky · AlmaLinux 8/9, Ubuntu 22.04/24.04 를 대상으로 만들었다 |
+| 서비스 | Windows 서비스 | systemd(`hnix-ax` · `ax-datalake` · `pmsx` · `hnix-ax-ollama`), 전용 계정 `hnixax` |
+| DB | PostgreSQL 18 을 함께 설치 | 서버의 PostgreSQL 14 이상(없으면 dnf · apt 로 설치) 또는 사내 DB 서버(DBA 가 만든 계정 · DB) |
+| 방화벽 | Windows 방화벽 | firewalld 또는 ufw 가 켜져 있으면 세 포트(이 꾸러미가 연 규칙만 기록하고 지운다) |
+| 매일 백업 | 예약 작업 | systemd 타이머 `hnix-ax-backup.timer` |
+| 명령 | `server.ps1 install · status · start · stop · backup · users · uninstall` | `server.sh` 에 같은 이름 |
+| 판 올리기 | 새 설치 파일을 덮어 실행 | 새 꾸러미를 다른 곳에 풀어 `packages/` · `server.sh` · `lib/` 만 옮기고 `install` — 판 비교 · 백업 · 실패 시 되돌리기는 같다 |
+| 모델 파일 | 이 릴리스의 `ollama-model-*` | 같은 파일을 `packages/` 에 넣는다 |
+
+설치 전에 인프라 담당에게 받을 것(OS · root · 포트 · DB · 패키지 저장소)과 막히는 곳은 [설치 가이드 — 리눅스 서버](/getting-started/install-linux.md)에 표로 정리했다.
+
+**확인한 것** — 2026-11-22 설치 흐름의 계산 부분(판 비교, 설정 검사, `pg_hba.conf` 넣고 빼기, systemd 서비스 파일, 레이크 설정 바꾸기)과 꾸러미 묶기(실행 권한 · 링크가 살아 있는지)를 자동 시험 17건으로 확인했다. **실제 리눅스 서버(또는 WSL)에서 설치 · 서비스 · 방화벽 · DB 준비를 돌려 본 것은 아직 없다.**
 
 ## 꾸러미 만들기(개발 PC)
 

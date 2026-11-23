@@ -15,6 +15,8 @@
 > 2026-11-18 서버판 판 올리기 — 이미 설치한 서버에 새 설치 파일을 덮어 실행하면 판이 바뀐 제품만 올리고(판 번호 비교, 올리기 전 백업), 실패하면 옛 판으로 되돌리며, 끝에 포트마다 실제로 도는 판을 확인한다. PMS-X 1.3.19(소스 수집기 0.5.2 — Oracle 직접 수집이 막히던 것을 고치고 `selfcheck` 추가). AX-DataLake 0.6.1(시간대가 붙은 시각의 시간 축 차트가 비던 것, 큰 금액 숫자 칸 고침). 레이크를 PostgreSQL 카탈로그 · 공유 저장소의 서버 두 대(수집 · 조회)로 띄워, 한 대에서 정한 권한 · 가림이 다른 서버에도 그대로 걸리고 수집 서버를 멈춰도 조회가 이어지는 것을 확인했다.
 >
 > 2026-11-22 As-Is 분석 — PMS-X 1.3.24. ERD 에 트리거 흐름(번개 표시, 누른 테이블의 연쇄, 트리거가 부른 프로시저 안의 쓰기까지). 소스 분석기 0.5.7: 화면 · 서버 저장소를 따로 고르기, 메뉴 테이블이 없으면 소스에서 메뉴 만들기, 서버 없이 Vue · React · ASP.NET 화면 그림, 앱에서 DB 연결 시험(비밀번호는 설정 파일에 남기지 않음), PostgreSQL 형식 이름을 짧게(`varchar(20)`). 서버판 설치 파일은 `HNIX-AX-Server-Setup-20261122.exe`.
+>
+> 2026-11-22 리눅스 서버판(시험판) — 네 제품을 리눅스 서버 한 대에 올리는 꾸러미와 `server.sh`(설치 · 판 올리기 · 되돌리기 · 백업 · 사용자 일괄 등록, systemd · firewalld/ufw · 서버의 PostgreSQL 또는 사내 DB 서버), [설치 가이드](/getting-started/install-linux.md). 실제 리눅스 서버 리허설은 다음 일이다.
 
 ## 접수 — 요청·경보가 들어오는 곳
 
@@ -66,7 +68,7 @@
 | 기능 | 상태 | 문서 | 남은 것 |
 |---|---|---|---|
 | 레이크(표준 Parquet · 시점 조회 · 바뀐 행), 카탈로그(설명·등급·태그) | 제품에 있음 | [AX-DataLake](/datalake/README.md) | — |
-| ITO 온톨로지(객체·관계·액션·승인), 계보·영향 범위, 커넥터(SQL Server·Snowflake·REST·폴더/S3) | 제품에 있음 | [온톨로지](/datalake/ontology.md) · [계보](/datalake/lineage.md) | SQL Server·Snowflake 실서버 연결은 PoC, 열 단위 계보 |
+| ITO 온톨로지(객체·관계·액션·승인), 계보·영향 범위, 커넥터(SQL Server·클라우드 웨어하우스·REST·폴더/S3) | 제품에 있음 | [온톨로지](/datalake/ontology.md) · [계보](/datalake/lineage.md) | SQL Server·클라우드 웨어하우스 실서버 연결은 PoC, 열 단위 계보 |
 | 파일 수집(EUC-KR CSV·Excel·Parquet·JSON) | 제품에 있음 | [수집](/datalake/ingest.md#파일) | — |
 | 원본 DB 동기화(PostgreSQL·MySQL — 통째로·증분·병합, 주기) | 제품에 있음 | [수집](/datalake/ingest.md#원본-연결) | — |
 | 원본 DB 동기화 — Oracle(클라이언트 설치 불필요) | 현장 확인 | [수집](/datalake/ingest.md#원본-연결) | 고객 Oracle 서버로 연결 확인(타입 변환은 시험 완료) |

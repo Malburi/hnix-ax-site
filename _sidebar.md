@@ -12,6 +12,7 @@
   - [제품 조합과 함께 설치할 때](/getting-started/together.md)
   - [빠른 시작](/getting-started/quickstart.md)
   - [설치 가이드 — 서버 PC](/getting-started/install-server.md)
+  - [설치 가이드 — 리눅스 서버](/getting-started/install-linux.md)
   - [설치 가이드 — 개인 PC](/getting-started/install-pc.md)
   - [Claude 연결 — 구독·키·게이트웨이](/getting-started/connect.md)
   - [장애 한 건 따라가기](/getting-started/scenario.md)
