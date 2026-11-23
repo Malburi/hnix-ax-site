@@ -5,7 +5,7 @@
 | 연동 | 설정 |
 |---|---|
 | **사내 게이트웨이** | 명령 팔레트 › **AX-NAVI: AI 모델 연결 설정** → 가상 키 입력. 주소는 조직 정책의 `gateway.baseUrl`이나 설정 `axnavi.gateway.baseUrl`, 모델 별칭은 `axnavi.gateway.model` |
-| **사용량 전송(사용량·비용)** | 설정 `axnavi.insight.server` + 명령 **AX-NAVI: Insight 키 설정**. 둘 다 있을 때만 작업 요약(모델, 토큰, 성공 여부, 작업번호)을 보낸다. 기본은 꺼짐 |
+| **사용량 전송(사용량·비용)** | 설정 `axnavi.insight.server` + 명령 **AX-NAVI: 사용량 기록 키 설정**. 둘 다 있을 때만 작업 요약(모델, 토큰, 성공 여부, 작업번호)을 보낸다. 기본은 꺼짐 |
 | **색인 도구** | 자동. AX-NAVI CLI가 있으면 `QueryIndex`를 에이전트 MCP 서버(`axnavi`)로 등록한다(`axnavi.mcp.autoRegister`) |
 | **플랫폼 MCP 허브** | AX-NAVI 채팅 위 톱니(설정) › **MCP** 탭에서 허브 주소(`<플랫폼>/mcp`)와 키를 서버로 추가한다. PMS-X 화면 흐름·영향도·서비스 요청(SR) 구현 명세, 문서 검색을 에이전트가 함께 쓴다. 도구 호출은 실행 전에 승인을 받는다 |
 
